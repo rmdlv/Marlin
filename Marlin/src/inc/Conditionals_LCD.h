@@ -1492,10 +1492,12 @@
   #define TFT_DEFAULT_DRIVER ST7796
   #define TFT_DEFAULT_ORIENTATION TFT_INVERT_Y
   #define TOUCH_ORIENTATION TOUCH_PORTRAIT
-  #define TOUCH_CALIBRATION_X            11579
-  #define TOUCH_CALIBRATION_Y            17253
-  #define TOUCH_OFFSET_X                   -24
-  #define TOUCH_OFFSET_Y                   -42
+  #if MOTHERBOARD == BOARD_MKS_ROBIN_NANO_V3
+    #define TOUCH_CALIBRATION_X            11579
+    #define TOUCH_CALIBRATION_Y            17253
+    #define TOUCH_OFFSET_X                   -24
+    #define TOUCH_OFFSET_Y                   -42
+  #endif
   #define TFT_RES_320x480
   #define TFT_INTERFACE_SPI
 #elif EITHER(LERDGE_TFT35, ANET_ET5_TFT35)                                    // ST7796
