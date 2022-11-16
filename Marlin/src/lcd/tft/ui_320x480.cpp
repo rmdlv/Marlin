@@ -320,6 +320,9 @@ void MarlinUI::draw_status_screen() {
 
   #if ENABLED(TOUCH_SCREEN)
     add_control(236, 190, menu_main, imgSettings);                                                      //MENU         !!!!!!!!!!!!!!!!
+    #ifdef LED_FAST_MENU
+      add_control(128, 190, menu_case_on, imgChamber);
+    #endif
     //add_control(128, 190, menu_led, imgChamber);
     TERN_(SDSUPPORT, add_control(20, 190, menu_media, imgSD, !printingIsActive(), COLOR_CONTROL_ENABLED, card.isMounted() && printingIsActive() ? COLOR_BUSY : COLOR_CONTROL_DISABLED));
   #endif                                                                                                  //SD           !!!!!!!!!!!!!!!!

@@ -39,7 +39,7 @@
 
 
 #define DIAG_JUMPERS_REMOVED
-// #define MOTHERBOARD BOARD_LINUX_RAMPS
+#define MOTHERBOARD BOARD_LINUX_RAMPS
 
 
 
@@ -3384,3 +3384,6 @@
 
 // Disable servo with M282 to reduce power consumption, noise, and heat when not in use
 //#define SERVO_DETACH_GCODE
+
+
+#define LED_FAST_MENU
