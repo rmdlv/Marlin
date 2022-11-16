@@ -748,7 +748,7 @@ void MarlinUI::init() {
     chirp();  // Buzz and wait. Is the delay needed for buttons to settle?
 
     #if HAS_CHIRP && HAS_MARLINUI_MENU
-      #if HAS_BEEPER
+      #if HAS_BEEPER && ENABLED(SPEAKER)
         for (int8_t i = 5; i--;) { buzzer.tick(); delay(2); }
       #else
         delay(10);

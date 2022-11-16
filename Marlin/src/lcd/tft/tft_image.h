@@ -33,6 +33,8 @@ extern const uint16_t marlin_logo_320x240x16[];
 extern const uint16_t marlin_logo_480x320x16[];
 extern const uint16_t background_320x30x16[];
 
+extern const uint8_t fb_logo_200x220x4[];
+
 extern const uint8_t hotend_64x64x4[];
 extern const uint8_t bed_64x64x4[], bed_heated_64x64x4[];
 extern const uint8_t chamber_64x64x4[], chamber_heated_64x64x4[];
@@ -136,6 +138,8 @@ extern const tImage NoLogo;
   extern const tImage MarlinLogo195x59x16;
   extern const tImage MarlinLogo320x240x16;
   extern const tImage MarlinLogo480x320x16;
+
+  extern const tImage FBLogo200x220x4;
 #endif
 extern const tImage Background320x30x16;
 

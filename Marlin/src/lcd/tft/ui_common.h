@@ -39,6 +39,8 @@
   #include "ui_320x240.h"
 #elif HAS_UI_480x320 || HAS_UI_480x272
   #include "ui_480x320.h"
+#elif HAS_UI_320x480
+  #include "ui_320x480.h"
 #elif HAS_UI_1024x600
   #include "ui_1024x600.h"
 #else

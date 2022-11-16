@@ -63,7 +63,8 @@ void Touch::init() {
   enable();
 }
 
-void Touch::add_control(TouchControlType type, uint16_t x, uint16_t y, uint16_t width, uint16_t height, intptr_t data) {
+void Touch::add_control(TouchControlType type, uint16_t x, uint16_t y, uint16_t width, uint16_t height, intptr_t data) {   //   TEST !!!!!!!!!!!!!!
+
   if (controls_count == MAX_CONTROLS) return;
 
   controls[controls_count].type = type;
@@ -111,6 +112,11 @@ void Touch::idle() {
     if (PENDING(last_touch_ms, time_to_hold)) return;
 
     if (x != 0 && y != 0) {
+      // char msg[20];
+      // sprintf_P(msg, "(%d, %d)", x, y);
+      // ui.set_status(msg);
+      // return;
+
       if (current_control) {
         if (WITHIN(x, current_control->x - FREE_MOVE_RANGE, current_control->x + current_control->width + FREE_MOVE_RANGE) && WITHIN(y, current_control->y - FREE_MOVE_RANGE, current_control->y + current_control->height + FREE_MOVE_RANGE)) {
           NOLESS(x, current_control->x);
@@ -179,7 +185,7 @@ void Touch::touch(touch_control_t *control) {
       ui.encoderPosition = ui.encoderPosition + LCD_HEIGHT < (uint32_t)screen_items ? ui.encoderPosition + LCD_HEIGHT : screen_items;
       ui.refresh();
       break;
-    case SLIDER:    hold(control); ui.encoderPosition = (x - control->x) * control->data / control->width; break;
+    case SLIDER:    hold(control); ui.encoderPosition = (y - control->y) * control->data / control->height; break;
     case INCREASE:  hold(control, repeat_delay - 5); TERN(AUTO_BED_LEVELING_UBL, ui.external_control ? bedlevel.encoder_diff++ : ui.encoderPosition++, ui.encoderPosition++); break;
     case DECREASE:  hold(control, repeat_delay - 5); TERN(AUTO_BED_LEVELING_UBL, ui.external_control ? bedlevel.encoder_diff-- : ui.encoderPosition--, ui.encoderPosition--); break;
     case HEATER:
@@ -222,13 +228,13 @@ void Touch::touch(touch_control_t *control) {
       break;
     case FEEDRATE:
       ui.clear_lcd();
-      MenuItem_int3::action(GET_TEXT_F(MSG_SPEED), &feedrate_percentage, 10, 999);
+      MenuItem_int3::action(GET_TEXT_F(MSG_SPEED), &feedrate_percentage, 10, 500);
       break;
     case FLOWRATE:
       ui.clear_lcd();
       MenuItemBase::itemIndex = control->data;
       #if EXTRUDERS == 1
-        MenuItem_int3::action(GET_TEXT_F(MSG_FLOW), &planner.flow_percentage[MenuItemBase::itemIndex], 10, 999, []{ planner.refresh_e_factor(MenuItemBase::itemIndex); });
+        MenuItem_int3::action(GET_TEXT_F(MSG_FLOW), &planner.flow_percentage[MenuItemBase::itemIndex], 10, 500, []{ planner.refresh_e_factor(MenuItemBase::itemIndex); });
       #else
         MenuItem_int3::action(GET_TEXT_F(MSG_FLOW_N), &planner.flow_percentage[MenuItemBase::itemIndex], 10, 999, []{ planner.refresh_e_factor(MenuItemBase::itemIndex); });
       #endif

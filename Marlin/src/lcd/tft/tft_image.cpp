@@ -36,6 +36,9 @@ const tImage NoLogo                 = { nullptr, 0, 0, NOCOLORS };
   const tImage MarlinLogo195x59x16  = { (void *)marlin_logo_195x59x16,  195,  59, HIGHCOLOR };
   const tImage MarlinLogo320x240x16 = { (void *)marlin_logo_320x240x16, 320, 240, HIGHCOLOR };
   const tImage MarlinLogo480x320x16 = { (void *)marlin_logo_480x320x16, 480, 320, HIGHCOLOR };
+
+  const tImage FBLogo200x220x4      = { (void *)fb_logo_200x220x4, 200, 220, GREYSCALE4 };
+
 #endif
 const tImage Background320x30x16    = { (void *)background_320x30x16, 320, 30, HIGHCOLOR };
 
@@ -76,7 +79,8 @@ const tImage Leveling_32x32x4       = { (void *)leveling_32x32x4, 32, 32, GREYSC
 const tImage Slider8x16x4           = { (void *)slider_8x16x4, 8, 16, GREYSCALE4 };
 
 const tImage Images[imgCount] = {
-  TERN(SHOW_BOOTSCREEN, TERN(BOOT_MARLIN_LOGO_SMALL, MarlinLogo195x59x16, MARLIN_LOGO_FULL_SIZE), NoLogo),
+  FBLogo200x220x4,
+  //TERN(SHOW_BOOTSCREEN, TERN(BOOT_MARLIN_LOGO_SMALL, MarlinLogo195x59x16, MARLIN_LOGO_FULL_SIZE), NoLogo),
   HotEnd_64x64x4,
   Bed_64x64x4,
   Bed_Heated_64x64x4,

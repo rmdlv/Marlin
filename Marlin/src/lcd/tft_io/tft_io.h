@@ -87,7 +87,7 @@
   #define TOUCH_OFFSET_Y        0
 #endif
 #ifndef TOUCH_ORIENTATION
-  #define TOUCH_ORIENTATION     TOUCH_LANDSCAPE
+  #define TOUCH_ORIENTATION     TOUCH_PORTRAIT
 #endif
 
 #ifndef TFT_DRIVER
