@@ -196,8 +196,8 @@ void draw_heater_status(uint16_t x, uint16_t y, const int8_t Heater) {
 }
 
 void draw_fan_status(uint16_t x, uint16_t y, const bool blink) {
-  TERN_(TOUCH_SCREEN, touch.add_control(FAN, x, y + 20, 64, 130));                                               //FAN !!!!!!!!!!!!!!!!!!!!!!!
-  tft.canvas(x, y + 20, 64, 130);
+  TERN_(TOUCH_SCREEN, touch.add_control(FAN, x, y + 32, 64, 130));                                               //FAN !!!!!!!!!!!!!!!!!!!!!!!
+  tft.canvas(x, y + 32, 66, 130);
   tft.set_background(COLOR_BACKGROUND);
 
   uint8_t fanSpeed = thermalManager.fan_speed[0];
@@ -214,7 +214,7 @@ void draw_fan_status(uint16_t x, uint16_t y, const bool blink) {
 
   tft_string.set(ui8tostr4pctrj(thermalManager.fan_speed[0]));
   tft_string.trim();
-  tft.add_text(tft_string.center(64) + 6, 82, COLOR_FAN, tft_string);
+  tft.add_text(tft_string.center(64) + 6, 68, COLOR_FAN, tft_string);
 }
 
 void MarlinUI::draw_status_screen() {
@@ -339,7 +339,7 @@ void MarlinUI::draw_status_screen() {
 
   y += TERN(HAS_UI_480x272, 28, 36);
   // progress bar
-  const uint8_t progress = ui.get_progress_percent();
+  // const uint8_t progress = ui.get_progress_percent();
   tft.canvas(4, 400, 312, 9);
   tft.set_background(COLOR_PROGRESS_BG);
   tft.add_rectangle(0, 0, 312, 9, COLOR_PROGRESS_FRAME);
@@ -607,19 +607,19 @@ static void drawCurStepValue() {
   tft.add_text(CUR_STEP_VALUE_WIDTH - tft_string.width(), 0, COLOR_AXIS_HOMED, tft_string);
 }
 
-static void drawCurZSelection() {
-  tft_string.set('Z');
-  tft.canvas(motionAxisState.zTypePos.x, motionAxisState.zTypePos.y, tft_string.width(), 24);
-  tft.set_background(COLOR_BACKGROUND);
-  tft.add_text(0, 0, Z_BTN_COLOR, tft_string);
-  tft.queue.sync();
-  tft_string.set(F("Offset"));
-  tft.canvas(motionAxisState.zTypePos.x, motionAxisState.zTypePos.y + 34, tft_string.width(), 24);
-  tft.set_background(COLOR_BACKGROUND);
-  if (motionAxisState.z_selection == Z_SELECTION_Z_PROBE) {
-    tft.add_text(0, 0, Z_BTN_COLOR, tft_string);
-  }
-}
+// static void drawCurZSelection() {
+//   tft_string.set('Z');
+//   tft.canvas(motionAxisState.zTypePos.x, motionAxisState.zTypePos.y, tft_string.width(), 24);
+//   tft.set_background(COLOR_BACKGROUND);
+//   tft.add_text(0, 0, Z_BTN_COLOR, tft_string);
+//   tft.queue.sync();
+//   tft_string.set(F("Offset"));
+//   tft.canvas(motionAxisState.zTypePos.x, motionAxisState.zTypePos.y + 34, tft_string.width(), 24);
+//   tft.set_background(COLOR_BACKGROUND);
+//   if (motionAxisState.z_selection == Z_SELECTION_Z_PROBE) {
+//     tft.add_text(0, 0, Z_BTN_COLOR, tft_string);
+//   }
+// }
 
 
 static void drawCurESelection() {
