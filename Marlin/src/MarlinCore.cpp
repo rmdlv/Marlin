@@ -64,6 +64,8 @@
   #include "lcd/extui/mks_ui/draw_ui.h"
   #include "lcd/extui/mks_ui/mks_hardware.h"
   #include <lvgl.h>
+#elif ENABLED(MKS_WIFI_MODULE)
+  #include "module/wifi/wifi.h"
 #endif
 
 #if HAS_DWIN_E3V2
@@ -818,6 +820,8 @@ void idle(bool no_stepper_sleep/*=false*/) {
   // Check network connection
   TERN_(HAS_ETHERNET, ethernet.check());
 
+  TERN_(MKS_WIFI_MODULE, get_wifi_commands());
+
   // Handle Power-Loss Recovery
   #if ENABLED(POWER_LOSS_RECOVERY) && PIN_EXISTS(POWER_LOSS)
     if (IS_SD_PRINTING()) recovery.outage();
@@ -1350,6 +1354,12 @@ void setup() {
   #if HAS_ETHERNET
     SETUP_RUN(ethernet.init());
   #endif
+
+  #if ENABLED(MKS_WIFI_MODULE)
+    wifi_init();
+    mks_wifi_firmware_update();
+  #endif
+
 
   #if HAS_TOUCH_BUTTONS
     SETUP_RUN(touchBt.init());

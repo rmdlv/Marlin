@@ -351,6 +351,8 @@ void MarlinUI::draw_status_screen() {
 
   y += 20;
   // status message
+  TERN_(MKS_WIFI_MODULE, touch.add_control(WIFI, 0, 420, 320, 30, 0));          // IP !!!!!!!!!!!!!!
+
   tft.canvas(0, 420, 320, 30);
   tft.set_background(COLOR_BACKGROUND);
   tft_string.set(status_message);
