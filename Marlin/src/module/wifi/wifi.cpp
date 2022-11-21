@@ -37,6 +37,7 @@
 #include "../planner.h"
 #include "../servo.h"
 #include "../probe.h"
+#include "../printcounter.h"
 
 #if DISABLED(EMERGENCY_PARSER)
   #include "../motion.h"
@@ -90,6 +91,10 @@ volatile WIFI_STATE wifi_link_state;
 WIFI_PARA wifiPara;
 IP_PARA ipPara;
 CLOUD_PARA cloud_para;
+
+WIFI_LIST wifi_list;
+WIFI_CFG wifi_cfg;
+
 
 char wifi_check_time = 0;
 
@@ -1175,41 +1180,43 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
           break;
 
         case 992:
-          // if ((uiCfg.print_state == WORKING) || (uiCfg.print_state == PAUSED)) {
-          //   ZERO(tempBuf);
-          //   sprintf_P((char *)tempBuf, PSTR("M992 %d%d:%d%d:%d%d\r\n"), print_time.hours/10, print_time.hours%10, print_time.minutes/10, print_time.minutes%10, print_time.seconds/10, print_time.seconds%10);
-          //   wifi_ret_ack();
-          //   send_to_wifi((uint8_t *)tempBuf, strlen((char *)tempBuf));
-          // }
+          if (card.isPrinting() || card.isPaused()) {
+            ZERO(tempBuf);
+
+            char buffer[30];
+            duration_t elapsed = print_job_timer.duration();
+            elapsed.toDigital(buffer);
+
+            sprintf_P((char *)tempBuf, PSTR("M992 %s\r\n"), buffer);
+
+            // sprintf_P((char *)tempBuf, PSTR("M992 %d%d:%d%d:%d%d\r\n"), print_time.hours/10, print_time.hours%10, print_time.minutes/10, print_time.minutes%10, print_time.seconds/10, print_time.seconds%10);
+            wifi_ret_ack();
+            send_to_wifi((uint8_t *)tempBuf, strlen((char *)tempBuf));
+          }
           break;
 
         case 994:
-          // if ((uiCfg.print_state == WORKING) || (uiCfg.print_state == PAUSED)) {
-          //   ZERO(tempBuf);
-          //   if (strlen((char *)list_file.file_name[sel_id]) > (100 - 1)) return;
-          //   sprintf_P((char *)tempBuf, PSTR("M994 %s;%d\n"), list_file.file_name[sel_id], (int)gCfgItems.curFilesize);
-          //   wifi_ret_ack();
-          //   send_to_wifi((uint8_t *)tempBuf, strlen((char *)tempBuf));
-          // }
+          if (card.isFileOpen()) {
+            ZERO(tempBuf);
+            sprintf_P((char *)tempBuf, PSTR("M994 %s;%d\n"), card.filename, (int)card.getFileSize());
+            wifi_ret_ack();
+            send_to_wifi((uint8_t *)tempBuf, strlen((char *)tempBuf));
+          }
           break;
 
         case 997:
-          // if (uiCfg.print_state == IDLE) {
-          //   wifi_ret_ack();
-          //   send_to_wifi((uint8_t *)"M997 IDLE\r\n", strlen("M997 IDLE\r\n"));
-          // }
-          // else if (uiCfg.print_state == WORKING) {
-          //   wifi_ret_ack();
-          //   send_to_wifi((uint8_t *)"M997 PRINTING\r\n", strlen("M997 PRINTING\r\n"));
-          // }
-          // else if (uiCfg.print_state == PAUSED) {
-          //   wifi_ret_ack();
-          //   send_to_wifi((uint8_t *)"M997 PAUSE\r\n", strlen("M997 PAUSE\r\n"));
-          // }
-          // else if (uiCfg.print_state == REPRINTING) {
-          //   wifi_ret_ack();
-          //   send_to_wifi((uint8_t *)"M997 PAUSE\r\n", strlen("M997 PAUSE\r\n"));
-          // }
+          if (card.isPrinting()) {
+            wifi_ret_ack();
+            send_to_wifi((uint8_t *)"M997 PRINTING\r\n", strlen("M997 PRINTING\r\n"));
+          }
+          else if (card.isPaused()) {
+            wifi_ret_ack();
+            send_to_wifi((uint8_t *)"M997 PAUSE\r\n", strlen("M997 PAUSE\r\n"));
+          }
+          else {
+            wifi_ret_ack();
+            send_to_wifi((uint8_t *)"M997 IDLE\r\n", strlen("M997 IDLE\r\n"));
+          }
           // if (!uiCfg.command_send) get_wifi_list_command_send();
           break;
 
@@ -1532,6 +1539,7 @@ static void file_first_msg_handle(uint8_t * msg, uint16_t msgLen) {
       wifiTransError.flag = 1;
       wifiTransError.start_tick = getWifiTick();
       // lv_draw_dialog(DIALOG_TYPE_UPLOAD_FILE);
+      ui.set_status("Uploading...");
       return;
     }
     strcpy((char *)saveFilePath, dosName);
@@ -1548,6 +1556,7 @@ static void file_first_msg_handle(uint8_t * msg, uint16_t msgLen) {
       wifiTransError.start_tick = getWifiTick();
 
       // lv_draw_dialog(DIALOG_TYPE_UPLOAD_FILE);
+      ui.set_status("Uploading...");
       return;
     }
 
@@ -1559,8 +1568,10 @@ static void file_first_msg_handle(uint8_t * msg, uint16_t msgLen) {
 
   // clear_cur_ui();
   // lv_draw_dialog(DIALOG_TYPE_UPLOAD_FILE);
+  ui.set_status("Uploading...");
 
   // lv_task_handler();
+  get_wifi_commands();
 
   file_writer.tick_begin = getWifiTick();
 
@@ -1882,14 +1893,14 @@ void wifi_rcv_handle() {
   }
 }
 
-void wifi_looping() {
+void mks_wifi_looping() {
   do {
     wifi_rcv_handle();
     hal.watchdog_refresh();
   } while (wifi_link_state == WIFI_TRANS_FILE);
 }
 
-void wifi_init() {
+void mks_wifi_init() {
   wifi_link_state = WIFI_NOT_CONFIG;
 
   SET_OUTPUT(WIFI_RESET_PIN);

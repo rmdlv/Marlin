@@ -1356,8 +1356,8 @@ void setup() {
   #endif
 
   #if ENABLED(MKS_WIFI_MODULE)
-    wifi_init();
-    mks_wifi_firmware_update();
+    mks_wifi_init();
+    // mks_wifi_firmware_update();
   #endif
 
 
@@ -1697,6 +1697,8 @@ void loop() {
     endstops.event_handler();
 
     TERN_(HAS_TFT_LVGL_UI, printer_state_polling());
+    TERN_(MKS_WIFI_MODULE, mks_wifi_looping());
+
 
     TERN_(MARLIN_TEST_BUILD, runPeriodicTests());
 

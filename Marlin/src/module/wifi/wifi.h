@@ -93,6 +93,7 @@ typedef struct {
   int baud;
   int mode;
 } WIFI_PARA;
+extern WIFI_PARA wifiPara;
 
 typedef struct {
   char state;
@@ -116,6 +117,7 @@ typedef struct {
   char start_ip_addr[16];
   char end_ip_addr[16];
 } IP_PARA;
+extern IP_PARA ipPara;
 
 typedef enum {
   WIFI_NOT_CONFIG,
@@ -188,12 +190,12 @@ extern WIFI_GCODE_BUFFER espGcodeFifo;
 uint32_t getWifiTick();
 uint32_t getWifiTickDiff(int32_t lastTick, int32_t curTick);
 
-void wifi_init();
+void mks_wifi_init();
 void mks_wifi_firmware_update();
+void mks_wifi_looping();
 
 extern int cfg_cloud_flag;
 int send_to_wifi(uint8_t *buf, int len);
-void wifi_looping();
 int raw_send_to_wifi(uint8_t *buf, int len);
 int package_to_wifi(WIFI_RET_TYPE type, uint8_t *buf, int len);
 void get_wifi_list_command_send();
