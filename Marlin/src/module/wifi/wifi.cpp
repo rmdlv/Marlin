@@ -61,7 +61,8 @@ uint8_t public_buf[513];
 extern uint8_t Explore_Disk(char *path, uint8_t recu_level);
 
 extern uint8_t commands_in_queue;
-extern uint8_t sel_id;
+uint8_t sel_id = 0;
+// extern uint8_t sel_id;
 extern unsigned int getTickDiff(unsigned int curTick, unsigned int lastTick);
 
 volatile SZ_USART_FIFO WifiRxFifo;
@@ -95,6 +96,8 @@ CLOUD_PARA cloud_para;
 WIFI_LIST wifi_list;
 WIFI_CFG wifi_cfg;
 
+LIST_FILE list_file;
+
 
 char wifi_check_time = 0;
 
@@ -118,7 +121,7 @@ extern WIFI_PARA wifiPara;
 extern IP_PARA ipPara;
 extern CLOUD_PARA cloud_para;
 
-extern bool once_flag, flash_preview_begin, default_preview_flg, gcode_preview_over;
+bool once_flag, flash_preview_begin, default_preview_flg, gcode_preview_over;
 extern bool flash_dma_mode;
 
 uint32_t getWifiTick() { return millis(); }
@@ -717,9 +720,9 @@ void set_cur_file_sys(int fileType) { fileSysType = fileType; }
 void get_file_list(char *path) {
   if (!path) return;
 
-  if (fileSysType == FILE_SYS_SD) {
+  // if (fileSysType == FILE_SYS_SD) {
     TERN_(SDSUPPORT, card.mount());
-  }
+  // }
   // else if (fileSysType == FILE_SYS_USB) {
     // udisk
   // }
@@ -848,7 +851,7 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
   int8_t tempBuf[100] = { 0 };
   uint8_t *tmpStr = 0;
   int cmd_value;
-  // volatile int print_rate;
+  volatile int print_rate;
   if (strchr((char *)cmd_line, '\n') && (strchr((char *)cmd_line, 'G') || strchr((char *)cmd_line, 'M') || strchr((char *)cmd_line, 'T'))) {
     tmpStr = (uint8_t *)strchr((char *)cmd_line, '\n');
     if (tmpStr) *tmpStr = '\0';
@@ -866,223 +869,137 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
 
       switch (cmd_value) {
 
-        case 20: // M20: Print SD / µdisk file
+        case 20: // M20 [path]: get the printer file list
           file_writer.fileTransfer = 0;
-          // if (uiCfg.print_state == IDLE) {
-          //   int index = 0;
-
-          //   if (tmpStr == 0) {
-          //     gCfgItems.fileSysType = FILE_SYS_SD;
-          //     send_to_wifi((uint8_t *)(STR_BEGIN_FILE_LIST "\r\n"), strlen(STR_BEGIN_FILE_LIST "\r\n"));
-          //     get_file_list((char *)"0:/");
-          //     send_to_wifi((uint8_t *)(STR_END_FILE_LIST "\r\n"), strlen(STR_END_FILE_LIST "\r\n"));
-          //     SEND_OK_TO_WIFI;
-          //     break;
-          //   }
-
-          //   while (tmpStr[index] == ' ') index++;
-
-          //   if (gCfgItems.wifi_type == ESP_WIFI) {
-          //     char *path = (char *)tempBuf;
-
-          //     if (strlen((char *)&tmpStr[index]) < 80) {
-          //       send_to_wifi((uint8_t *)(STR_BEGIN_FILE_LIST "\r\n"), strlen(STR_BEGIN_FILE_LIST "\r\n"));
-
-          //       if (strncmp((char *)&tmpStr[index], "1:", 2) == 0)
-          //         gCfgItems.fileSysType = FILE_SYS_SD;
-          //       else if (strncmp((char *)&tmpStr[index], "0:", 2) == 0)
-          //         gCfgItems.fileSysType = FILE_SYS_USB;
-
-          //       strcpy((char *)path, (char *)&tmpStr[index]);
-          //       get_file_list(path);
-          //       send_to_wifi((uint8_t *)(STR_END_FILE_LIST "\r\n"), strlen(STR_END_FILE_LIST "\r\n"));
-          //     }
+          if (!card.isPrinting() || !card.isPaused()) {
+            int index = 0;
+            if (tmpStr == 0) {
+              send_to_wifi((uint8_t *)(STR_BEGIN_FILE_LIST "\r\n"), strlen(STR_BEGIN_FILE_LIST "\r\n"));
+              get_file_list((char *)"0:/");
+              send_to_wifi((uint8_t *)(STR_END_FILE_LIST "\r\n"), strlen(STR_END_FILE_LIST "\r\n"));
               SEND_OK_TO_WIFI;
-          //   }
-          // }
+              break;
+            }
+            while (tmpStr[index] == ' ') index++;
+            char *path = (char *)tempBuf;
+
+            if (strlen((char *)&tmpStr[index]) < 80) {
+              send_to_wifi((uint8_t *)(STR_BEGIN_FILE_LIST "\r\n"), strlen(STR_BEGIN_FILE_LIST "\r\n"));
+              strcpy((char *)path, (char *)&tmpStr[index]);
+              get_file_list(path);
+              send_to_wifi((uint8_t *)(STR_END_FILE_LIST "\r\n"), strlen(STR_END_FILE_LIST "\r\n"));
+            }
+            SEND_OK_TO_WIFI;
+          }
           break;
 
-        case 21: SEND_OK_TO_WIFI; break;            // Init SD card
+        // case 21: SEND_OK_TO_WIFI; break;            // Init SD card
 
-        case 23:
-          // Select the file
-          // if (uiCfg.print_state == IDLE) {
-          //   int index = 0;
-          //   while (tmpStr[index] == ' ') index++;
+        case 23: // M23 xxx.gcode：select the gcode file
+          if (!card.isPrinting() || !card.isPaused()) {
+            int index = 0;
+            while (tmpStr[index] == ' ') index++;
+            if (strstr_P((char *)&tmpStr[index], PSTR(".g")) || strstr_P((char *)&tmpStr[index], PSTR(".G"))) {
+              if (strlen((char *)&tmpStr[index]) < 80) {
+                ZERO(list_file.file_name[sel_id]);
+                uint8_t has_path_selected = 0;
+                if (strncmp_P((char *)&tmpStr[index], PSTR("1:"), 2) == 0 || strncmp_P((char *)&tmpStr[index], PSTR("0:"), 2) == 0) {
+                  has_path_selected = 1;
+                }
+                else if (tmpStr[index] != '/') strcat_P((char *)list_file.file_name[sel_id], PSTR("/"));
 
-          //   if (strstr_P((char *)&tmpStr[index], PSTR(".g")) || strstr_P((char *)&tmpStr[index], PSTR(".G"))) {
-          //     if (strlen((char *)&tmpStr[index]) < 80) {
-          //       ZERO(list_file.file_name[sel_id]);
-          //       ZERO(list_file.long_name[sel_id]);
-          //       uint8_t has_path_selected = 0;
+                if (file_writer.fileTransfer == 1) {
+                  char dosName[FILENAME_LENGTH];
+                  uint8_t fileName[sizeof(list_file.file_name[sel_id])];
+                  fileName[0] = '\0';
+                  if (has_path_selected == 1) {
+                    strcat((char *)fileName, (char *)&tmpStr[index + 3]);
+                    strcat_P((char *)list_file.file_name[sel_id], PSTR("/"));
+                  }
+                  else strcat((char *)fileName, (char *)&tmpStr[index]);
 
-                // if (gCfgItems.wifi_type == ESP_WIFI) {
-                //   if (strncmp_P((char *)&tmpStr[index], PSTR("1:"), 2) == 0) {
-                //     gCfgItems.fileSysType = FILE_SYS_SD;
-                //     has_path_selected = 1;
-                //   }
-                //   else if (strncmp_P((char *)&tmpStr[index], PSTR("0:"), 2) == 0) {
-                //     gCfgItems.fileSysType = FILE_SYS_USB;
-                //     has_path_selected = 1;
-                //   }
-                //   else if (tmpStr[index] != '/')
-                //     strcat_P((char *)list_file.file_name[sel_id], PSTR("/"));
+                  if (!longName2DosName((const char *)fileName, dosName))
+                    strcpy_P(list_file.file_name[sel_id], PSTR("notValid"));
+                  strcat((char *)list_file.file_name[sel_id], dosName);
+                  strcat((char *)list_file.long_name[sel_id], dosName);
+                }
+                else {
+                  strcat((char *)list_file.file_name[sel_id], (char *)&tmpStr[index]);
+                  strcat((char *)list_file.long_name[sel_id], (char *)&tmpStr[index]);
+                }
 
-                //   if (file_writer.fileTransfer == 1) {
-                //     char dosName[FILENAME_LENGTH];
-                //     uint8_t fileName[sizeof(list_file.file_name[sel_id])];
-                //     fileName[0] = '\0';
-                //     if (has_path_selected == 1) {
-                //       strcat((char *)fileName, (char *)&tmpStr[index + 3]);
-                //       strcat_P((char *)list_file.file_name[sel_id], PSTR("/"));
-                //     }
-                //     else strcat((char *)fileName, (char *)&tmpStr[index]);
-                //     if (!longName2DosName((const char *)fileName, dosName))
-                //       strcpy_P(list_file.file_name[sel_id], PSTR("notValid"));
-                //     strcat((char *)list_file.file_name[sel_id], dosName);
-                //     strcat((char *)list_file.long_name[sel_id], dosName);
-                //   }
-                //   else {
-                //     strcat((char *)list_file.file_name[sel_id], (char *)&tmpStr[index]);
-                //     strcat((char *)list_file.long_name[sel_id], (char *)&tmpStr[index]);
-                //   }
+                char *cur_name=strrchr(list_file.file_name[sel_id],'/');
+                card.openFileRead(cur_name);
 
-                // }
-                // else
-                //   strcpy(list_file.file_name[sel_id], (char *)&tmpStr[index]);
-
-                // char *cur_name=strrchr(list_file.file_name[sel_id],'/');
-
-                // card.openFileRead(cur_name);
-
-                // if (card.isFileOpen())
-                //   send_to_wifi((uint8_t *)"File selected\r\n", strlen("File selected\r\n"));
-                // else {
-                //   send_to_wifi((uint8_t *)"file.open failed\r\n", strlen("file.open failed\r\n"));
-                //   strcpy_P(list_file.file_name[sel_id], PSTR("notValid"));
-                // }
+                if (card.isFileOpen())
+                  send_to_wifi((uint8_t *)"File selected\r\n", strlen("File selected\r\n"));
+                else {
+                  send_to_wifi((uint8_t *)"file.open failed\r\n", strlen("file.open failed\r\n"));
+                  strcpy_P(list_file.file_name[sel_id], PSTR("notValid"));
+                }
                 SEND_OK_TO_WIFI;
-          //     }
-          //   }
-          // }
+              }
+            }
+          }
           break;
 
-        case 24:
-          // if (strcmp_P(list_file.file_name[sel_id], PSTR("notValid")) != 0) {
-          //   if (uiCfg.print_state == IDLE) {
-          //     clear_cur_ui();
-          //     reset_print_time();
-          //     start_print_time();
-          //     preview_gcode_prehandle(list_file.file_name[sel_id]);
-          //     uiCfg.print_state = WORKING;
-          //     lv_draw_printing();
-
-          //     #if ENABLED(SDSUPPORT)
-          //       if (!gcode_preview_over) {
-          //         char *cur_name = strrchr(list_file.file_name[sel_id], '/');
-
-          //         SdFile file;
-          //         SdFile *curDir;
-          //         card.abortFilePrintNow();
-          //         const char * const fname = card.diveToFile(false, curDir, cur_name);
-          //         if (!fname) return;
-          //         if (file.open(curDir, fname, O_READ)) {
-          //           gCfgItems.curFilesize = file.fileSize();
-          //           file.close();
-          //           update_spi_flash();
-          //         }
-          //         card.openFileRead(cur_name);
-          //         if (card.isFileOpen()) {
-          //           //saved_feedrate_percentage = feedrate_percentage;
-          //           feedrate_percentage = 100;
-          //           #if HAS_EXTRUDERS
-          //             planner.flow_percentage[0] = 100;
-          //             planner.e_factor[0] = planner.flow_percentage[0] * 0.01f;
-          //           #endif
-          //           #if HAS_MULTI_EXTRUDER
-          //             planner.flow_percentage[1] = 100;
-          //             planner.e_factor[1] = planner.flow_percentage[1] * 0.01f;
-          //           #endif
-          //           card.startOrResumeFilePrinting();
-          //           TERN_(POWER_LOSS_RECOVERY, recovery.prepare());
-          //           once_flag = false;
-          //         }
-          //       }
-          //     #endif
-          //   }
-          //   else if (uiCfg.print_state == PAUSED) {
-          //     uiCfg.print_state = RESUMING;
-          //     clear_cur_ui();
-          //     start_print_time();
-
-          //     if (gCfgItems.from_flash_pic)
-          //       flash_preview_begin = true;
-          //     else
-          //       default_preview_flg = true;
-          //     lv_draw_printing();
-          //   }
-          //   else if (uiCfg.print_state == REPRINTING) {
-          //     uiCfg.print_state = REPRINTED;
-          //     clear_cur_ui();
-          //     start_print_time();
-          //     if (gCfgItems.from_flash_pic)
-          //       flash_preview_begin = true;
-          //     else
-          //       default_preview_flg = true;
-          //     lv_draw_printing();
-          //   }
-          // }
+        case 24: // M24：Start or resume printing
+          if (strcmp_P(list_file.file_name[sel_id], PSTR("notValid")) != 0) {
+            if (!card.isPrinting() || !card.isPaused()) {
+              if (!gcode_preview_over) {
+                char *cur_name = strrchr(list_file.file_name[sel_id], '/');
+                SdFile file;
+                SdFile *curDir;
+                card.abortFilePrintNow();
+                const char * const fname = card.diveToFile(false, curDir, cur_name);
+                if (!fname) return;
+                card.openFileRead(cur_name);
+                if (card.isFileOpen()) {
+                  feedrate_percentage = 100;
+                #if HAS_EXTRUDERS
+                  planner.flow_percentage[0] = 100;
+                  planner.e_factor[0] = planner.flow_percentage[0] * 0.01f;
+                #endif
+                #if HAS_MULTI_EXTRUDER
+                  planner.flow_percentage[1] = 100;
+                  planner.e_factor[1] = planner.flow_percentage[1] * 0.01f;
+                #endif
+                  card.startOrResumeFilePrinting();
+                  TERN_(POWER_LOSS_RECOVERY, recovery.prepare());
+                  once_flag = false;
+                }
+              }
+            } else if (card.isPaused()) {
+                card.startOrResumeFilePrinting();
+            }
+          }
           SEND_OK_TO_WIFI;
           break;
 
-        case 25:
-          // Pause print file
-          // if (uiCfg.print_state == WORKING) {
-          //   stop_print_time();
-
-          //   clear_cur_ui();
-
-          //   #if ENABLED(SDSUPPORT)
-          //     card.pauseSDPrint();
-          //     uiCfg.print_state = PAUSING;
-          //   #endif
-          //   if (gCfgItems.from_flash_pic)
-          //     flash_preview_begin = true;
-          //   else
-          //     default_preview_flg = true;
-          //   lv_draw_printing();
+        case 25: // M25: pause printing
+          if (card.isPrinting()) {
+            card.pauseSDPrint();
             SEND_OK_TO_WIFI;
-          // }
+          }
           break;
 
-        case 26:
-          // Stop print file
-          // if ((uiCfg.print_state == WORKING) || (uiCfg.print_state == PAUSED) || (uiCfg.print_state == REPRINTING)) {
-          //   stop_print_time();
-
-          //   clear_cur_ui();
-          //   #if ENABLED(SDSUPPORT)
-          //     uiCfg.print_state = IDLE;
-          //     card.abortFilePrintSoon();
-          //   #endif
-
-          //   lv_draw_ready_print();
-
+        case 26: // M26：stop printing
+          if (card.isPrinting() || card.isPaused()) {
+            card.abortFilePrintSoon();
             SEND_OK_TO_WIFI;
-          // }
+          }
           break;
 
-        case 27:
-          // Report print rate
-          // if ((uiCfg.print_state == WORKING) || (uiCfg.print_state == PAUSED)|| (uiCfg.print_state == REPRINTING)) {
-          //   print_rate = uiCfg.totalSend;
-          //   ZERO(tempBuf);
-          //   sprintf_P((char *)tempBuf, PSTR("M27 %d\r\n"), print_rate);
-          //   send_to_wifi((uint8_t *)tempBuf, strlen((char *)tempBuf));
-          // }
+        case 27: // M27：Report the printing progress (%)
+          if (card.isPrinting() || card.isPaused()) {
+            print_rate = card.percentDone();
+            ZERO(tempBuf);
+            sprintf_P((char *)tempBuf, PSTR("M27 %d\r\n"), print_rate);
+            send_to_wifi((uint8_t *)tempBuf, strlen((char *)tempBuf));
+          }
           break;
 
-        case 28:
+        // case 28:
           // Begin to transfer file to filesys
           // if (uiCfg.print_state == IDLE) {
 
@@ -1122,10 +1039,10 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
           //     #endif
           //   }
           // }
-          break;
+          // break;
 
         case 105:
-        case 991:
+        case 991: // M991：like M105, get the temperature
           ZERO(tempBuf);
           if (cmd_value == 105) {
 
@@ -1163,8 +1080,7 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
             outBuf += 4;
 
             strcat_P(outBuf, PSTR(" @:0 B@:0\r\n"));
-          }
-          else {
+          } else {
             sprintf_P((char *)tempBuf, PSTR("T:%d /%d B:%d /%d T0:%d /%d T1:%d /%d @:0 B@:0\r\n"),
               thermalManager.wholeDegHotend(0), thermalManager.degTargetHotend(0),
               TERN0(HAS_HEATED_BED, thermalManager.wholeDegBed()),
@@ -1179,23 +1095,25 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
           queue.enqueue_one(F("M105"));
           break;
 
-        case 992:
+        case 992: // M992：get the time has print
           if (card.isPrinting() || card.isPaused()) {
             ZERO(tempBuf);
 
             char buffer[30];
             duration_t elapsed = print_job_timer.duration();
-            elapsed.toDigital(buffer);
-
-            sprintf_P((char *)tempBuf, PSTR("M992 %s\r\n"), buffer);
-
+            // elapsed.toDigital(buffer);
+            // sprintf_P((char *)tempBuf, PSTR("M992 %s\r\n"), buffer);
+            sprintf_P((char *)tempBuf, PSTR("M992 %d%d:%d%d:%d%d\r\n"),
+                                            elapsed.hour()/10, elapsed.hour()%10,
+                                            elapsed.minute()/10, elapsed.minute()%10,
+                                            elapsed.second()/10, elapsed.second()%10);
             // sprintf_P((char *)tempBuf, PSTR("M992 %d%d:%d%d:%d%d\r\n"), print_time.hours/10, print_time.hours%10, print_time.minutes/10, print_time.minutes%10, print_time.seconds/10, print_time.seconds%10);
             wifi_ret_ack();
             send_to_wifi((uint8_t *)tempBuf, strlen((char *)tempBuf));
           }
           break;
 
-        case 994:
+        case 994: // M994： Get the name and size of the file being printing
           if (card.isFileOpen()) {
             ZERO(tempBuf);
             sprintf_P((char *)tempBuf, PSTR("M994 %s;%d\n"), card.filename, (int)card.getFileSize());
@@ -1204,7 +1122,7 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
           }
           break;
 
-        case 997:
+        case 997: // M997：Get the current printer state
           if (card.isPrinting()) {
             wifi_ret_ack();
             send_to_wifi((uint8_t *)"M997 PRINTING\r\n", strlen("M997 PRINTING\r\n"));
@@ -1220,13 +1138,13 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
           // if (!uiCfg.command_send) get_wifi_list_command_send();
           break;
 
-        case 998:
+        // case 998:
           // if (uiCfg.print_state == IDLE) {
           //   const int v = atoi((char *)tmpStr);
           //   if (v == 0 || v == 1) set_cur_file_sys(v);
           //   wifi_ret_ack();
           // }
-          break;
+          // break;
 
         case 115:
           ZERO(tempBuf);
@@ -1512,12 +1430,8 @@ static void file_first_msg_handle(uint8_t * msg, uint16_t msgLen) {
 
   ZERO(saveFilePath);
 
-  // if (gCfgItems.fileSysType == FILE_SYS_SD) {
-    TERN_(SDSUPPORT, card.mount());
-  // }
-  // else if (gCfgItems.fileSysType == FILE_SYS_USB) {
-    // nothing
-  // }
+  TERN_(SDSUPPORT, card.mount());
+
   file_writer.write_index = 0;
   lastFragment = -1;
 
@@ -1529,48 +1443,34 @@ static void file_first_msg_handle(uint8_t * msg, uint16_t msgLen) {
 
   wifi_delay(1000);
 
-  #if ENABLED(SDSUPPORT)
+  char dosName[FILENAME_LENGTH];
 
-    char dosName[FILENAME_LENGTH];
+  if (!longName2DosName((const char *)file_writer.saveFileName, dosName)) {
+    upload_result = 2;
+    wifiTransError.flag = 1;
+    wifiTransError.start_tick = getWifiTick();
+    ui.set_status("Uploading.");
+    return;
+  }
+  strcpy((char *)saveFilePath, dosName);
 
-    if (!longName2DosName((const char *)file_writer.saveFileName, dosName)) {
-      // clear_cur_ui();
-      upload_result = 2;
-      wifiTransError.flag = 1;
-      wifiTransError.start_tick = getWifiTick();
-      // lv_draw_dialog(DIALOG_TYPE_UPLOAD_FILE);
-      ui.set_status("Uploading...");
-      return;
-    }
-    strcpy((char *)saveFilePath, dosName);
+  card.cdroot();
+  upload_file.close();
+  const char * const fname = card.diveToFile(false, upload_curDir, saveFilePath);
 
-    card.cdroot();
-    upload_file.close();
-    const char * const fname = card.diveToFile(false, upload_curDir, saveFilePath);
-
-    if (!upload_file.open(upload_curDir, fname, O_CREAT | O_APPEND | O_WRITE | O_TRUNC)) {
-      // clear_cur_ui();
-      upload_result = 2;
-
-      wifiTransError.flag = 1;
-      wifiTransError.start_tick = getWifiTick();
-
-      // lv_draw_dialog(DIALOG_TYPE_UPLOAD_FILE);
-      ui.set_status("Uploading...");
-      return;
-    }
-
-  #endif // SDSUPPORT
+  if (!upload_file.open(upload_curDir, fname, O_CREAT | O_APPEND | O_WRITE | O_TRUNC)) {
+    upload_result = 2;
+    wifiTransError.flag = 1;
+    wifiTransError.start_tick = getWifiTick();
+    ui.set_status("Uploading...");
+    return;
+  }
 
   wifi_link_state = WIFI_TRANS_FILE;
 
   upload_result = 1;
-
-  // clear_cur_ui();
-  // lv_draw_dialog(DIALOG_TYPE_UPLOAD_FILE);
   ui.set_status("Uploading...");
 
-  // lv_task_handler();
   get_wifi_commands();
 
   file_writer.tick_begin = getWifiTick();
