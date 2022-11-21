@@ -1101,12 +1101,12 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
 
             char buffer[30];
             duration_t elapsed = print_job_timer.duration();
-            // elapsed.toDigital(buffer);
-            // sprintf_P((char *)tempBuf, PSTR("M992 %s\r\n"), buffer);
-            sprintf_P((char *)tempBuf, PSTR("M992 %d%d:%d%d:%d%d\r\n"),
-                                            elapsed.hour()/10, elapsed.hour()%10,
-                                            elapsed.minute()/10, elapsed.minute()%10,
-                                            elapsed.second()/10, elapsed.second()%10);
+            elapsed.toDigital(buffer);
+            sprintf_P((char *)tempBuf, PSTR("M992 %s\r\n"), buffer);
+            // sprintf_P((char *)tempBuf, PSTR("M992 %d%d:%d%d:%d%d\r\n"),
+            //                                 elapsed.hour()/10, elapsed.hour()%10,
+            //                                 elapsed.minute()/10, elapsed.minute()%10,
+            //                                 elapsed.second()/10, elapsed.second()%10);
             // sprintf_P((char *)tempBuf, PSTR("M992 %d%d:%d%d:%d%d\r\n"), print_time.hours/10, print_time.hours%10, print_time.minutes/10, print_time.minutes%10, print_time.seconds/10, print_time.seconds%10);
             wifi_ret_ack();
             send_to_wifi((uint8_t *)tempBuf, strlen((char *)tempBuf));
