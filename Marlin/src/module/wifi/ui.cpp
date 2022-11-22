@@ -43,7 +43,7 @@ void mks_update_status(char *filename, uint32_t current_filesize, uint32_t file_
       tft.add_bar(8, 150, width, 30, COLOR_GREEN);
 
       sprintf(str,"%ld of %ld (%d%%)",current_filesize,file_size,(uint8_t)percent_done);
-      tft.add_text(100, 150, COLOR_WHITE, str);
+      tft.add_text(20, 150, COLOR_WHITE, str);
 
       tft.queue.sync();
       last_value = percent_done;

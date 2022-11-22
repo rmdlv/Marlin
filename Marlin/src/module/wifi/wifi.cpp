@@ -171,7 +171,7 @@ static bool longName2DosName(const char *longName, char *dosName) {
       if (c < 0x21 || c == 0x7F) return false;                        // Check size, non-printable characters
       dosName[i++] = (c < 'a' || c > 'z') ? (c) : (c + ('A' - 'a'));  // Uppercase required for 8.3 name
     }
-    if (i >= 5) {
+    if (i >= 20) {
       strcat_P(dosName, PSTR("~1.GCO"));
       return dosName[0] != '\0';
     }
