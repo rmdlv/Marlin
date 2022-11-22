@@ -39,6 +39,8 @@
 #include "../probe.h"
 #include "../printcounter.h"
 
+#include "ui.h"
+
 #if DISABLED(EMERGENCY_PARSER)
   #include "../motion.h"
 #endif
@@ -749,6 +751,8 @@ char saveFilePath[50];
 static SdFile upload_file, *upload_curDir;
 static filepos_t pos;
 
+int16_t save_bed, save_e0, save_e1;
+
 int write_to_file(char *buf, int len) {
   int i;
   int res = 0;
@@ -771,6 +775,7 @@ int write_to_file(char *buf, int len) {
       if (res == -1) return -1;
 
       upload_file.getpos(&pos);
+      mks_update_status((char*)file_writer.saveFileName, pos.position, file_writer.fileLen);
       file_writer.write_index = 0;
     }
   }
@@ -1414,6 +1419,8 @@ void utf8_2_unicode(uint8_t *source, uint8_t Len) {
 static void file_first_msg_handle(uint8_t * msg, uint16_t msgLen) {
   uint8_t fileNameLen = *msg;
 
+  // prepare filename
+
   if (msgLen != fileNameLen + 5) return;
 
   file_writer.fileLen = *((uint32_t *)(msg + 1));
@@ -1427,6 +1434,21 @@ static void file_first_msg_handle(uint8_t * msg, uint16_t msgLen) {
 
   if (strlen((const char *)file_writer.saveFileName) > sizeof(saveFilePath))
     return;
+
+  // draw UI
+
+  mks_update_status((char*)file_writer.saveFileName, 0, file_writer.fileLen);
+
+  // heating off
+
+   save_bed = thermalManager.degTargetBed();
+   save_e0 = thermalManager.degTargetHotend(0);
+  //  save_e1 = thermalManager.degTargetHotend(1);
+
+   thermalManager.disable_all_heaters();
+   thermalManager.task();
+
+  // prepare sd card
 
   ZERO(saveFilePath);
 
@@ -1446,10 +1468,10 @@ static void file_first_msg_handle(uint8_t * msg, uint16_t msgLen) {
   char dosName[FILENAME_LENGTH];
 
   if (!longName2DosName((const char *)file_writer.saveFileName, dosName)) {
-    upload_result = 2;
+    upload_result = 2;  // upload error
     wifiTransError.flag = 1;
     wifiTransError.start_tick = getWifiTick();
-    ui.set_status("Uploading.");
+    ui.set_status("Upload error");
     return;
   }
   strcpy((char *)saveFilePath, dosName);
@@ -1459,22 +1481,20 @@ static void file_first_msg_handle(uint8_t * msg, uint16_t msgLen) {
   const char * const fname = card.diveToFile(false, upload_curDir, saveFilePath);
 
   if (!upload_file.open(upload_curDir, fname, O_CREAT | O_APPEND | O_WRITE | O_TRUNC)) {
-    upload_result = 2;
+    upload_result = 2;  // upload error
     wifiTransError.flag = 1;
     wifiTransError.start_tick = getWifiTick();
-    ui.set_status("Uploading...");
+    ui.set_status("Upload error");
     return;
   }
 
   wifi_link_state = WIFI_TRANS_FILE;
-
-  upload_result = 1;
+  upload_result = 1;  // uploading
   ui.set_status("Uploading...");
 
   get_wifi_commands();
 
   file_writer.tick_begin = getWifiTick();
-
   file_writer.fileTransfer = 1;
 }
 
@@ -1486,14 +1506,14 @@ static void file_fragment_msg_handle(uint8_t * msg, uint16_t msgLen) {
     ZERO(public_buf);
     file_writer.write_index = 0;
     wifi_link_state = WIFI_CONNECTED;
-    upload_result = 2;
+    upload_result = 2;  // upload error
   }
   else {
     if (write_to_file((char *)msg + 4, msgLen - 4) < 0) {
       ZERO(public_buf);
       file_writer.write_index = 0;
       wifi_link_state = WIFI_CONNECTED;
-      upload_result = 2;
+      upload_result = 2;  // upload error
       return;
     }
     lastFragment = frag;
@@ -1520,7 +1540,7 @@ static void file_fragment_msg_handle(uint8_t * msg, uint16_t msgLen) {
         ZERO(public_buf);
         file_writer.write_index = 0;
         wifi_link_state = WIFI_CONNECTED;
-        upload_result = 2;
+        upload_result = 2;  // upload error
         return;
       }
       ZERO(public_buf);
@@ -1528,7 +1548,8 @@ static void file_fragment_msg_handle(uint8_t * msg, uint16_t msgLen) {
       file_writer.tick_end = getWifiTick();
       upload_time_sec = getWifiTickDiff(file_writer.tick_begin, file_writer.tick_end) / 1000;
       wifi_link_state = WIFI_CONNECTED;
-      upload_result = 3;
+      upload_result = 3;  // uploaded!
+      ui.set_status("Upload done");
     }
   }
 }
@@ -1688,6 +1709,12 @@ void stopEspTransfer() {
   changeFlashMode(true); // Set SPI flash to use DMA mode
   esp_port_begin(1);
   wifi_delay(200);
+
+  mks_end_transmit();
+
+  thermalManager.setTargetBed(save_bed);
+  thermalManager.setTargetHotend(save_e0,0);
+
 
   // W25QXX.init(SPI_QUARTER_SPEED);
 
