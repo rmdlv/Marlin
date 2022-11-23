@@ -776,6 +776,10 @@ public:
     static void move_axis_screen();
   #endif
 
+  #if ENABLED(MKS_WIFI_MODULE)
+    static void wifi_screen();
+  #endif
+
 private:
 
   #if HAS_SCREEN_TIMEOUT

@@ -36,6 +36,7 @@
 #include "../../module/printcounter.h"
 #include "../../module/planner.h"
 #include "../../module/motion.h"
+#include "../../module/wifi/wifi.h";
 
 #if DISABLED(LCD_PROGRESS_BAR) && BOTH(FILAMENT_LCD_DISPLAY, SDSUPPORT)
   #include "../../feature/filwidth.h"
@@ -321,7 +322,8 @@ void MarlinUI::draw_status_screen() {
   #if ENABLED(TOUCH_SCREEN)
     add_control(236, 190, menu_main, imgSettings);                                                      //MENU         !!!!!!!!!!!!!!!!
     #ifdef LED_FAST_MENU
-      add_control(128, 190, menu_case_on, imgChamber);
+      add_control(128, 190, wifi_screen, imgWifi, wifi_link_state == WIFI_CONNECTED);
+      // wifi_link_state == WIFI_CONNECTED
     #endif
     //add_control(128, 190, menu_led, imgChamber);
     TERN_(SDSUPPORT, add_control(20, 190, menu_media, imgSD, !printingIsActive(), COLOR_CONTROL_ENABLED, card.isMounted() && printingIsActive() ? COLOR_BUSY : COLOR_CONTROL_DISABLED));
@@ -338,9 +340,9 @@ void MarlinUI::draw_status_screen() {
   tft.canvas(96, 360, 130, 30);
   tft.set_background(COLOR_BACKGROUND);
   tft_string.set(buffer);  
-  tft_string.add("   ");                   //Zr
-  tft_string.add(i16tostr3rj(progress));  //Zr
-  tft_string.add("%");                    //Zr
+  tft_string.add("   ");                   
+  tft_string.add(i16tostr3rj(progress));  
+  tft_string.add("%");                    
   tft.add_text(tft_string.center(130), 0, COLOR_PRINT_TIME, tft_string);
 
   y += TERN(HAS_UI_480x272, 28, 36);
@@ -936,4 +938,26 @@ void MarlinUI::move_axis_screen() {
 
   TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH + 25, y-30, BACK, imgBack));
 }
+
+void MarlinUI::wifi_screen() {
+  // Reset
+  defer_status_screen(true);
+
+  // TERN_(HAS_TFT_XPT2046, touch.enable());
+
+  ui.clear_lcd();
+  TERN_(TOUCH_SCREEN, touch.clear());
+
+  tft.canvas(0, 200, 320, 80);
+  tft.set_background(COLOR_BACKGROUND);
+  tft_string.set("SSID: ");  
+  tft_string.add(wifiPara.ap_name);                   
+  tft.add_text(tft_string.center(320), 0, COLOR_PRINT_TIME, tft_string);
+  tft_string.set("IP: ");
+  tft_string.add(ipPara.ip_addr);
+  tft.add_text(tft_string.center(320), 40, COLOR_PRINT_TIME, tft_string);
+  TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH + 25, 410, BACK, imgBack));
+
+}
+
 #endif //HAS_UI_320x480
