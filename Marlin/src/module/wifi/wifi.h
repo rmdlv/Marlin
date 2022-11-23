@@ -21,6 +21,8 @@
  */
 #pragma once
 
+#ifdef MKS_WIFI_MODULE
+
 #include "../../inc/MarlinConfig.h"
 
 #ifdef __cplusplus
@@ -331,3 +333,5 @@ extern UI_CFG uiCfg;
 #ifdef __cplusplus
   } /* C-declarations for C++ */
 #endif
+
+#endif //MKS_WIFI_MODULE

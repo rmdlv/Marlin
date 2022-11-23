@@ -21,6 +21,8 @@
  */
 #pragma once
 
+#ifdef MKS_WIFI_MODULE
+
 #include <inttypes.h>
 #include "Stream.h"
 #include "uart.h"
@@ -61,3 +63,5 @@ class WifiSerial {
     uint8_t _config;
     unsigned long _baud;
 };
+
+#endif //MKS_WIFI_MODULE

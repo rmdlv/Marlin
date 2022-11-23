@@ -1,6 +1,9 @@
 #include "ui.h"
 
+#ifdef MKS_WIFI_MODULE
+
 #if ENABLED(TFT_320x480) || ENABLED(TFT_320x480_SPI)
+
 
 #include "../../lcd/tft/tft.h"
 #include "../../lcd/tft/tft_color.h"
@@ -68,5 +71,5 @@ void mks_end_transmit(void){
   tft.queue.sync();
 }
 
-
+#endif //MKS_WIFI_MODULE
 #endif

@@ -20,7 +20,7 @@
  *
  */
 #pragma once
-
+#ifdef MKS_WIFI_MODULE
 #ifdef __cplusplus
   extern "C" {
 #endif
@@ -71,4 +71,6 @@ int32_t wifi_upload(int type);
 
 #ifdef __cplusplus
   } /* C-declarations for C++ */
+#endif
+
 #endif

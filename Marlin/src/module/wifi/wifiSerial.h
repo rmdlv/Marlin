@@ -21,6 +21,8 @@
  */
 #pragma once
 
+#ifdef MKS_WIFI_MODULE
+
 #ifdef SERIAL_PORT_2
   #error "SERIAL_PORT_2 must be disabled with MKS_WIFI_MODULE."
 #endif
@@ -38,3 +40,5 @@
 
 extern WifiSerial WifiSerial1;
 #define WIFISERIAL WifiSerial1
+
+#endif //MKS_WIFI_MODULE

@@ -321,7 +321,7 @@ void MarlinUI::draw_status_screen() {
 
   #if ENABLED(TOUCH_SCREEN)
     add_control(236, 190, menu_main, imgSettings);                                                      //MENU         !!!!!!!!!!!!!!!!
-    #ifdef LED_FAST_MENU
+    #ifdef MKS_WIFI_MODULE
       add_control(128, 190, wifi_screen, imgWifi, wifi_link_state == WIFI_CONNECTED);
       // wifi_link_state == WIFI_CONNECTED
     #endif
@@ -939,7 +939,9 @@ void MarlinUI::move_axis_screen() {
   TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH + 25, y-30, BACK, imgBack));
 }
 
+#ifdef MKS_WIFI_MODULE 
 void MarlinUI::wifi_screen() {
+
   // Reset
   defer_status_screen(true);
 
@@ -959,5 +961,6 @@ void MarlinUI::wifi_screen() {
   TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH + 25, 410, BACK, imgBack));
 
 }
+#endif //MKS_WIFI_MODULE
 
 #endif //HAS_UI_320x480

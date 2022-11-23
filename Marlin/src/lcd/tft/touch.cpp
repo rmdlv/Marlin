@@ -254,9 +254,6 @@ void Touch::touch(touch_control_t *control) {
 
     // TODO: TOUCH could receive data to pass to the callback
     case BUTTON: ((screenFunc_t)control->data)(); break;
-    case WIFI:
-      ui.set_status(ipPara.ip_addr);
-      break;
 
     default: break;
   }

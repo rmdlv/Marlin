@@ -171,7 +171,7 @@ static bool longName2DosName(const char *longName, char *dosName) {
       if (c < 0x21 || c == 0x7F) return false;                        // Check size, non-printable characters
       dosName[i++] = (c < 'a' || c > 'z') ? (c) : (c + ('A' - 'a'));  // Uppercase required for 8.3 name
     }
-    if (i >= 20) {
+    if (i >= 16) {
       strcat_P(dosName, PSTR("~1.GCO"));
       return dosName[0] != '\0';
     }
@@ -837,7 +837,7 @@ uint8_t Explore_Disk(char *path , uint8_t recu_level) {
   for (uint8_t i = 0; i < fileCnt; i++) {
     card.getfilename_sorted(SD_ORDER(i, fileCnt));
     ZERO(tmp);
-    strcpy(tmp, card.filename);
+    strcpy(tmp, card.longFilename);
 
     ZERO(Fstream);
     strcpy(Fstream, tmp);
@@ -1228,7 +1228,7 @@ static void net_msg_handle(uint8_t * msg, uint16_t msgLen) {
     default:   wifi_link_state = WIFI_NOT_CONFIG; break;
   }
 
-  if (wifi_link_state == WIFI_CONNECTED) ui.set_status(ipPara.ip_addr);
+  // if (wifi_link_state == WIFI_CONNECTED) ui.set_status(ipPara.ip_addr);
 
   // mode
   wifiPara.mode = msg[7];
