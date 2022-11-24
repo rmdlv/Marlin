@@ -36,7 +36,10 @@
 #include "../../module/printcounter.h"
 #include "../../module/planner.h"
 #include "../../module/motion.h"
-#include "../../module/wifi/wifi.h";
+
+#ifdef MKS_WIFI_MODULE
+  #include "../../module/wifi/wifi.h";
+#endif
 
 #if DISABLED(LCD_PROGRESS_BAR) && BOTH(FILAMENT_LCD_DISPLAY, SDSUPPORT)
   #include "../../feature/filwidth.h"
@@ -256,7 +259,7 @@ void MarlinUI::draw_status_screen() {
   y += TERN(HAS_UI_480x272, 118, 128);
 
   // coordinates
-  tft.canvas(4, 143, 312, 34);
+  tft.canvas(4, 160, 312, 34);
   tft.set_background(COLOR_BACKGROUND);
   tft.add_rectangle(0, 0, 312, 34, COLOR_AXIS_HOMED);
 
@@ -276,10 +279,10 @@ void MarlinUI::draw_status_screen() {
     tft_string.set(blink && nhx ? "?" : ftostr4sign(LOGICAL_X_POSITION(current_position.x)));
     tft.add_text( 68 - tft_string.width(), 3, nhx ? COLOR_AXIS_NOT_HOMED : COLOR_AXIS_HOMED, tft_string);
 
-    tft.add_text(127, 3, COLOR_AXIS_HOMED , "Y");
+    tft.add_text(115, 3, COLOR_AXIS_HOMED , "Y");
     const bool nhy = axis_should_home(Y_AXIS);
     tft_string.set(blink && nhy ? "?" : ftostr4sign(LOGICAL_Y_POSITION(current_position.y)));
-    tft.add_text(185 - tft_string.width(), 3, nhy ? COLOR_AXIS_NOT_HOMED : COLOR_AXIS_HOMED, tft_string);
+    tft.add_text(185 - 12 - tft_string.width(), 3, nhy ? COLOR_AXIS_NOT_HOMED : COLOR_AXIS_HOMED, tft_string);
   }
   tft.add_text(219, 3, COLOR_AXIS_HOMED , "Z");
   uint16_t offset = 32;
@@ -296,37 +299,37 @@ void MarlinUI::draw_status_screen() {
     offset -= tft_string.width();
   }
   tft.add_text(301 - tft_string.width() - offset, 3, nhz ? COLOR_AXIS_NOT_HOMED : COLOR_AXIS_HOMED, tft_string);
-  TERN_(TOUCH_SCREEN, touch.add_control(MOVE_AXIS, 0, 143, 312, 24));                                   //MOVE AXIS    !!!!!!!!!!!!!!!
+  TERN_(TOUCH_SCREEN, touch.add_control(MOVE_AXIS, 0, 160, 312, 34));                                   //MOVE AXIS    !!!!!!!!!!!!!!!
 
   y += TERN(HAS_UI_480x272, 38, 48);
   // feed rate
-  tft.canvas(40, 280, 80, 32);
+  tft.canvas(40, 300, 80, 32);
   tft.set_background(COLOR_BACKGROUND);
   uint16_t color = feedrate_percentage == 100 ? COLOR_RATE_100 : COLOR_RATE_ALTERED;
   tft.add_image(0, 0, imgFeedRate, color);
   tft_string.set(i16tostr3rj(feedrate_percentage));
   tft_string.add('%');
   tft.add_text(32, 6, color , tft_string);
-  TERN_(TOUCH_SCREEN, touch.add_control(FEEDRATE, 40, 280, 80, 32));                                      //FEEDRATE     !!!!!!!!!!!!!!!
+  TERN_(TOUCH_SCREEN, touch.add_control(FEEDRATE, 40, 300, 80, 32));                                      //FEEDRATE     !!!!!!!!!!!!!!!
 
   // flow rate
-  tft.canvas(210, 280, 80, 32);
+  tft.canvas(210, 300, 80, 32);
   tft.set_background(COLOR_BACKGROUND);
   color = planner.flow_percentage[0] == 100 ? COLOR_RATE_100 : COLOR_RATE_ALTERED;
   tft.add_image(0, 0, imgFlowRate, color);
   tft_string.set(i16tostr3rj(planner.flow_percentage[active_extruder]));
   tft_string.add('%');
   tft.add_text(32, 6, color , tft_string);
-  TERN_(TOUCH_SCREEN, touch.add_control(FLOWRATE, 210, 280, 80, 32, active_extruder));                  //FLOWRATE     !!!!!!!!!!!!!!!!
+  TERN_(TOUCH_SCREEN, touch.add_control(FLOWRATE, 210, 300, 80, 32, active_extruder));                  //FLOWRATE     !!!!!!!!!!!!!!!!
 
   #if ENABLED(TOUCH_SCREEN)
-    add_control(236, 190, menu_main, imgSettings);                                                      //MENU         !!!!!!!!!!!!!!!!
+    add_control(236, 220, menu_main, imgSettings);                                                      //MENU         !!!!!!!!!!!!!!!!
     #ifdef MKS_WIFI_MODULE
-      add_control(128, 190, wifi_screen, imgWifi, wifi_link_state == WIFI_CONNECTED);
+      add_control(128, 220, wifi_screen, imgWifi, wifi_link_state == WIFI_CONNECTED);
       // wifi_link_state == WIFI_CONNECTED
     #endif
     //add_control(128, 190, menu_led, imgChamber);
-    TERN_(SDSUPPORT, add_control(20, 190, menu_media, imgSD, !printingIsActive(), COLOR_CONTROL_ENABLED, card.isMounted() && printingIsActive() ? COLOR_BUSY : COLOR_CONTROL_DISABLED));
+    TERN_(SDSUPPORT, add_control(20, 220, menu_media, imgSD, !printingIsActive(), COLOR_CONTROL_ENABLED, card.isMounted() && printingIsActive() ? COLOR_BUSY : COLOR_CONTROL_DISABLED));
   #endif                                                                                                  //SD           !!!!!!!!!!!!!!!!
 
   // print duration
