@@ -780,6 +780,10 @@ public:
     static void wifi_screen();
   #endif
 
+  static void heater_screen();
+
+  static void bed_screen();
+
 private:
 
   #if HAS_SCREEN_TIMEOUT
