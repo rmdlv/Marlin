@@ -39,7 +39,7 @@
 
 
 #define DIAG_JUMPERS_REMOVED
-#define MOTHERBOARD BOARD_LINUX_RAMPS
+//#define MOTHERBOARD BOARD_LINUX_RAMPS
 
 
 
@@ -3156,8 +3156,9 @@
 #define TFT_COLOR_UI
 //#define TFT_LVGL_UI
 
-
-// #define MKS_WIFI_MODULE  // MKS WiFi module
+#if MOTHERBOARD == BOARD_MKS_ROBIN_NANO_V3
+   #define MKS_WIFI_MODULE  // MKS WiFi module
+#endif
 
 #if ENABLED(TFT_LVGL_UI)
   //#define MKS_WIFI_MODULE  // MKS WiFi module

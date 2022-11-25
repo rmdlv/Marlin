@@ -36,7 +36,7 @@
 #include "../../module/printcounter.h"
 #include "../../module/planner.h"
 #include "../../module/motion.h"
-#include "../../module/wifi/wifi.h";
+#include "../../module/wifi/wifi.h"
 
 #if DISABLED(LCD_PROGRESS_BAR) && BOTH(FILAMENT_LCD_DISPLAY, SDSUPPORT)
   #include "../../feature/filwidth.h"
@@ -339,10 +339,10 @@ void MarlinUI::draw_status_screen() {
 
   tft.canvas(96, 360, 130, 30);
   tft.set_background(COLOR_BACKGROUND);
-  tft_string.set(buffer);  
-  tft_string.add("   ");                   
-  tft_string.add(i16tostr3rj(progress));  
-  tft_string.add("%");                    
+  tft_string.set(buffer);
+  tft_string.add("   ");
+  tft_string.add(i16tostr3rj(progress));
+  tft_string.add("%");
   tft.add_text(tft_string.center(130), 0, COLOR_PRINT_TIME, tft_string);
 
   y += TERN(HAS_UI_480x272, 28, 36);
@@ -939,7 +939,7 @@ void MarlinUI::move_axis_screen() {
   TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH + 25, y-30, BACK, imgBack));
 }
 
-#ifdef MKS_WIFI_MODULE 
+#ifdef MKS_WIFI_MODULE
 void MarlinUI::wifi_screen() {
 
   // Reset
@@ -952,8 +952,8 @@ void MarlinUI::wifi_screen() {
 
   tft.canvas(0, 200, 320, 80);
   tft.set_background(COLOR_BACKGROUND);
-  tft_string.set("SSID: ");  
-  tft_string.add(wifiPara.ap_name);                   
+  tft_string.set("SSID: ");
+  tft_string.add(wifiPara.ap_name);
   tft.add_text(tft_string.center(320), 0, COLOR_PRINT_TIME, tft_string);
   tft_string.set("IP: ");
   tft_string.add(ipPara.ip_addr);

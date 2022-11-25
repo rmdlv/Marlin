@@ -1,6 +1,7 @@
-#include "ui.h"
+#include "../../inc/MarlinConfigPre.h"
 
-#ifdef MKS_WIFI_MODULE
+
+#if ENABLED(MKS_WIFI_MODULE)
 
 #if ENABLED(TFT_320x480) || ENABLED(TFT_320x480_SPI)
 
@@ -10,6 +11,7 @@
 #include "../../lcd/marlinui.h"
 #include "../temperature.h"
 
+#include "ui.h"
 
 extern TFT tft;
 char str[100];
@@ -71,5 +73,5 @@ void mks_end_transmit(void){
   tft.queue.sync();
 }
 
-#endif //MKS_WIFI_MODULE
-#endif
+#endif // TFT_320x480
+#endif // MKS_WIFI_MODULE

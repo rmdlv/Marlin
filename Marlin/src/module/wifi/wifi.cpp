@@ -60,7 +60,7 @@
 uint8_t bmp_public_buf[14 * 1024];
 uint8_t public_buf[513];
 
-extern uint8_t Explore_Disk(char *path, uint8_t recu_level);
+extern uint8_t send_sd_ls(char *path);
 
 extern uint8_t commands_in_queue;
 uint8_t sel_id = 0;
@@ -719,17 +719,17 @@ int send_to_wifi(uint8_t *buf, int len) { return package_to_wifi(WIFI_TRANS_INF,
 
 void set_cur_file_sys(int fileType) { fileSysType = fileType; }
 
-void get_file_list(char *path) {
-  if (!path) return;
+// void get_file_list(char *path) {
+//   if (!path) return;
 
   // if (fileSysType == FILE_SYS_SD) {
-    TERN_(SDSUPPORT, card.mount());
+    // TERN_(SDSUPPORT, card.mount());
   // }
   // else if (fileSysType == FILE_SYS_USB) {
     // udisk
   // }
-  Explore_Disk(path, 0);
-}
+//   Explore_Disk(path, 0);
+// }
 
 char wait_ip_back_flag = 0;
 
@@ -826,27 +826,22 @@ static int cut_msg_head(uint8_t *msg, uint16_t msgLen, uint16_t cutLen) {
   return msgLen - cutLen;
 }
 
-uint8_t Explore_Disk(char *path , uint8_t recu_level) {
-  char tmp[200];
-  char Fstream[200];
+uint8_t send_sd_ls(char *path) {
+  char fn[200];
 
-  if (!path) return 0;
+  card.mount();
+  card.cdroot();
+  if (path) card.cd(path);
 
   const uint8_t fileCnt = card.get_num_Files();
 
   for (uint8_t i = 0; i < fileCnt; i++) {
+    ZERO(fn);
     card.getfilename_sorted(SD_ORDER(i, fileCnt));
-    ZERO(tmp);
-    strcpy(tmp, card.longFilename);
-
-    ZERO(Fstream);
-    strcpy(Fstream, tmp);
-
-    if (card.flag.filenameIsDir && recu_level <= 10)
-      strcat_P(Fstream, PSTR(".DIR"));
-
-    strcat_P(Fstream, PSTR("\r\n"));
-    send_to_wifi((uint8_t*)Fstream, strlen(Fstream));
+    strcpy(fn, card.longFilename[0] ? card.longFilename : card.filename);
+    if (card.flag.filenameIsDir) strcat_P(fn, PSTR(".DIR"));
+    strcat_P(fn, PSTR("\r\n"));
+    send_to_wifi((uint8_t*)fn, strlen(fn));
   }
 
   return fileCnt;
@@ -880,7 +875,7 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
             int index = 0;
             if (tmpStr == 0) {
               send_to_wifi((uint8_t *)(STR_BEGIN_FILE_LIST "\r\n"), strlen(STR_BEGIN_FILE_LIST "\r\n"));
-              get_file_list((char *)"0:/");
+              send_sd_ls(0);
               send_to_wifi((uint8_t *)(STR_END_FILE_LIST "\r\n"), strlen(STR_END_FILE_LIST "\r\n"));
               SEND_OK_TO_WIFI;
               break;
@@ -891,7 +886,7 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
             if (strlen((char *)&tmpStr[index]) < 80) {
               send_to_wifi((uint8_t *)(STR_BEGIN_FILE_LIST "\r\n"), strlen(STR_BEGIN_FILE_LIST "\r\n"));
               strcpy((char *)path, (char *)&tmpStr[index]);
-              get_file_list(path);
+              send_sd_ls(path);
               send_to_wifi((uint8_t *)(STR_END_FILE_LIST "\r\n"), strlen(STR_END_FILE_LIST "\r\n"));
             }
             SEND_OK_TO_WIFI;
@@ -935,9 +930,10 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
 
                 char *cur_name=strrchr(list_file.file_name[sel_id],'/');
                 card.openFileRead(cur_name);
-
+                char msg[300];
+                sprintf((char*)msg, "File selected %s\r\n", cur_name);
                 if (card.isFileOpen())
-                  send_to_wifi((uint8_t *)"File selected\r\n", strlen("File selected\r\n"));
+                  send_to_wifi((uint8_t *)msg, strlen(msg));
                 else {
                   send_to_wifi((uint8_t *)"file.open failed\r\n", strlen("file.open failed\r\n"));
                   strcpy_P(list_file.file_name[sel_id], PSTR("notValid"));
