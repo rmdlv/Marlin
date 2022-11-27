@@ -39,7 +39,7 @@
 
 
 #define DIAG_JUMPERS_REMOVED
-#define MOTHERBOARD BOARD_LINUX_RAMPS
+// #define MOTHERBOARD BOARD_LINUX_RAMPS  // Config for Simulator mode
 
 
 
@@ -94,6 +94,7 @@
 // Choose the name from boards.h that matches your setup
 #ifndef MOTHERBOARD
   #define MOTHERBOARD BOARD_MKS_ROBIN_NANO_V3
+  #define MKS_WIFI_MODULE  // MKS WiFi module
 #endif
 
 /**
@@ -3157,8 +3158,6 @@
 //#define TFT_LVGL_UI
 
 
-// #define MKS_WIFI_MODULE  // MKS WiFi module
-
 #if ENABLED(TFT_LVGL_UI)
   //#define MKS_WIFI_MODULE  // MKS WiFi module
 #endif
@@ -3198,7 +3197,7 @@
   #define BUTTON_DELAY_MENU     250 // (ms) Button repeat delay for menus
 
   //#define DISABLE_ENCODER         // Disable the click encoder, if any
-  //#define TOUCH_IDLE_SLEEP_MINS 5 // (minutes) Display Sleep after a period of inactivity. Set with M255 S.
+  #define TOUCH_IDLE_SLEEP_MINS 2 // (minutes) Display Sleep after a period of inactivity. Set with M255 S.
 
 #if MOTHERBOARD == BOARD_LINUX_RAMPS
   #define TOUCH_SCREEN_CALIBRATION

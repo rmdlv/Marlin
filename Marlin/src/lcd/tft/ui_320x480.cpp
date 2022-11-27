@@ -972,14 +972,32 @@ void MarlinUI::wifi_screen() {
 
 void MarlinUI::heater_screen() {
 
-  int temp_hotend = 0;
+
+  celsius_t currentTemperature, targetTemperature;
+  currentTemperature = thermalManager.wholeDegHotend(H_E0);
+  targetTemperature = thermalManager.degTargetHotend(H_E0);
+
   ui.clear_lcd();
   TERN_(TOUCH_SCREEN, touch.clear());
+
+  defer_status_screen(true);
+  //
+
+  tft.canvas(0, 20, 320, 80);
+  tft.add_rectangle(0, 0, 320, 60, COLOR_WHITE);
+  tft.set_background(COLOR_BACKGROUND);
+  tft_string.set("Extruder: ");
+  tft_string.add(i16tostr3rj(currentTemperature));
+  tft_string.add(" -> ");
+  tft_string.add(i16tostr3rj(targetTemperature));
+  tft.add_text(tft_string.center(320), 15, COLOR_WHITE, tft_string);
+
+  int temp_hotend = 0;
   int count = 1;
     for (uint8_t i =0; i <= 1; i++){
       for (uint8_t j=0; j <= 2; j++){
         if (count <= PREHEAT_COUNT){
-          tft.canvas(XX_OFFSET + PREHEAT_BTN_WIDTH * j + X_SPACING * j, YY_OFFSET + PREHEAT_BTN_HEIGHT * i + Y_SPACING * i, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT);
+          tft.canvas(XX_OFFSET + PREHEAT_BTN_WIDTH * j + X_SPACING * j, 80 + YY_OFFSET + PREHEAT_BTN_HEIGHT * i + Y_SPACING * i, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT);
           tft.set_background(COLOR_BACKGROUND);
           // label = preheat_label[count];
           switch (count)
@@ -1019,7 +1037,7 @@ void MarlinUI::heater_screen() {
           // tft_string.set(label);
           tft.add_rectangle(0, 0, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT, COLOR_WHITE);
           tft.add_text(tft_string.center(PREHEAT_BTN_WIDTH), 15, COLOR_WHITE, tft_string);
-          TERN_(TOUCH_SCREEN, touch.add_control(HEAT_EXT, XX_OFFSET + PREHEAT_BTN_WIDTH * j + X_SPACING * j, YY_OFFSET + PREHEAT_BTN_HEIGHT * i + Y_SPACING * i, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT, temp_hotend));
+          TERN_(TOUCH_SCREEN, touch.add_control(HEAT_EXT, XX_OFFSET + PREHEAT_BTN_WIDTH * j + X_SPACING * j, 80 + YY_OFFSET + PREHEAT_BTN_HEIGHT * i + Y_SPACING * i, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT, temp_hotend));
           count++;
         }
       }
@@ -1047,14 +1065,31 @@ void MarlinUI::heater_screen() {
 
 void MarlinUI::bed_screen() {
  
-  int temp_bed = 0;
+  celsius_t currentTemperature, targetTemperature;
+  currentTemperature = thermalManager.wholeDegBed();
+  targetTemperature = thermalManager.degTargetBed();
+
   ui.clear_lcd();
   TERN_(TOUCH_SCREEN, touch.clear());
+
+  defer_status_screen(true);
+  //
+
+  tft.canvas(0, 20, 320, 80);
+  tft.add_rectangle(0, 0, 320, 60, COLOR_WHITE);
+  tft.set_background(COLOR_BACKGROUND);
+  tft_string.set("Bed: ");
+  tft_string.add(i16tostr3rj(currentTemperature));
+  tft_string.add(" -> ");
+  tft_string.add(i16tostr3rj(targetTemperature));
+  tft.add_text(tft_string.center(320), 15, COLOR_WHITE, tft_string);
+
+  int temp_bed = 0;
   int count = 1;
     for (uint8_t i =0; i <= 1; i++){
       for (uint8_t j=0; j <= 2; j++){
         if (count <= PREHEAT_COUNT){
-          tft.canvas(XX_OFFSET + PREHEAT_BTN_WIDTH * j + X_SPACING * j, YY_OFFSET + PREHEAT_BTN_HEIGHT * i + Y_SPACING * i, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT);
+          tft.canvas(XX_OFFSET + PREHEAT_BTN_WIDTH * j + X_SPACING * j, 80 + YY_OFFSET + PREHEAT_BTN_HEIGHT * i + Y_SPACING * i, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT);
           tft.set_background(COLOR_BACKGROUND);
           // label = preheat_label[count];
           switch (count)
@@ -1094,7 +1129,7 @@ void MarlinUI::bed_screen() {
           // tft_string.set(label);
           tft.add_rectangle(0, 0, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT, COLOR_WHITE);
           tft.add_text(tft_string.center(PREHEAT_BTN_WIDTH), 15, COLOR_WHITE, tft_string);
-          TERN_(TOUCH_SCREEN, touch.add_control(HEAT_BED, XX_OFFSET + PREHEAT_BTN_WIDTH * j + X_SPACING * j, YY_OFFSET + PREHEAT_BTN_HEIGHT * i + Y_SPACING * i, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT, temp_bed));
+          TERN_(TOUCH_SCREEN, touch.add_control(HEAT_BED, XX_OFFSET + PREHEAT_BTN_WIDTH * j + X_SPACING * j, 80 + YY_OFFSET + PREHEAT_BTN_HEIGHT * i + Y_SPACING * i, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT, temp_bed));
           count++;
         }
       }
