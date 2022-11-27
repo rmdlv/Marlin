@@ -977,7 +977,7 @@ void MarlinUI::heater_screen() {
   currentTemperature = thermalManager.wholeDegHotend(H_E0);
   targetTemperature = thermalManager.degTargetHotend(H_E0);
 
-  ui.clear_lcd();
+  // ui.clear_lcd();
   TERN_(TOUCH_SCREEN, touch.clear());
 
   defer_status_screen(true);
@@ -1061,6 +1061,10 @@ void MarlinUI::heater_screen() {
   TERN_(TOUCH_SCREEN, touch.add_control(HEATER_MANUAL, 10, 330, 120, 64, H_E0));
   TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH + 25, 410, BACK, imgBack));
 
+
+  // moveAxis(const AxisEnum axis, const int8_t direction)
+  // moveAxis(E_AXIS, 1);
+
 }
 
 void MarlinUI::bed_screen() {
@@ -1069,7 +1073,7 @@ void MarlinUI::bed_screen() {
   currentTemperature = thermalManager.wholeDegBed();
   targetTemperature = thermalManager.degTargetBed();
 
-  ui.clear_lcd();
+  // ui.clear_lcd();
   TERN_(TOUCH_SCREEN, touch.clear());
 
   defer_status_screen(true);

@@ -2264,7 +2264,7 @@
 
 #if ENABLED(NOZZLE_PARK_FEATURE)
   // Specify a park position as { X, Y, Z_raise }
-  #define NOZZLE_PARK_POINT { (X_MIN_POS + 10), (Y_MAX_POS - 10), 200 }
+  #define NOZZLE_PARK_POINT { (X_MIN_POS), (Y_MIN_POS), 20 }
   #define NOZZLE_PARK_MOVE          0   // Park motion: 0 = XY Move, 1 = X Only, 2 = Y Only, 3 = X before Y, 4 = Y before X
   #define NOZZLE_PARK_Z_RAISE_MIN   2   // (mm) Always raise Z by at least this distance
   #define NOZZLE_PARK_XY_FEEDRATE 100   // (mm/s) X and Y axes feedrate (also used for delta Z axis)
@@ -3197,7 +3197,7 @@
   #define BUTTON_DELAY_MENU     250 // (ms) Button repeat delay for menus
 
   //#define DISABLE_ENCODER         // Disable the click encoder, if any
-  #define TOUCH_IDLE_SLEEP_MINS 2 // (minutes) Display Sleep after a period of inactivity. Set with M255 S.
+  // #define TOUCH_IDLE_SLEEP_MINS 2 // (minutes) Display Sleep after a period of inactivity. Set with M255 S.
 
 #if MOTHERBOARD == BOARD_LINUX_RAMPS
   #define TOUCH_SCREEN_CALIBRATION
