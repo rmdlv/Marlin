@@ -730,6 +730,7 @@ void MarlinUI::init() {
     // Wake up a sleeping TFT
     void MarlinUI::wakeup_screen() {
       TERN(HAS_TOUCH_BUTTONS, touchBt.wakeUp(), touch.wakeUp());
+      // queue.inject(F("M355 S1"));
     }
   #endif
 
@@ -1091,6 +1092,17 @@ void MarlinUI::init() {
         if (max_display_update_time) max_display_update_time--;  // Be sure never go to a very big number
         refresh(LCDVIEW_REDRAW_NOW);
       }
+      if (on_heater_screen() && !lcd_status_update_delay--) {
+        lcd_status_update_delay = TERN(HAS_MARLINUI_U8GLIB, 12, 9);
+        if (max_display_update_time) max_display_update_time--;  // Be sure never go to a very big number
+        refresh(LCDVIEW_REDRAW_NOW);
+      }
+      if (on_bed_screen() && !lcd_status_update_delay--) {
+        lcd_status_update_delay = TERN(HAS_MARLINUI_U8GLIB, 12, 9);
+        if (max_display_update_time) max_display_update_time--;  // Be sure never go to a very big number
+        refresh(LCDVIEW_REDRAW_NOW);
+      }
+
 
       #if BOTH(HAS_MARLINUI_MENU, SCROLL_LONG_FILENAMES)
         // If scrolling of long file names is enabled and we are in the sd card menu,

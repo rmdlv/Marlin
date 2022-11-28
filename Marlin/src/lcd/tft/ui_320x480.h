@@ -24,6 +24,8 @@
 #define MARLIN_LOGO_FULL_SIZE MarlinLogo480x320x16
 
 #include "ui_common.h"
+#include "string.h"
+using namespace std;
 
 #define TFT_STATUS_TOP_Y       0
 #define TFT_TOP_LINE_Y         2
@@ -43,3 +45,9 @@
 
 #define FONT_LINE_HEIGHT    34
 
+  const int XX_OFFSET = 10; 
+  const int YY_OFFSET = 10;
+  const int X_SPACING = 10;
+  const int Y_SPACING = 10;
+  const int PREHEAT_BTN_WIDTH = 90;
+  const int PREHEAT_BTN_HEIGHT = 64;
