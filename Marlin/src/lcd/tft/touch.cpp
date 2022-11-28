@@ -199,33 +199,33 @@ void Touch::touch(touch_control_t *control) {
       //push 100mm fila
       if (direction == 1) {
         if (thermalManager.wholeDegHotend(H_E0) < 180) {
-          tft.canvas(20, 420, 100, 30);
+          tft.canvas(20, 420, 200, 30);
           tft.set_background(COLOR_BACKGROUND);
           tft.add_text(0, 0, COLOR_YELLOW, "Too Cold");
         } else {
           queue.inject("G91\nG1 E100 F60\nG90");
-          tft.canvas(20, 420, 100, 24);
+          tft.canvas(20, 420, 200, 24);
           tft.set_background(COLOR_BACKGROUND);
-          tft.add_text(0, 0, COLOR_YELLOW, "In 20");  
+          tft.add_text(0, 0, COLOR_YELLOW, "Input 100mm");  
         }
       }
         //pull 100mm fila
       if (direction == -1) {
         if (thermalManager.wholeDegHotend(H_E0) < 180) {
-          tft.canvas(20, 420, 100, 30);
+          tft.canvas(20, 420, 200, 30);
           tft.set_background(COLOR_BACKGROUND);
           tft.add_text(0, 0, COLOR_YELLOW, "Too Cold");
         } else {
           queue.inject("G91\nG1 E-100 F60\nG90");
-          tft.canvas(20, 420, 100, 30);
+          tft.canvas(20, 420, 200, 30);
           tft.set_background(COLOR_BACKGROUND);
-          tft.add_text(0, 0, COLOR_YELLOW, "Out 20");  
+          tft.add_text(0, 0, COLOR_YELLOW, "Output 100mm");  
         }
       }
       if (direction == 0) {
-        tft.canvas(20, 420, 100, 30);
+        tft.canvas(20, 420, 200, 30);
         tft.set_background(COLOR_BACKGROUND);
-        tft.add_text(0, 0, COLOR_YELLOW, "Stoping");
+        tft.add_text(0, 0, COLOR_YELLOW, "Stoping Extruder");
         quickstop_stepper();
       }
       break;
