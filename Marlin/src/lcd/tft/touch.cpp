@@ -31,6 +31,7 @@
 
 #include "../../module/temperature.h"
 #include "../../module/planner.h"
+#include "../../module/stepper.h"
 
 #if ENABLED(AUTO_BED_LEVELING_UBL)
   #include "../../feature/bedlevel/bedlevel.h"
@@ -192,6 +193,42 @@ void Touch::touch(touch_control_t *control) {
     case SLIDER:    hold(control); ui.encoderPosition = (x - control->x) * control->data / control->width; break;
     case INCREASE:  hold(control, repeat_delay - 5); TERN(AUTO_BED_LEVELING_UBL, ui.external_control ? bedlevel.encoder_diff++ : ui.encoderPosition++, ui.encoderPosition++); break;
     case DECREASE:  hold(control, repeat_delay - 5); TERN(AUTO_BED_LEVELING_UBL, ui.external_control ? bedlevel.encoder_diff-- : ui.encoderPosition--, ui.encoderPosition--); break;
+    case FILAMENT_MOVE:
+      int8_t direction;
+      direction = control->data;
+      //push 100mm fila
+      if (direction == 1) {
+        if (thermalManager.wholeDegHotend(H_E0) < 180) {
+          tft.canvas(20, 420, 100, 30);
+          tft.set_background(COLOR_BACKGROUND);
+          tft.add_text(0, 0, COLOR_YELLOW, "Too Cold");
+        } else {
+          queue.inject("G91\nG1 E100 F60\nG90");
+          tft.canvas(20, 420, 100, 24);
+          tft.set_background(COLOR_BACKGROUND);
+          tft.add_text(0, 0, COLOR_YELLOW, "In 20");  
+        }
+      }
+        //pull 100mm fila
+      if (direction == -1) {
+        if (thermalManager.wholeDegHotend(H_E0) < 180) {
+          tft.canvas(20, 420, 100, 30);
+          tft.set_background(COLOR_BACKGROUND);
+          tft.add_text(0, 0, COLOR_YELLOW, "Too Cold");
+        } else {
+          queue.inject("G91\nG1 E-100 F60\nG90");
+          tft.canvas(20, 420, 100, 30);
+          tft.set_background(COLOR_BACKGROUND);
+          tft.add_text(0, 0, COLOR_YELLOW, "Out 20");  
+        }
+      }
+      if (direction == 0) {
+        tft.canvas(20, 420, 100, 30);
+        tft.set_background(COLOR_BACKGROUND);
+        tft.add_text(0, 0, COLOR_YELLOW, "Stoping");
+        quickstop_stepper();
+      }
+      break;
     case HEATER: 
       int8_t heater;
       heater = control->data;
