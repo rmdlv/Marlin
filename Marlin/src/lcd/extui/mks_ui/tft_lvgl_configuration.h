@@ -30,6 +30,8 @@
   extern "C" {
 #endif
 
+#if HAS_TFT_LVGL_UI
+
 #include <lvgl.h>
 
 //#define TFT_ROTATION TFT_ROTATE_180
@@ -68,4 +70,6 @@ bool get_lcd_dma_lock();
 
 #ifdef __cplusplus
   } /* C-declarations for C++ */
+#endif
+
 #endif

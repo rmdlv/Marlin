@@ -21,33 +21,24 @@
  */
 #pragma once
 
-#define MARLIN_LOGO_FULL_SIZE MarlinLogo480x320x16
+#ifdef MKS_WIFI_MODULE
 
-#include "ui_common.h"
-#include "string.h"
-using namespace std;
+#ifdef SERIAL_PORT_2
+  #error "SERIAL_PORT_2 must be disabled with MKS_WIFI_MODULE."
+#endif
 
-#define TFT_STATUS_TOP_Y       0
-#define TFT_TOP_LINE_Y         2
+#define WIFI_BAUDRATE          115200
+#define WIFI_UPLOAD_BAUDRATE  1958400
+#define USART_SAFE_INSERT
 
-#define MENU_TEXT_X_OFFSET    10
-#define MENU_TEXT_Y_OFFSET    10
+#define WIFI_RX_BUF_SIZE  (1024)
+#define WIFI_TX_BUF_SIZE  (64)
 
-#define MENU_ITEM_ICON_X       5
-#define MENU_ITEM_ICON_Y       5
-#define MENU_ITEM_ICON_SPACE  42
+//#include "tft_lvgl_configuration.h"
 
-#define MENU_ITEM_HEIGHT      43
-#define MENU_LINE_HEIGHT      (MENU_ITEM_HEIGHT + 2)
+#include "wifiSerial_STM32.h"
 
-#define MENU_FONT_NAME        Helvetica18
-#define SYMBOLS_FONT_NAME     Helvetica18_symbols
+extern WifiSerial WifiSerial1;
+#define WIFISERIAL WifiSerial1
 
-#define FONT_LINE_HEIGHT    34
-
-  const int XX_OFFSET = 10; 
-  const int YY_OFFSET = 10;
-  const int X_SPACING = 10;
-  const int Y_SPACING = 10;
-  const int PREHEAT_BTN_WIDTH = 90;
-  const int PREHEAT_BTN_HEIGHT = 64;
+#endif //MKS_WIFI_MODULE

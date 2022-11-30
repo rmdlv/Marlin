@@ -59,13 +59,18 @@ enum TouchControlType : uint16_t {
   DECREASE,
   CANCEL,
   CONFIRM,
+  HEATER_MANUAL,
   HEATER,
+  HEAT_EXT,
+  HEAT_BED,
+  FILAMENT_MOVE,
   FAN,
   FEEDRATE,
   FLOWRATE,
   UBL,
   MOVE_AXIS,
   BUTTON,
+  WIFI,
 };
 
 typedef void (*screenFunc_t)();

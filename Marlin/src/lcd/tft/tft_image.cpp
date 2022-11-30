@@ -64,7 +64,7 @@ const tImage Cancel_64x64x4         = { (void *)cancel_64x64x4, 64, 64, GREYSCAL
 const tImage Increase_64x64x4       = { (void *)increase_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Decrease_64x64x4       = { (void *)decrease_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Pause_64x64x4          = { (void *)pause_64x64x4, 64, 64, GREYSCALE4 };
-
+const tImage Wifi_64x64x4           = { (void *)wifi_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Feedrate_32x32x4       = { (void *)feedrate_32x32x4, 32, 32, GREYSCALE4 };
 const tImage Flowrate_32x32x4       = { (void *)flowrate_32x32x4, 32, 32, GREYSCALE4 };
 const tImage Directory_32x32x4      = { (void *)directory_32x32x4, 32, 32, GREYSCALE4 };
@@ -112,6 +112,7 @@ const tImage Images[imgCount] = {
   Home_64x64x4,
   BtnRounded_64x52x4,
   BtnRounded_42x39x4,
+  Wifi_64x64x4,
 };
 
 #endif // HAS_GRAPHICAL_TFT

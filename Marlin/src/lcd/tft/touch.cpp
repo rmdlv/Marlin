@@ -31,9 +31,14 @@
 
 #include "../../module/temperature.h"
 #include "../../module/planner.h"
+#include "../../module/stepper.h"
 
 #if ENABLED(AUTO_BED_LEVELING_UBL)
   #include "../../feature/bedlevel/bedlevel.h"
+#endif
+
+#if ENABLED(MKS_WIFI_MODULE)
+  #include "../../module/wifi/wifi.h"
 #endif
 
 #include "tft.h"
@@ -188,12 +193,72 @@ void Touch::touch(touch_control_t *control) {
     case SLIDER:    hold(control); ui.encoderPosition = (x - control->x) * control->data / control->width; break;
     case INCREASE:  hold(control, repeat_delay - 5); TERN(AUTO_BED_LEVELING_UBL, ui.external_control ? bedlevel.encoder_diff++ : ui.encoderPosition++, ui.encoderPosition++); break;
     case DECREASE:  hold(control, repeat_delay - 5); TERN(AUTO_BED_LEVELING_UBL, ui.external_control ? bedlevel.encoder_diff-- : ui.encoderPosition--, ui.encoderPosition--); break;
-    case HEATER:
+    case FILAMENT_MOVE:
+      int8_t direction;
+      direction = control->data;
+      //push 100mm fila
+      if (direction == 1) {
+        if (thermalManager.wholeDegHotend(H_E0) < 180) {
+          tft.canvas(20, 420, 200, 30);
+          tft.set_background(COLOR_BACKGROUND);
+          tft.add_text(0, 0, COLOR_YELLOW, "Too Cold");
+        } else {
+          queue.inject("G91\nG1 E100 F60\nG90");
+          tft.canvas(20, 420, 200, 24);
+          tft.set_background(COLOR_BACKGROUND);
+          tft.add_text(0, 0, COLOR_YELLOW, "Input 100mm");  
+        }
+      }
+        //pull 100mm fila
+      if (direction == -1) {
+        if (thermalManager.wholeDegHotend(H_E0) < 180) {
+          tft.canvas(20, 420, 200, 30);
+          tft.set_background(COLOR_BACKGROUND);
+          tft.add_text(0, 0, COLOR_YELLOW, "Too Cold");
+        } else {
+          queue.inject("G91\nG1 E-100 F60\nG90");
+          tft.canvas(20, 420, 200, 30);
+          tft.set_background(COLOR_BACKGROUND);
+          tft.add_text(0, 0, COLOR_YELLOW, "Output 100mm");  
+        }
+      }
+      if (direction == 0) {
+        tft.canvas(20, 420, 200, 30);
+        tft.set_background(COLOR_BACKGROUND);
+        tft.add_text(0, 0, COLOR_YELLOW, "Stoping Extruder");
+        quickstop_stepper();
+      }
+      break;
+    case HEATER: 
       int8_t heater;
       heater = control->data;
+      if (heater == H_BED) {
+        ui.goto_screen((screenFunc_t)ui.bed_screen);
+      } else {
+        ui.goto_screen((screenFunc_t)ui.heater_screen);
+      }
+      break;
+    case HEAT_EXT: 
+      int16_t ext_temp;
+      ext_temp = control->data;
+      // if (ext_temp == 0) {
+      //   thermalManager.cooldown();
+      // } else {
+        thermalManager.setTargetHotend(ext_temp, H_E0);
+      // }
+      break;
+    case HEAT_BED: 
+      int16_t bed_temp;
+      bed_temp = control->data;
+      // thermalManager.setTargetHotend(ext_temp, H_E0);
+      thermalManager.setTargetBed(bed_temp);
+      break;    
+    case HEATER_MANUAL:
+      int8_t heater_manual;
+      heater_manual = control->data;
       ui.clear_lcd();
       #if HAS_HOTEND
-        if (heater >= 0) { // HotEnd
+        if (heater_manual >= 0) { // HotEnd
           #if HOTENDS == 1
             MenuItem_int3::action(GET_TEXT_F(MSG_NOZZLE), &thermalManager.temp_hotend[0].target, 0, thermalManager.hotend_max_target(0), []{ thermalManager.start_watching_hotend(0); });
           #else
@@ -203,17 +268,17 @@ void Touch::touch(touch_control_t *control) {
         }
       #endif
       #if HAS_HEATED_BED
-        else if (heater == H_BED) {
+        else if (heater_manual == H_BED) {
           MenuItem_int3::action(GET_TEXT_F(MSG_BED), &thermalManager.temp_bed.target, 0, BED_MAX_TARGET, thermalManager.start_watching_bed);
         }
       #endif
       #if HAS_HEATED_CHAMBER
-        else if (heater == H_CHAMBER) {
+        else if (heater_manual == H_CHAMBER) {
           MenuItem_int3::action(GET_TEXT_F(MSG_CHAMBER), &thermalManager.temp_chamber.target, 0, CHAMBER_MAX_TARGET, thermalManager.start_watching_chamber);
         }
       #endif
       #if HAS_COOLER
-        else if (heater == H_COOLER) {
+        else if (heater_manual == H_COOLER) {
           MenuItem_int3::action(GET_TEXT_F(MSG_COOLER), &thermalManager.temp_cooler.target, 0, COOLER_MAX_TARGET, thermalManager.start_watching_cooler);
         }
       #endif

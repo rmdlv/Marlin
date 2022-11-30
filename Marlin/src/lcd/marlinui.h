@@ -589,6 +589,8 @@ public:
 
     static void return_to_status();
     static bool on_status_screen() { return currentScreen == status_screen; }
+    static bool on_heater_screen() { return currentScreen == heater_screen; }
+    static bool on_bed_screen() { return currentScreen == bed_screen; }
     FORCE_INLINE static void run_current_screen() { (*currentScreen)(); }
 
     #if ENABLED(LIGHTWEIGHT_UI)
@@ -775,6 +777,14 @@ public:
   #if HAS_GRAPHICAL_TFT
     static void move_axis_screen();
   #endif
+
+  #if ENABLED(MKS_WIFI_MODULE)
+    static void wifi_screen();
+  #endif
+
+  static void heater_screen();
+
+  static void bed_screen();
 
 private:
 

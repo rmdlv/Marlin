@@ -28,7 +28,7 @@
 #include "../../feature/babystep.h"
 #include "../../module/probe.h"
 #include "../../module/planner.h"
-
+extern bool baby_step_set_data;
 #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
   #include "../../core/serial.h"
 #endif
