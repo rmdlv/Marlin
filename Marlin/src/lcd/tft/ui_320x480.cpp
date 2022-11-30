@@ -41,7 +41,7 @@ using namespace std;
 #include "../../module/motion.h"
 
 #ifdef MKS_WIFI_MODULE
-  #include "../../module/wifi/wifi.h";
+  #include "../../module/wifi/wifi.h"
 #endif
 
 #if DISABLED(LCD_PROGRESS_BAR) && BOTH(FILAMENT_LCD_DISPLAY, SDSUPPORT)
@@ -71,6 +71,20 @@ void MarlinUI::tft_idle() {
 #if ENABLED(SHOW_BOOTSCREEN)
 
   void MarlinUI::show_bootscreen() {
+    uint32_t filesize = 2493587, progress = 1234567;
+    uint32_t percent_done;
+    // uint16_t width;
+    // double fsize = file_size, csize = cur_size;
+    char str[100];
+
+    // fsize /= 1024*1024;
+    // csize /= 1024*1024;
+
+    percent_done = progress*100 / filesize;
+
+    sprintf(str, "%3.2f of %3.2f MB (%d%%)", progress/1024./1024., filesize/1024./1024., (uint8_t)percent_done);
+
+
     tft.queue.reset();
 
     tft.canvas(0, 0, TFT_WIDTH, TFT_HEIGHT);
@@ -89,6 +103,8 @@ void MarlinUI::tft_idle() {
     //   tft_string.set(WEBSITE_URL);
     //   tft.add_text(tft_string.center(TFT_WIDTH), SITE_URL_Y, COLOR_WEBSITE_URL, tft_string);
     // #endif
+
+    // tft.add_text(20, 400, COLOR_WHITE, str);
 
     tft.queue.sync();
   }
