@@ -63,6 +63,7 @@ enum TouchControlType : uint16_t {
   HEATER,
   HEAT_EXT,
   HEAT_BED,
+  FILAMENT_MOVE,
   FAN,
   FEEDRATE,
   FLOWRATE,
