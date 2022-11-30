@@ -41,7 +41,7 @@ using namespace std;
 #include "../../module/motion.h"
 
 #ifdef MKS_WIFI_MODULE
-  #include "../../module/wifi/wifi.h";
+  #include "../../module/wifi/wifi.h"
 #endif
 
 #if DISABLED(LCD_PROGRESS_BAR) && BOTH(FILAMENT_LCD_DISPLAY, SDSUPPORT)
@@ -71,6 +71,20 @@ void MarlinUI::tft_idle() {
 #if ENABLED(SHOW_BOOTSCREEN)
 
   void MarlinUI::show_bootscreen() {
+    uint32_t filesize = 2493587, progress = 1234567;
+    uint32_t percent_done;
+    // uint16_t width;
+    // double fsize = file_size, csize = cur_size;
+    char str[100];
+
+    // fsize /= 1024*1024;
+    // csize /= 1024*1024;
+
+    percent_done = progress*100 / filesize;
+
+    sprintf(str, "%3.2f of %3.2f MB (%d%%)", progress/1024./1024., filesize/1024./1024., (uint8_t)percent_done);
+
+
     tft.queue.reset();
 
     tft.canvas(0, 0, TFT_WIDTH, TFT_HEIGHT);
@@ -89,6 +103,8 @@ void MarlinUI::tft_idle() {
     //   tft_string.set(WEBSITE_URL);
     //   tft.add_text(tft_string.center(TFT_WIDTH), SITE_URL_Y, COLOR_WEBSITE_URL, tft_string);
     // #endif
+
+    // tft.add_text(20, 400, COLOR_WHITE, str);
 
     tft.queue.sync();
   }
@@ -346,10 +362,10 @@ void MarlinUI::draw_status_screen() {
 
   tft.canvas(96, 360, 130, 30);
   tft.set_background(COLOR_BACKGROUND);
-  tft_string.set(buffer);  
-  tft_string.add("   ");                   
-  tft_string.add(i16tostr3rj(progress));  
-  tft_string.add("%");                    
+  tft_string.set(buffer);
+  tft_string.add("   ");
+  tft_string.add(i16tostr3rj(progress));
+  tft_string.add("%");
   tft.add_text(tft_string.center(130), 0, COLOR_PRINT_TIME, tft_string);
 
   y += TERN(HAS_UI_480x272, 28, 36);
@@ -946,7 +962,7 @@ void MarlinUI::move_axis_screen() {
   TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH + 25, y-30, BACK, imgBack));
 }
 
-#ifdef MKS_WIFI_MODULE 
+#ifdef MKS_WIFI_MODULE
 void MarlinUI::wifi_screen() {
 
   // Reset
@@ -959,8 +975,8 @@ void MarlinUI::wifi_screen() {
 
   tft.canvas(0, 200, 320, 80);
   tft.set_background(COLOR_BACKGROUND);
-  tft_string.set("SSID: ");  
-  tft_string.add(wifiPara.ap_name);                   
+  tft_string.set("SSID: ");
+  tft_string.add(wifiPara.ap_name);
   tft.add_text(tft_string.center(320), 0, COLOR_PRINT_TIME, tft_string);
   tft_string.set("IP: ");
   tft_string.add(ipPara.ip_addr);
@@ -1003,35 +1019,35 @@ void MarlinUI::heater_screen() {
           switch (count)
           {
             #ifdef PREHEAT_1_LABEL
-              case 1: tft_string.set(PREHEAT_1_LABEL); 
+              case 1: tft_string.set(PREHEAT_1_LABEL);
                 temp_hotend = PREHEAT_1_TEMP_HOTEND;
                 break;
             #endif
             #ifdef PREHEAT_2_LABEL
-              case 2: tft_string.set(PREHEAT_2_LABEL); 
+              case 2: tft_string.set(PREHEAT_2_LABEL);
                 temp_hotend = PREHEAT_2_TEMP_HOTEND;
                 break;
             #endif
             #ifdef PREHEAT_3_LABEL
-              case 3: tft_string.set(PREHEAT_3_LABEL); 
+              case 3: tft_string.set(PREHEAT_3_LABEL);
                 temp_hotend = PREHEAT_3_TEMP_HOTEND;
                 break;
             #endif
             #ifdef PREHEAT_4_LABEL
-              case 4: tft_string.set(PREHEAT_4_LABEL); 
+              case 4: tft_string.set(PREHEAT_4_LABEL);
                 temp_hotend = PREHEAT_4_TEMP_HOTEND;
                 break;
-            #endif                                    
+            #endif
             #ifdef PREHEAT_5_LABEL
-              case 5: tft_string.set(PREHEAT_5_LABEL); 
+              case 5: tft_string.set(PREHEAT_5_LABEL);
                 temp_hotend = PREHEAT_5_TEMP_HOTEND;
                 break;
             #endif
             #ifdef PREHEAT_6_LABEL
-              case 6: tft_string.set(PREHEAT_6_LABEL); 
+              case 6: tft_string.set(PREHEAT_6_LABEL);
                 temp_hotend = PREHEAT_6_TEMP_HOTEND;
                 break;
-            #endif                  
+            #endif
             default: break;
           }
           // tft_string.set(label);
@@ -1043,7 +1059,7 @@ void MarlinUI::heater_screen() {
       }
     }
 
-  tft.canvas(XX_OFFSET + PREHEAT_BTN_WIDTH * 0 + X_SPACING * 0, 80 + YY_OFFSET + PREHEAT_BTN_HEIGHT * 2 + Y_SPACING * 2, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT);    
+  tft.canvas(XX_OFFSET + PREHEAT_BTN_WIDTH * 0 + X_SPACING * 0, 80 + YY_OFFSET + PREHEAT_BTN_HEIGHT * 2 + Y_SPACING * 2, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT);
   tft.set_background(COLOR_BACKGROUND);
   tft_string.set("In");
   tft.add_rectangle(0, 0, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT, COLOR_WHITE);
@@ -1051,7 +1067,7 @@ void MarlinUI::heater_screen() {
   TERN_(TOUCH_SCREEN, touch.add_control(FILAMENT_MOVE, XX_OFFSET + PREHEAT_BTN_WIDTH * 0 + X_SPACING * 0, 80 + YY_OFFSET + PREHEAT_BTN_HEIGHT * 2 + Y_SPACING * 2, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT, 1));
 
 
-  tft.canvas(XX_OFFSET + PREHEAT_BTN_WIDTH * 1 + X_SPACING * 1, 80 + YY_OFFSET + PREHEAT_BTN_HEIGHT * 2 + Y_SPACING * 2, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT);    
+  tft.canvas(XX_OFFSET + PREHEAT_BTN_WIDTH * 1 + X_SPACING * 1, 80 + YY_OFFSET + PREHEAT_BTN_HEIGHT * 2 + Y_SPACING * 2, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT);
   tft.set_background(COLOR_BACKGROUND);
   tft_string.set("STOP");
   tft.add_rectangle(0, 0, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT, COLOR_WHITE);
@@ -1059,7 +1075,7 @@ void MarlinUI::heater_screen() {
   TERN_(TOUCH_SCREEN, touch.add_control(FILAMENT_MOVE, XX_OFFSET + PREHEAT_BTN_WIDTH * 1 + X_SPACING * 1, 80 + YY_OFFSET + PREHEAT_BTN_HEIGHT * 2 + Y_SPACING * 2, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT, 0));
 
 
-  tft.canvas(XX_OFFSET + PREHEAT_BTN_WIDTH * 2 + X_SPACING * 2, 80 + YY_OFFSET + PREHEAT_BTN_HEIGHT * 2 + Y_SPACING * 2, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT);    
+  tft.canvas(XX_OFFSET + PREHEAT_BTN_WIDTH * 2 + X_SPACING * 2, 80 + YY_OFFSET + PREHEAT_BTN_HEIGHT * 2 + Y_SPACING * 2, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT);
   tft.set_background(COLOR_BACKGROUND);
   tft_string.set("Out");
   tft.add_rectangle(0, 0, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT, COLOR_WHITE);
@@ -1104,7 +1120,7 @@ void MarlinUI::heater_screen() {
 }
 
 void MarlinUI::bed_screen() {
- 
+
   celsius_t currentTemperature, targetTemperature;
   currentTemperature = thermalManager.wholeDegBed();
   targetTemperature = thermalManager.degTargetBed();
@@ -1135,35 +1151,35 @@ void MarlinUI::bed_screen() {
           switch (count)
           {
             #ifdef PREHEAT_1_LABEL
-              case 1: tft_string.set(PREHEAT_1_LABEL); 
+              case 1: tft_string.set(PREHEAT_1_LABEL);
                 temp_bed = PREHEAT_1_TEMP_BED;
                 break;
             #endif
             #ifdef PREHEAT_2_LABEL
-              case 2: tft_string.set(PREHEAT_2_LABEL); 
+              case 2: tft_string.set(PREHEAT_2_LABEL);
                 temp_bed = PREHEAT_2_TEMP_BED;
                 break;
             #endif
             #ifdef PREHEAT_3_LABEL
-              case 3: tft_string.set(PREHEAT_3_LABEL); 
+              case 3: tft_string.set(PREHEAT_3_LABEL);
                 temp_bed = PREHEAT_3_TEMP_BED;
                 break;
             #endif
             #ifdef PREHEAT_4_LABEL
-              case 4: tft_string.set(PREHEAT_4_LABEL); 
+              case 4: tft_string.set(PREHEAT_4_LABEL);
                 temp_bed = PREHEAT_4_TEMP_BED;
                 break;
-            #endif                                    
+            #endif
             #ifdef PREHEAT_5_LABEL
-              case 5: tft_string.set(PREHEAT_5_LABEL); 
+              case 5: tft_string.set(PREHEAT_5_LABEL);
                 temp_bed = PREHEAT_5_TEMP_BED;
                 break;
             #endif
             #ifdef PREHEAT_6_LABEL
-              case 6: tft_string.set(PREHEAT_6_LABEL); 
+              case 6: tft_string.set(PREHEAT_6_LABEL);
                 temp_bed = PREHEAT_6_TEMP_BED;
                 break;
-            #endif                  
+            #endif
             default: break;
           }
           // tft_string.set(label);
