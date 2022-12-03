@@ -59,9 +59,9 @@ void GcodeSuite::M593() {
              seen_Y = TERN0(INPUT_SHAPING_Y, parser.seen_test('Y')),
              for_X = seen_X || TERN0(INPUT_SHAPING_X, (!seen_X && !seen_Y)),
              for_Y = seen_Y || TERN0(INPUT_SHAPING_Y, (!seen_X && !seen_Y));
-
   if (parser.seen('D')) {
     const float zeta = parser.value_float();
+    SERIAL_ECHOLN(STRINGIFY("ZETA" + zeta));
     if (WITHIN(zeta, 0, 1)) {
       if (for_X) stepper.set_shaping_damping_ratio(X_AXIS, zeta);
       if (for_Y) stepper.set_shaping_damping_ratio(Y_AXIS, zeta);
