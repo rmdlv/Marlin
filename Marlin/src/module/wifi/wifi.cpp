@@ -60,7 +60,7 @@
 uint8_t bmp_public_buf[14 * 1024];
 uint8_t public_buf[513];
 
-extern uint8_t Explore_Disk(char *path, uint8_t recu_level);
+extern uint8_t send_sd_ls(char *path);
 
 extern uint8_t commands_in_queue;
 uint8_t sel_id = 0;
@@ -153,31 +153,42 @@ void mount_file_sys(uint8_t disk_type) {
   }
 }
 
-static bool longName2DosName(const char *longName, char *dosName) {
-  uint8_t i = FILENAME_LENGTH;
-  while (i) dosName[--i] = '\0';
+  // char *pos = buffer;
+  // LOOP_L_N(i, 11) {
+  //   if (p.name[i] == ' ') continue;
+  //   if (i == 8) *pos++ = '.';
+  //   *pos++ = p.name[i];
+  // }
+  // *pos++ = 0;
+  // return buffer;
 
-  while (*longName) {
-    uint8_t c = *longName++;
-    if (c == '.') { // For a dot...
-      if (i == 0) return false;
-      strcat_P(dosName, PSTR(".GCO"));
-      return dosName[0] != '\0';
-    }
-    else {
-      // Fail for illegal characters
-      PGM_P p = PSTR("|<>^+=?/[];,*\"\\");
-      while (uint8_t b = pgm_read_byte(p++)) if (b == c) return false;
-      if (c < 0x21 || c == 0x7F) return false;                        // Check size, non-printable characters
-      dosName[i++] = (c < 'a' || c > 'z') ? (c) : (c + ('A' - 'a'));  // Uppercase required for 8.3 name
-    }
-    if (i >= 16) {
-      strcat_P(dosName, PSTR("~1.GCO"));
-      return dosName[0] != '\0';
-    }
-  }
-  return dosName[0] != '\0'; // Return true if any name was set
-}
+
+// static bool longName2DosName(const char *longName, char *dosName) {
+//   uint8_t i = FILENAME_LENGTH;
+//   while (i) dosName[--i] = '\0';
+
+//   while (*longName) {
+//     uint8_t c = *longName++;
+//     if (c == ' ') continue;
+//     if (c == '.') { // For a dot...
+//       if (i == 0) return false;
+//       strcat_P(dosName, PSTR(".GCO"));
+//       return dosName[0] != '\0';
+//     }
+//     else {
+//       // Fail for illegal characters
+//       PGM_P p = PSTR("|<>^+=?/[];,*\"\\");
+//       while (uint8_t b = pgm_read_byte(p++)) if (b == c) continue;
+//       if (c < 0x21 || c == 0x7F) continue;                        // Check size, non-printable characters
+//       dosName[i++] = (c < 'a' || c > 'z') ? (c) : (c + ('A' - 'a'));  // Uppercase required for 8.3 name
+//     }
+//     if (i >= 16) {
+//       strcat_P(dosName, PSTR("~1.GCO"));
+//       return dosName[0] != '\0';
+//     }
+//   }
+//   return dosName[0] != '\0'; // Return true if any name was set
+// }
 
 #ifdef __STM32F1__
 
@@ -719,23 +730,23 @@ int send_to_wifi(uint8_t *buf, int len) { return package_to_wifi(WIFI_TRANS_INF,
 
 void set_cur_file_sys(int fileType) { fileSysType = fileType; }
 
-void get_file_list(char *path) {
-  if (!path) return;
+// void get_file_list(char *path) {
+//   if (!path) return;
 
   // if (fileSysType == FILE_SYS_SD) {
-    TERN_(SDSUPPORT, card.mount());
+    // TERN_(SDSUPPORT, card.mount());
   // }
   // else if (fileSysType == FILE_SYS_USB) {
     // udisk
   // }
-  Explore_Disk(path, 0);
-}
+//   Explore_Disk(path, 0);
+// }
 
 char wait_ip_back_flag = 0;
 
 typedef struct {
   int write_index;
-  uint8_t saveFileName[30];
+  uint8_t saveFileName[LONG_FILENAME_LENGTH];
   uint8_t fileTransfer;
   uint32_t fileLen;
   uint32_t tick_begin;
@@ -746,7 +757,7 @@ FILE_WRITER file_writer;
 
 int32_t lastFragment = 0;
 
-char saveFilePath[50];
+char saveFilePath[LONG_FILENAME_LENGTH];
 
 static SdFile upload_file, *upload_curDir;
 static filepos_t pos;
@@ -775,7 +786,7 @@ int write_to_file(char *buf, int len) {
       if (res == -1) return -1;
 
       upload_file.getpos(&pos);
-      mks_update_status((char*)file_writer.saveFileName, pos.position, file_writer.fileLen);
+      mks_update_status(pos.position, file_writer.fileLen);
       file_writer.write_index = 0;
     }
   }
@@ -826,27 +837,22 @@ static int cut_msg_head(uint8_t *msg, uint16_t msgLen, uint16_t cutLen) {
   return msgLen - cutLen;
 }
 
-uint8_t Explore_Disk(char *path , uint8_t recu_level) {
-  char tmp[200];
-  char Fstream[200];
+uint8_t send_sd_ls(char *path) {
+  char fn[200];
 
-  if (!path) return 0;
+  card.mount();
+  card.cdroot();
+  if (path) card.cd(path);
 
   const uint8_t fileCnt = card.get_num_Files();
 
   for (uint8_t i = 0; i < fileCnt; i++) {
+    ZERO(fn);
     card.getfilename_sorted(SD_ORDER(i, fileCnt));
-    ZERO(tmp);
-    strcpy(tmp, card.longFilename);
-
-    ZERO(Fstream);
-    strcpy(Fstream, tmp);
-
-    if (card.flag.filenameIsDir && recu_level <= 10)
-      strcat_P(Fstream, PSTR(".DIR"));
-
-    strcat_P(Fstream, PSTR("\r\n"));
-    send_to_wifi((uint8_t*)Fstream, strlen(Fstream));
+    strcpy(fn, card.longFilename[0] ? card.longFilename : card.filename);
+    if (card.flag.filenameIsDir) strcat_P(fn, PSTR(".DIR"));
+    strcat_P(fn, PSTR("\r\n"));
+    send_to_wifi((uint8_t*)fn, strlen(fn));
   }
 
   return fileCnt;
@@ -880,7 +886,7 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
             int index = 0;
             if (tmpStr == 0) {
               send_to_wifi((uint8_t *)(STR_BEGIN_FILE_LIST "\r\n"), strlen(STR_BEGIN_FILE_LIST "\r\n"));
-              get_file_list((char *)"0:/");
+              send_sd_ls(0);
               send_to_wifi((uint8_t *)(STR_END_FILE_LIST "\r\n"), strlen(STR_END_FILE_LIST "\r\n"));
               SEND_OK_TO_WIFI;
               break;
@@ -891,7 +897,7 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
             if (strlen((char *)&tmpStr[index]) < 80) {
               send_to_wifi((uint8_t *)(STR_BEGIN_FILE_LIST "\r\n"), strlen(STR_BEGIN_FILE_LIST "\r\n"));
               strcpy((char *)path, (char *)&tmpStr[index]);
-              get_file_list(path);
+              send_sd_ls(path);
               send_to_wifi((uint8_t *)(STR_END_FILE_LIST "\r\n"), strlen(STR_END_FILE_LIST "\r\n"));
             }
             SEND_OK_TO_WIFI;
@@ -907,37 +913,39 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
             if (strstr_P((char *)&tmpStr[index], PSTR(".g")) || strstr_P((char *)&tmpStr[index], PSTR(".G"))) {
               if (strlen((char *)&tmpStr[index]) < 80) {
                 ZERO(list_file.file_name[sel_id]);
-                uint8_t has_path_selected = 0;
-                if (strncmp_P((char *)&tmpStr[index], PSTR("1:"), 2) == 0 || strncmp_P((char *)&tmpStr[index], PSTR("0:"), 2) == 0) {
-                  has_path_selected = 1;
-                }
-                else if (tmpStr[index] != '/') strcat_P((char *)list_file.file_name[sel_id], PSTR("/"));
+                // uint8_t has_path_selected = 0;
+                // if (strncmp_P((char *)&tmpStr[index], PSTR("1:"), 2) == 0 || strncmp_P((char *)&tmpStr[index], PSTR("0:"), 2) == 0) {
+                //   has_path_selected = 1;
+                // }
+                // else
+                if (tmpStr[index] != '/') strcat_P((char *)list_file.file_name[sel_id], PSTR("/"));
 
-                if (file_writer.fileTransfer == 1) {
-                  char dosName[FILENAME_LENGTH];
-                  uint8_t fileName[sizeof(list_file.file_name[sel_id])];
-                  fileName[0] = '\0';
-                  if (has_path_selected == 1) {
-                    strcat((char *)fileName, (char *)&tmpStr[index + 3]);
-                    strcat_P((char *)list_file.file_name[sel_id], PSTR("/"));
-                  }
-                  else strcat((char *)fileName, (char *)&tmpStr[index]);
+                // if (file_writer.fileTransfer == 1) {
+                //   char dosName[FILENAME_LENGTH];
+                //   uint8_t fileName[sizeof(list_file.file_name[sel_id])];
+                //   fileName[0] = '\0';
+                //   if (has_path_selected == 1) {
+                //     strcat((char *)fileName, (char *)&tmpStr[index + 3]);
+                //     strcat_P((char *)list_file.file_name[sel_id], PSTR("/"));
+                //   }
+                //   else strcat((char *)fileName, (char *)&tmpStr[index]);
 
-                  if (!longName2DosName((const char *)fileName, dosName))
-                    strcpy_P(list_file.file_name[sel_id], PSTR("notValid"));
-                  strcat((char *)list_file.file_name[sel_id], dosName);
-                  strcat((char *)list_file.long_name[sel_id], dosName);
-                }
-                else {
+                //   if (!longName2DosName((const char *)fileName, dosName))
+                //     strcpy_P(list_file.file_name[sel_id], PSTR("notValid"));
+                //   strcat((char *)list_file.file_name[sel_id], dosName);
+                //   strcat((char *)list_file.long_name[sel_id], dosName);
+                // }
+                // else {
                   strcat((char *)list_file.file_name[sel_id], (char *)&tmpStr[index]);
                   strcat((char *)list_file.long_name[sel_id], (char *)&tmpStr[index]);
-                }
+                // }
 
                 char *cur_name=strrchr(list_file.file_name[sel_id],'/');
                 card.openFileRead(cur_name);
-
+                char msg[300];
+                sprintf((char*)msg, "File selected %s\r\n", cur_name);
                 if (card.isFileOpen())
-                  send_to_wifi((uint8_t *)"File selected\r\n", strlen("File selected\r\n"));
+                  send_to_wifi((uint8_t *)msg, strlen(msg));
                 else {
                   send_to_wifi((uint8_t *)"file.open failed\r\n", strlen("file.open failed\r\n"));
                   strcpy_P(list_file.file_name[sel_id], PSTR("notValid"));
@@ -1121,7 +1129,7 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
         case 994: // M994： Get the name and size of the file being printing
           if (card.isFileOpen()) {
             ZERO(tempBuf);
-            sprintf_P((char *)tempBuf, PSTR("M994 %s;%d\n"), card.filename, (int)card.getFileSize());
+            sprintf_P((char *)tempBuf, PSTR("M994 %s;%d\n"), card.longFilename, (int)card.getFileSize());
             wifi_ret_ack();
             send_to_wifi((uint8_t *)tempBuf, strlen((char *)tempBuf));
           }
@@ -1422,37 +1430,32 @@ static void file_first_msg_handle(uint8_t * msg, uint16_t msgLen) {
   // prepare filename
 
   if (msgLen != fileNameLen + 5) return;
-
   file_writer.fileLen = *((uint32_t *)(msg + 1));
+
   ZERO(file_writer.saveFileName);
-
   memcpy(file_writer.saveFileName, msg + 5, fileNameLen);
-
   utf8_2_unicode(file_writer.saveFileName, fileNameLen);
+  if (strlen((const char *)file_writer.saveFileName) > sizeof(saveFilePath)) return;
 
   ZERO(public_buf);
 
-  if (strlen((const char *)file_writer.saveFileName) > sizeof(saveFilePath))
-    return;
-
   // draw UI
 
-  mks_update_status((char*)file_writer.saveFileName, 0, file_writer.fileLen);
+  mks_upload_screen((char*)file_writer.saveFileName);
+  // mks_update_status((char*)file_writer.saveFileName, 0, file_writer.fileLen);
 
   // heating off
 
-   save_bed = thermalManager.degTargetBed();
-   save_e0 = thermalManager.degTargetHotend(0);
+  save_bed = thermalManager.degTargetBed();
+  save_e0 = thermalManager.degTargetHotend(0);
   //  save_e1 = thermalManager.degTargetHotend(1);
 
-   thermalManager.disable_all_heaters();
-   thermalManager.task();
+  thermalManager.disable_all_heaters();
+  thermalManager.task();
 
   // prepare sd card
 
   ZERO(saveFilePath);
-
-  TERN_(SDSUPPORT, card.mount());
 
   file_writer.write_index = 0;
   lastFragment = -1;
@@ -1461,20 +1464,21 @@ static void file_first_msg_handle(uint8_t * msg, uint16_t msgLen) {
   wifiTransError.start_tick = 0;
   wifiTransError.now_tick = 0;
 
-  TERN_(SDSUPPORT, card.closefile());
+  card.mount();
+  card.closefile();
 
   wifi_delay(1000);
 
-  char dosName[FILENAME_LENGTH];
+  // char dosName[FILENAME_LENGTH];
 
-  if (!longName2DosName((const char *)file_writer.saveFileName, dosName)) {
-    upload_result = 2;  // upload error
-    wifiTransError.flag = 1;
-    wifiTransError.start_tick = getWifiTick();
-    ui.set_status("Upload error");
-    return;
-  }
-  strcpy((char *)saveFilePath, dosName);
+  // if (!longName2DosName((const char *)file_writer.saveFileName, dosName)) {
+  //   upload_result = 2;  // upload error
+  //   wifiTransError.flag = 1;
+  //   wifiTransError.start_tick = getWifiTick();
+  //   ui.set_status("Upload error");
+  //   return;
+  // }
+  strcpy((char *)saveFilePath, (char *)file_writer.saveFileName);
 
   card.cdroot();
   upload_file.close();
@@ -1484,13 +1488,14 @@ static void file_first_msg_handle(uint8_t * msg, uint16_t msgLen) {
     upload_result = 2;  // upload error
     wifiTransError.flag = 1;
     wifiTransError.start_tick = getWifiTick();
+    mks_end_transmit();
     ui.set_status("Upload error");
     return;
   }
 
   wifi_link_state = WIFI_TRANS_FILE;
   upload_result = 1;  // uploading
-  ui.set_status("Uploading...");
+  // ui.set_status("Uploading...");
 
   get_wifi_commands();
 
@@ -1507,6 +1512,8 @@ static void file_fragment_msg_handle(uint8_t * msg, uint16_t msgLen) {
     file_writer.write_index = 0;
     wifi_link_state = WIFI_CONNECTED;
     upload_result = 2;  // upload error
+    mks_end_transmit();
+    ui.set_status("Upload error");
   }
   else {
     if (write_to_file((char *)msg + 4, msgLen - 4) < 0) {
@@ -1514,6 +1521,8 @@ static void file_fragment_msg_handle(uint8_t * msg, uint16_t msgLen) {
       file_writer.write_index = 0;
       wifi_link_state = WIFI_CONNECTED;
       upload_result = 2;  // upload error
+      mks_end_transmit();
+      ui.set_status("Upload error");
       return;
     }
     lastFragment = frag;
@@ -1527,6 +1536,7 @@ static void file_fragment_msg_handle(uint8_t * msg, uint16_t msgLen) {
         if (upload_file.open(upload_curDir, fname, O_WRITE)) {
           upload_file.setpos(&pos);
           res = upload_file.write(public_buf, file_writer.write_index);
+          mks_update_status(pos.position, file_writer.fileLen);
         }
       }
       upload_file.close();
@@ -1541,6 +1551,8 @@ static void file_fragment_msg_handle(uint8_t * msg, uint16_t msgLen) {
         file_writer.write_index = 0;
         wifi_link_state = WIFI_CONNECTED;
         upload_result = 2;  // upload error
+        mks_end_transmit();
+        ui.set_status("Upload error");
         return;
       }
       ZERO(public_buf);
@@ -1549,6 +1561,7 @@ static void file_fragment_msg_handle(uint8_t * msg, uint16_t msgLen) {
       upload_time_sec = getWifiTickDiff(file_writer.tick_begin, file_writer.tick_end) / 1000;
       wifi_link_state = WIFI_CONNECTED;
       upload_result = 3;  // uploaded!
+      mks_end_transmit();
       ui.set_status("Upload done");
     }
   }
@@ -1687,6 +1700,7 @@ void stopEspTransfer() {
   if (upload_result != 3) {
     wifiTransError.flag = 1;
     wifiTransError.start_tick = getWifiTick();
+    mks_end_transmit();
     card.removeFile((const char *)saveFilePath);
   }
 
@@ -1710,10 +1724,8 @@ void stopEspTransfer() {
   esp_port_begin(1);
   wifi_delay(200);
 
-  mks_end_transmit();
-
-  thermalManager.setTargetBed(save_bed);
-  thermalManager.setTargetHotend(save_e0,0);
+  // thermalManager.setTargetBed(save_bed);
+  // thermalManager.setTargetHotend(save_e0, 0);
 
 
   // W25QXX.init(SPI_QUARTER_SPEED);
