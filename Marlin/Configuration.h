@@ -97,6 +97,8 @@
   #define MKS_WIFI_MODULE  // MKS WiFi module
 #endif
 
+#define SAFE_BABYSTEP_TO_Z_OFFSET
+
 /**
  * Select the serial port on the board to use for communication with the host.
  * This allows the connection of wireless adapters (for instance) to non-default port pins.

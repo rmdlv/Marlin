@@ -68,7 +68,7 @@ void Touch::init() {
   enable();
 }
 
-void Touch::add_control(TouchControlType type, uint16_t x, uint16_t y, uint16_t width, uint16_t height, intptr_t data) {   //   TEST !!!!!!!!!!!!!!
+void Touch::add_control(TouchControlType type, uint16_t x, uint16_t y, uint16_t width, uint16_t height, intptr_t data) {
 
   if (controls_count == MAX_CONTROLS) return;
 
@@ -203,10 +203,10 @@ void Touch::touch(touch_control_t *control) {
           tft.set_background(COLOR_BACKGROUND);
           tft.add_text(0, 0, COLOR_YELLOW, "Too Cold");
         } else {
-          queue.inject("G91\nG1 E100 F60\nG90");
+          queue.inject("G91\nG1 E200 F80\nG90");
           tft.canvas(20, 420, 200, 24);
           tft.set_background(COLOR_BACKGROUND);
-          tft.add_text(0, 0, COLOR_YELLOW, "Input 100mm");  
+          tft.add_text(0, 0, COLOR_YELLOW, "Input 200mm");
         }
       }
         //pull 100mm fila
@@ -216,10 +216,10 @@ void Touch::touch(touch_control_t *control) {
           tft.set_background(COLOR_BACKGROUND);
           tft.add_text(0, 0, COLOR_YELLOW, "Too Cold");
         } else {
-          queue.inject("G91\nG1 E-100 F60\nG90");
+          queue.inject("G91\nG1 E-200 F80\nG90");
           tft.canvas(20, 420, 200, 30);
           tft.set_background(COLOR_BACKGROUND);
-          tft.add_text(0, 0, COLOR_YELLOW, "Output 100mm");  
+          tft.add_text(0, 0, COLOR_YELLOW, "Output 200mm");
         }
       }
       if (direction == 0) {

@@ -1084,7 +1084,7 @@ void MarlinUI::heater_screen() {
 
   TERN_(TOUCH_SCREEN, touch.add_control(HEAT_EXT, 190, 330, 120, 64, 0));
   TERN_(TOUCH_SCREEN, touch.add_control(HEATER_MANUAL, 10, 330, 120, 64, H_E0));
-  TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH + 25, 410, BACK, imgBack));
+  TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH + 25, 420, BACK, imgBack));
 
 
   // moveAxis(const AxisEnum axis, const int8_t direction)
@@ -1188,7 +1188,7 @@ void MarlinUI::bed_screen() {
   tft.add_text(tft_string.center(120), 15, COLOR_AQUA, tft_string);
   TERN_(TOUCH_SCREEN, touch.add_control(HEAT_BED, 190, 330, 120, 64, 0));
   TERN_(TOUCH_SCREEN, touch.add_control(HEATER_MANUAL, 10, 330, 120, 64, H_BED));
-  TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH + 25, 410, BACK, imgBack));
+  TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH + 25, 420, BACK, imgBack));
 
 }
 
