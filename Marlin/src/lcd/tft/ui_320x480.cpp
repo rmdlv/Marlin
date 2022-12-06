@@ -1000,13 +1000,12 @@ void MarlinUI::heater_screen() {
   //
 
   tft.canvas(0, 20, 320, 80);
-  tft.add_rectangle(0, 0, 320, 60, COLOR_WHITE);
   tft.set_background(COLOR_BACKGROUND);
   tft_string.set("Extruder: ");
   tft_string.add(i16tostr3rj(currentTemperature));
   tft_string.add(" -> ");
   tft_string.add(i16tostr3rj(targetTemperature));
-  tft.add_text(tft_string.center(320), 15, COLOR_WHITE, tft_string);
+  tft.add_text(tft_string.center(320), 15, COLOR_YELLOW, tft_string);
 
   int temp_hotend = 0;
   int count = 1;
@@ -1061,25 +1060,25 @@ void MarlinUI::heater_screen() {
 
   tft.canvas(XX_OFFSET + PREHEAT_BTN_WIDTH * 0 + X_SPACING * 0, 80 + YY_OFFSET + PREHEAT_BTN_HEIGHT * 2 + Y_SPACING * 2, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT);
   tft.set_background(COLOR_BACKGROUND);
-  tft_string.set("In");
-  tft.add_rectangle(0, 0, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT, COLOR_WHITE);
-  tft.add_text(tft_string.center(PREHEAT_BTN_WIDTH), 15, COLOR_WHITE, tft_string);
+  tft_string.set("E+");
+  tft.add_rectangle(0, 0, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT, COLOR_YELLOW);
+  tft.add_text(tft_string.center(PREHEAT_BTN_WIDTH), 15, COLOR_YELLOW, tft_string);
   TERN_(TOUCH_SCREEN, touch.add_control(FILAMENT_MOVE, XX_OFFSET + PREHEAT_BTN_WIDTH * 0 + X_SPACING * 0, 80 + YY_OFFSET + PREHEAT_BTN_HEIGHT * 2 + Y_SPACING * 2, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT, 1));
 
 
   tft.canvas(XX_OFFSET + PREHEAT_BTN_WIDTH * 1 + X_SPACING * 1, 80 + YY_OFFSET + PREHEAT_BTN_HEIGHT * 2 + Y_SPACING * 2, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT);
   tft.set_background(COLOR_BACKGROUND);
   tft_string.set("STOP");
-  tft.add_rectangle(0, 0, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT, COLOR_WHITE);
-  tft.add_text(tft_string.center(PREHEAT_BTN_WIDTH), 15, COLOR_WHITE, tft_string);
+  tft.add_rectangle(0, 0, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT, COLOR_RED);
+  tft.add_text(tft_string.center(PREHEAT_BTN_WIDTH), 15, COLOR_RED, tft_string);
   TERN_(TOUCH_SCREEN, touch.add_control(FILAMENT_MOVE, XX_OFFSET + PREHEAT_BTN_WIDTH * 1 + X_SPACING * 1, 80 + YY_OFFSET + PREHEAT_BTN_HEIGHT * 2 + Y_SPACING * 2, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT, 0));
 
 
   tft.canvas(XX_OFFSET + PREHEAT_BTN_WIDTH * 2 + X_SPACING * 2, 80 + YY_OFFSET + PREHEAT_BTN_HEIGHT * 2 + Y_SPACING * 2, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT);
   tft.set_background(COLOR_BACKGROUND);
-  tft_string.set("Out");
-  tft.add_rectangle(0, 0, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT, COLOR_WHITE);
-  tft.add_text(tft_string.center(PREHEAT_BTN_WIDTH), 15, COLOR_WHITE, tft_string);
+  tft_string.set("E-");
+  tft.add_rectangle(0, 0, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT, COLOR_YELLOW);
+  tft.add_text(tft_string.center(PREHEAT_BTN_WIDTH), 15, COLOR_YELLOW, tft_string);
   TERN_(TOUCH_SCREEN, touch.add_control(FILAMENT_MOVE, XX_OFFSET + PREHEAT_BTN_WIDTH * 2 + X_SPACING * 2, 80 + YY_OFFSET + PREHEAT_BTN_HEIGHT * 2 + Y_SPACING * 2, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT, -1));
 
 
@@ -1089,19 +1088,19 @@ void MarlinUI::heater_screen() {
   tft.canvas(10, 330, 120, 64);
   tft.set_background(COLOR_BACKGROUND);
   tft_string.set("Manual");
-  tft.add_rectangle(0, 0, 120, 64, COLOR_WHITE);
-  tft.add_text(tft_string.center(120), 15, COLOR_WHITE, tft_string);
+  tft.add_rectangle(0, 0, 120, 64, COLOR_DARK_ORANGE);
+  tft.add_text(tft_string.center(120), 15, COLOR_DARK_ORANGE, tft_string);
 
   // Cooling
   tft.canvas(190, 330, 120, 64);
   tft.set_background(COLOR_BACKGROUND);
   tft_string.set("Cooling");
-  tft.add_rectangle(0, 0, 120, 64, COLOR_WHITE);
-  tft.add_text(tft_string.center(120), 15, COLOR_WHITE, tft_string);
+  tft.add_rectangle(0, 0, 120, 64, COLOR_AQUA);
+  tft.add_text(tft_string.center(120), 15, COLOR_AQUA, tft_string);
 
   TERN_(TOUCH_SCREEN, touch.add_control(HEAT_EXT, 190, 330, 120, 64, 0));
   TERN_(TOUCH_SCREEN, touch.add_control(HEATER_MANUAL, 10, 330, 120, 64, H_E0));
-  TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH + 25, 410, BACK, imgBack));
+  TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH + 25, 420, BACK, imgBack));
 
 
   // moveAxis(const AxisEnum axis, const int8_t direction)
@@ -1132,13 +1131,12 @@ void MarlinUI::bed_screen() {
   //
 
   tft.canvas(0, 20, 320, 80);
-  tft.add_rectangle(0, 0, 320, 60, COLOR_WHITE);
   tft.set_background(COLOR_BACKGROUND);
   tft_string.set("Bed: ");
   tft_string.add(i16tostr3rj(currentTemperature));
   tft_string.add(" -> ");
   tft_string.add(i16tostr3rj(targetTemperature));
-  tft.add_text(tft_string.center(320), 15, COLOR_WHITE, tft_string);
+  tft.add_text(tft_string.center(320), 15, COLOR_YELLOW, tft_string);
 
   int temp_bed = 0;
   int count = 1;
@@ -1195,18 +1193,18 @@ void MarlinUI::bed_screen() {
   tft.canvas(10, 330, 120, 64);
   tft.set_background(COLOR_BACKGROUND);
   tft_string.set("Manual");
-  tft.add_rectangle(0, 0, 120, 64, COLOR_WHITE);
-  tft.add_text(tft_string.center(120), 15, COLOR_WHITE, tft_string);
+  tft.add_rectangle(0, 0, 120, 64, COLOR_DARK_ORANGE);
+  tft.add_text(tft_string.center(120), 15, COLOR_DARK_ORANGE, tft_string);
 
   // Cooling
   tft.canvas(190, 330, 120, 64);
   tft.set_background(COLOR_BACKGROUND);
   tft_string.set("Cooling");
-  tft.add_rectangle(0, 0, 120, 64, COLOR_WHITE);
-  tft.add_text(tft_string.center(120), 15, COLOR_WHITE, tft_string);
+  tft.add_rectangle(0, 0, 120, 64, COLOR_AQUA);
+  tft.add_text(tft_string.center(120), 15, COLOR_AQUA, tft_string);
   TERN_(TOUCH_SCREEN, touch.add_control(HEAT_BED, 190, 330, 120, 64, 0));
   TERN_(TOUCH_SCREEN, touch.add_control(HEATER_MANUAL, 10, 330, 120, 64, H_BED));
-  TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH + 25, 410, BACK, imgBack));
+  TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH + 25, 420, BACK, imgBack));
 
 }
 
