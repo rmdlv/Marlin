@@ -27,6 +27,31 @@ jobs:
         pip install --upgrade platformio
     - name: Run PlatformIO
       run: pio run -e mks_robin_nano_v3
+    - name: Display fetched artifacts
+      run: ls -la .pio/build/mks_robin_nano_v3 | grep firmware
+    - name: Zip artifact for deployment
+      run: zip -j firmware.zip .pio/build/mks_robin_nano_v3/firmware.bin
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release firmware ${{ github.ref }}
+        draft: false
+        prerelease: false
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} 
+        asset_path: ./firmware.zip
+        asset_name: firmware.zip
+        asset_content_type: application/zip
+
 on:
   push:
     tags:
