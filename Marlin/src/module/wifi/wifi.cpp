@@ -1483,6 +1483,8 @@ static void file_first_msg_handle(uint8_t * msg, uint16_t msgLen) {
   card.cdroot();
   upload_file.close();
   const char * const fname = card.diveToFile(false, upload_curDir, saveFilePath);
+  
+  if (card.fileExists(fname)) card.removeFile(fname); // delete file if exists
 
   if (!upload_file.open(upload_curDir, fname, O_CREAT | O_APPEND | O_WRITE | O_TRUNC)) {
     upload_result = 2;  // upload error
