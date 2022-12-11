@@ -1,16 +1,4 @@
-<style>
-    #flying_bear_logo {
-      -webkit-filter: invert(0%);
-      filter: invert(0%);
-    }
-    @media (prefers-color-scheme: dark) {
-      #flying_bear_logo {
-        -webkit-filter: invert(100%);
-        filter: invert(100%);
-      }
-    }
-  </style>
-<p align="center"><img src="buildroot/share/pixmaps/logo/flying_bear.png" height="250" id="flying_bear_logo" alt="Flying Bear logo" /></p>
+<p align="center"><img src="buildroot/share/pixmaps/logo/flying_bear.png" height="250" style="@media (prefers-color-scheme: dark) {-webkit-filter: invert(100%); filter: invert(100%); }" alt="Flying Bear logo" /></p>
 
 <h1 align="center">Flying Bear 3D Printer Custom Firmware</h1>
 
