@@ -27,15 +27,15 @@ jobs:
         python -m pip install --upgrade pip
         pip install --upgrade platformio
     - name: Build PlatformIO at 104GT-2/104NT
-      env:
-        CONFIGURE_TERMISTOR=13
       run: pio run -e mks_robin_nano_v3
+      env:
+        CONFIGURE_TERMISTOR=5
     - name: Zip artifact for deployment at 104GT-2/104NT
       run: zip -j firmware_104gt_and_stock.zip .pio/build/mks_robin_nano_v3/firmware.bin
     - name: Build PlatformIO at 3950
-      env:
-        CONFIGURE_TERMISTOR=5
       run: pio run -e mks_robin_nano_v3
+      env:
+        CONFIGURE_TERMISTOR=13
     - name: Display fetched artifacts at 3950
       run: ls -la .pio/build/mks_robin_nano_v3 | grep firmware
     - name: Zip artifact for deployment at 3950
