@@ -39,7 +39,7 @@
 
 
 #define DIAG_JUMPERS_REMOVED
-// #define MOTHERBOARD BOARD_LINUX_RAMPS  // Config for Simulator mode
+//#define MOTHERBOARD BOARD_LINUX_RAMPS  // Config for Simulator mode
 
 
 
@@ -551,7 +551,14 @@
  *   999 : Dummy Table that ALWAYS reads 100°C or the temperature defined below.
  *
  */
-#define TEMP_SENSOR_0 5
+#if CONFIGURE_TERMISTOR == 5
+  #define TEMP_SENSOR_0 5
+#elif CONFIGURE_TERMISTOR == 13
+  #define TEMP_SENSOR_0 13
+#else
+  #define TEMP_SENSOR_0 5
+#endif
+
 #define TEMP_SENSOR_1 0
 #define TEMP_SENSOR_2 0
 #define TEMP_SENSOR_3 0

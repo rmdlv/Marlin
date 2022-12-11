@@ -1,5 +1,6 @@
 name: FB-G6-release
 
+
 jobs:
   build:
 
@@ -25,12 +26,20 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install --upgrade platformio
-    - name: Run PlatformIO
+    - name: Build PlatformIO at 104GT-2/104NT
+      env:
+        CONFIGURE_TERMISTOR=13
       run: pio run -e mks_robin_nano_v3
-    - name: Display fetched artifacts
+    - name: Zip artifact for deployment at 104GT-2/104NT
+      run: zip -j firmware_104gt_and_stock.zip .pio/build/mks_robin_nano_v3/firmware.bin
+    - name: Build PlatformIO at 3950
+      env:
+        CONFIGURE_TERMISTOR=5
+      run: pio run -e mks_robin_nano_v3
+    - name: Display fetched artifacts at 3950
       run: ls -la .pio/build/mks_robin_nano_v3 | grep firmware
-    - name: Zip artifact for deployment
-      run: zip -j firmware.zip .pio/build/mks_robin_nano_v3/firmware.bin
+    - name: Zip artifact for deployment at 3950
+      run: zip -j firmware_3950.zip .pio/build/mks_robin_nano_v3/firmware.bin
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -41,15 +50,25 @@ jobs:
         release_name: Release firmware ${{ github.ref }}
         draft: false
         prerelease: false
-    - name: Upload Release Asset
-      id: upload-release-asset 
+    - name: Upload Release Asset at 104GT-2/104NT
+      id: upload-release-asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} 
-        asset_path: ./firmware.zip
-        asset_name: firmware.zip
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./firmware_104gt_and_stock.zip
+        asset_name: firmware_104gt_and_stock.zip
+        asset_content_type: application/zip
+    - name: Upload Release Asset at 3950
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./firmware_3950.zip
+        asset_name: firmware_3950.zip
         asset_content_type: application/zip
 
 on:
