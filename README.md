@@ -60,7 +60,7 @@ platformio run -e simulator_linux_release
 ### Supported 3D Printers
 
   Platform|3D printer
-  --------|---|-------
+  --------|---
   [STM32F407 - STM32F417](https://www.st.com/en/microcontrollers-microprocessors/stm32f407-417.html) ARM® Cortex-M4|Flying bear Ghost 6
 
 ## FB-G6 (Marlin) Support
