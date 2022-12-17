@@ -113,6 +113,7 @@ void GcodeSuite::M1001() {
 
   // Re-select the last printed file in the UI
   TERN_(SD_REPRINT_LAST_SELECTED_FILE, ui.reselect_last_file());
+  // TERN_(FINISH_SCREEN, MarlinUi::finish_screen());
 }
 
 #endif // SDSUPPORT

@@ -65,6 +65,7 @@ enum TouchControlType : uint16_t {
   HEAT_BED,
   FILAMENT_MOVE,
   // DEBUGING,
+  RETRY_PRINT,
   FAN,
   FEEDRATE,
   FLOWRATE,

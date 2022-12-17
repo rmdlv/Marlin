@@ -98,6 +98,7 @@
 #endif
 
 #define SAFE_BABYSTEP_TO_Z_OFFSET
+#define FINISH_SCREEN
 
 /**
  * Select the serial port on the board to use for communication with the host.

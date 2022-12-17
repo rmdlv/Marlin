@@ -591,6 +591,7 @@ public:
     static bool on_status_screen() { return currentScreen == status_screen; }
     static bool on_heater_screen() { return currentScreen == heater_screen; }
     static bool on_bed_screen() { return currentScreen == bed_screen; }
+    static bool on_finish_screen() {return currentScreen == finish_screen; }
     FORCE_INLINE static void run_current_screen() { (*currentScreen)(); }
 
     #if ENABLED(LIGHTWEIGHT_UI)
@@ -785,6 +786,8 @@ public:
   static void heater_screen();
 
   static void bed_screen();
+
+  static void finish_screen();
 
 private:
 

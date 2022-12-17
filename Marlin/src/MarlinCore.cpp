@@ -387,12 +387,8 @@ void startOrResumeJob() {
       marlin_state = MF_RUNNING;          // Signal to stop trying
       TERN_(PASSWORD_AFTER_SD_PRINT_END, password.lock_machine());
       TERN_(DGUS_LCD_UI_MKS, ScreenHandler.SDPrintingFinished());
-      buzzer.tick();
-      delay(200);
-      buzzer.tick();
-      delay(200);
-      buzzer.tick();
-    }
+      }
+    ui.goto_screen((screenFunc_t)ui.finish_screen);
   }
 
 #endif // SDSUPPORT
@@ -1685,7 +1681,20 @@ void loop() {
 
     #if ENABLED(SDSUPPORT)
       if (card.flag.abort_sd_printing) abortSDPrinting();
-      if (marlin_state == MF_SD_COMPLETE) finishSDPrinting();
+      if (marlin_state == MF_SD_COMPLETE) {
+        finishSDPrinting();
+        if (ui.sound_on) {
+          buzzer.click(500);
+          delay(150);
+          buzzer.click(500);
+          delay(150);
+          buzzer.click(500);
+        }
+        // ui.reselect_last_file();
+        // ui.clear_lcd();
+        // MarlinUI::finish_screen();
+        // if sonud is on do BEEP !!!!!!!!!!!!!!!!!!
+        }
     #endif
 
     queue.advance();

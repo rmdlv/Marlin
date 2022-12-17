@@ -203,6 +203,7 @@ void Touch::touch(touch_control_t *control) {
           tft.set_background(COLOR_BACKGROUND);
           tft.add_text(0, 0, COLOR_YELLOW, "Too Cold");
         } else {
+          quickstop_stepper();
           queue.inject("G91\nG1 E200 F80\nG90");
           tft.canvas(20, 420, 200, 24);
           tft.set_background(COLOR_BACKGROUND);
@@ -216,6 +217,7 @@ void Touch::touch(touch_control_t *control) {
           tft.set_background(COLOR_BACKGROUND);
           tft.add_text(0, 0, COLOR_YELLOW, "Too Cold");
         } else {
+          quickstop_stepper();
           queue.inject("G91\nG1 E-200 F80\nG90");
           tft.canvas(20, 420, 200, 30);
           tft.set_background(COLOR_BACKGROUND);
@@ -284,6 +286,14 @@ void Touch::touch(touch_control_t *control) {
       #endif
 
       break;
+
+    case RETRY_PRINT: 
+    //   //Print file again
+      card.openAndPrintFile(card.filename);
+      ui.return_to_status();
+      ui.reset_status();       
+      break;
+
     case FAN:
       ui.clear_lcd();
       static uint8_t fan, fan_speed;
