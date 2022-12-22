@@ -1194,26 +1194,42 @@ void MarlinUI::bed_screen() {
 
 
 void MarlinUI::finish_screen(){
-  // delay(2000);
-  // tft.queue.reset();
-  TERN_(TOUCH_SCREEN, touch.clear());
-  defer_status_screen(true);
+  char buffer[22]; 
 
-  tft.canvas(0, 20, 320, 160);
+  TERN_(TOUCH_SCREEN, touch.clear());
+  defer_status_screen(true);  //Blocking Autoback to status screen
+
+  //Print Head
+  tft.canvas(0, 20, 320, 200);
   tft.set_background(COLOR_BACKGROUND);
   tft_string.set("Printing Finished");
   tft.add_text(tft_string.center(320), 15, COLOR_YELLOW, tft_string);
-  // card.longest_filename()
-  tft_string.set(card.longest_filename());
-  tft.add_text(tft_string.center(320), 100, COLOR_WHITE, tft_string);
+  
+  //Print Time
+  duration_t(print_job_timer.duration()).toString(buffer);
+  tft_string.set(buffer);
+  tft.add_text(tft_string.center(320), 90, COLOR_YELLOW, tft_string);
 
-  tft.canvas(80, 330, 160, 64);
+  //Print Full filename
+  tft_string.set(card.longest_filename());
+  tft.add_text(tft_string.center(320), 150, COLOR_WHITE, tft_string);
+
+  //Print Button
+  tft.canvas(150, 330, 140, 64);
   tft.set_background(COLOR_BACKGROUND);
   tft_string.set("Print Again");
-  tft.add_rectangle(0, 0, 160, 64, COLOR_DARK_ORANGE);
-  tft.add_text(tft_string.center(160), 15, COLOR_ORANGE, tft_string);
-  TERN_(TOUCH_SCREEN, touch.add_control(RETRY_PRINT, 80, 330, 160, 64));  
-  TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH + 25, 420, BACK, imgBack));
+  tft.add_rectangle(0, 0, 140, 64, COLOR_DARK_ORANGE);
+  tft.add_text(tft_string.center(140), 15, COLOR_ORANGE, tft_string);
+  TERN_(TOUCH_SCREEN, touch.add_control(RETRY_PRINT, 150, 330, 140, 64));
+
+  //Print Back Button
+  tft.canvas(10, 330, 140, 64);
+  tft.set_background(COLOR_BACKGROUND);
+  tft_string.set("Back");
+  tft.add_rectangle(0, 0, 140, 64, COLOR_DARK_ORANGE);
+  tft.add_text(tft_string.center(140), 15, COLOR_ORANGE, tft_string);
+  TERN_(TOUCH_SCREEN, touch.add_control(BACK, 10, 330, 140, 64));
+  // TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH + 25, 420, BACK, imgBack));
 
 }
 

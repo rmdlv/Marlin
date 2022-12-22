@@ -3775,7 +3775,7 @@
 // @section custom config menu
 
 // Custom Menu: Configuration Menu
-#define CUSTOM_MENU_CONFIG
+// #define CUSTOM_MENU_CONFIG
 #if ENABLED(CUSTOM_MENU_CONFIG)
   //#define CUSTOM_MENU_CONFIG_TITLE "Custom Commands"
   #define CUSTOM_MENU_CONFIG_SCRIPT_DONE "M117 Wireless Script Done"
