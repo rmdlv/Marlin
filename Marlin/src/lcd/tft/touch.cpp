@@ -286,14 +286,14 @@ void Touch::touch(touch_control_t *control) {
       #endif
 
       break;
-
+    #ifdef FINISH_SCREEN
     case RETRY_PRINT: 
     //   //Print file again
       card.openAndPrintFile(card.filename);
       ui.return_to_status();
       ui.reset_status();       
       break;
-
+    #endif
     case FAN:
       ui.clear_lcd();
       static uint8_t fan, fan_speed;

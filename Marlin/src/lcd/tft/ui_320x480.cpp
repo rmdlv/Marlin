@@ -1192,7 +1192,7 @@ void MarlinUI::bed_screen() {
 
 }
 
-
+#ifdef FINISH_SCREEN
 void MarlinUI::finish_screen(){
   char buffer[22]; 
 
@@ -1232,6 +1232,6 @@ void MarlinUI::finish_screen(){
   // TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH + 25, 420, BACK, imgBack));
 
 }
-
+#endif
 
 #endif //HAS_UI_320x480
