@@ -1215,12 +1215,12 @@ void MarlinUI::finish_screen(){
   tft.add_text(tft_string.center(320), 150, COLOR_WHITE, tft_string);
 
   //Print Button
-  tft.canvas(150, 330, 140, 64);
+  tft.canvas(170, 330, 140, 64);
   tft.set_background(COLOR_BACKGROUND);
   tft_string.set("Print Again");
   tft.add_rectangle(0, 0, 140, 64, COLOR_DARK_ORANGE);
   tft.add_text(tft_string.center(140), 15, COLOR_ORANGE, tft_string);
-  TERN_(TOUCH_SCREEN, touch.add_control(RETRY_PRINT, 150, 330, 140, 64));
+  TERN_(TOUCH_SCREEN, touch.add_control(RETRY_PRINT, 170, 330, 140, 64));
 
   //Print Back Button
   tft.canvas(10, 330, 140, 64);
