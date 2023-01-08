@@ -176,9 +176,9 @@
     #define SUICIDE_PIN                     PB2
     #define SUICIDE_PIN_STATE               LOW
   #else
-    #define PS_ON_PIN                       PB2   // PW_OFF
+    #define PS_ON_PIN                       PB10   // PW_OFF
   #endif
-  #define KILL_PIN                          PA13  // PW_DET
+  #define KILL_PIN                          PB11  // PW_DET
   #define KILL_PIN_STATE                    HIGH
 #endif
 

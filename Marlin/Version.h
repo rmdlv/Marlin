@@ -28,7 +28,8 @@
 /**
  * Marlin release version identifier
  */
-#define SHORT_BUILD_VERSION "FBG6-2.1.1"
+#define SHORT_BUILD_VERSION "FBG6-2.1.1-1.7.3-3950"
+// #define SHORT_BUILD_VERSION "FBG6-2.1.1-1.7.3-104gt-2"
 
 /**
  * Verbose version identifier which should contain a reference to the location

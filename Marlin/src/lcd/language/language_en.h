@@ -49,6 +49,7 @@ namespace Language_en {
   LSTR LANGUAGE                           = _UxGT("English");
 
   // These strings should be translated
+  LSTR MSG_WIFI_LOAD_FROM_FILE            = _UxGT("Load Wi-Fi from File");
   LSTR WELCOME_MSG                        = MACHINE_NAME _UxGT(" Ready.");
   LSTR MSG_YES                            = _UxGT("YES");
   LSTR MSG_NO                             = _UxGT("NO");
@@ -631,6 +632,8 @@ namespace Language_en {
   LSTR MSG_DELTA_RADIUS                   = _UxGT("Radius");
   LSTR MSG_INFO_MENU                      = _UxGT("About Printer");
   LSTR MSG_INFO_PRINTER_MENU              = _UxGT("Printer Info");
+  LSTR MSG_INFO_SSID                      = _UxGT("SSID");
+  LSTR MSG_INFO_IP                        = _UxGT("IP");
   LSTR MSG_3POINT_LEVELING                = _UxGT("3-Point Leveling");
   LSTR MSG_LINEAR_LEVELING                = _UxGT("Linear Leveling");
   LSTR MSG_BILINEAR_LEVELING              = _UxGT("Bilinear Leveling");
@@ -639,6 +642,7 @@ namespace Language_en {
   LSTR MSG_MESH_DONE                      = _UxGT("Mesh probing done");
   LSTR MSG_INFO_STATS_MENU                = _UxGT("Printer Stats");
   LSTR MSG_INFO_BOARD_MENU                = _UxGT("Board Info");
+  LSTR MSG_INFO_WIFI_MENU                 = _UxGT("Wi-Fi Info");
   LSTR MSG_INFO_THERMISTOR_MENU           = _UxGT("Thermistors");
   LSTR MSG_INFO_EXTRUDERS                 = _UxGT("Extruders");
   LSTR MSG_INFO_BAUDRATE                  = _UxGT("Baud");

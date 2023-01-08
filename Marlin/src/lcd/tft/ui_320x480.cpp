@@ -344,11 +344,21 @@ void MarlinUI::draw_status_screen() {
 
   #if ENABLED(TOUCH_SCREEN)
     add_control(236, 220, menu_main, imgSettings);                                                      //MENU         !!!!!!!!!!!!!!!!
-    #ifdef MKS_WIFI_MODULE
-      add_control(128, 220, wifi_screen, imgWifi, wifi_link_state == WIFI_CONNECTED);
-      // wifi_link_state == WIFI_CONNECTED
-    #endif
-    //add_control(128, 190, menu_led, imgChamber);
+    // if (!printingIsActive){
+    //   #ifdef MKS_WIFI_MODULE
+    //     add_control(128, 220, wifi_screen, imgWifi, wifi_link_state == WIFI_CONNECTED);
+    //   #endif
+    // } else {
+      if (!printingIsPaused()) {
+        TERN_(TOUCH_SCREEN, add_control(128, 220, PAUSE_PRINT, imgPause, !printingIsPaused(), COLOR_GREEN, COLOR_RED));
+      } else {
+        TERN_(TOUCH_SCREEN, add_control(128, 220, RESUME_PRINT, imgPause, printingIsPaused(), COLOR_RED, COLOR_GREEN));
+      }
+    // }
+    // TERN_(TOUCH_SCREEN, touch.add_control(PLAY_PAUSE, 10, 330, 120, 64, H_BED));
+    // TERN_(SDSUPPORT, add_control(128, 220, pause_screen, imgPAUSE, !printingIsActive(), COLOR_CONTROL_ENABLED, card.isMounted() && printingIsActive() ? COLOR_BUSY : COLOR_CONTROL_DISABLED));
+    // void startOrResumeJob()
+    // if (!printingIsPaused())
     TERN_(SDSUPPORT, add_control(20, 220, menu_media, imgSD, !printingIsActive(), COLOR_CONTROL_ENABLED, card.isMounted() && printingIsActive() ? COLOR_BUSY : COLOR_CONTROL_DISABLED));
   #endif                                                                                                  //SD           !!!!!!!!!!!!!!!!
 
@@ -960,6 +970,13 @@ void MarlinUI::move_axis_screen() {
   drawBtn(xplus_x-10, y-30, "off", (intptr_t)disable_steppers, imgCancel, COLOR_WHITE, !busy);
 
   TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH + 25, y-30, BACK, imgBack));
+  
+  tft.canvas(120, 17, 80, 46);
+  tft.set_background(COLOR_BACKGROUND);
+  tft_string.set("Level");
+  tft.add_rectangle(0, 0, 80, 46, COLOR_DARK_ORANGE);
+  tft.add_text(tft_string.center(80), 8, COLOR_ORANGE, tft_string);
+  TERN_(TOUCH_SCREEN, touch.add_control(TRAMMING, 120, 17, 80, 46));
 }
 
 #ifdef MKS_WIFI_MODULE

@@ -100,6 +100,7 @@ enum MarlinImage : uint8_t {
   imgBtn52Rounded,
   imgBtn39Rounded,
   imgWifi,
+  imgPause,
   imgCount,
   noImage = imgCount,
   imgPageUp = imgLeft,

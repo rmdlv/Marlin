@@ -113,6 +113,7 @@ const tImage Images[imgCount] = {
   BtnRounded_64x52x4,
   BtnRounded_42x39x4,
   Wifi_64x64x4,
+  Pause_64x64x4,
 };
 
 #endif // HAS_GRAPHICAL_TFT

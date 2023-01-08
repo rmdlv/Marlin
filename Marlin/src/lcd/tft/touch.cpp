@@ -196,39 +196,57 @@ void Touch::touch(touch_control_t *control) {
     case FILAMENT_MOVE:
       int8_t direction;
       direction = control->data;
-      //push 100mm fila
+      //push 200mm fila
       if (direction == 1) {
-        if (thermalManager.wholeDegHotend(H_E0) < 180) {
-          tft.canvas(20, 420, 200, 30);
-          tft.set_background(COLOR_BACKGROUND);
-          tft.add_text(0, 0, COLOR_YELLOW, "Too Cold");
+        if (!printingIsActive()) {
+          if (thermalManager.wholeDegHotend(H_E0) < EXTRUDE_MINTEMP) {
+            tft.canvas(20, 420, 200, 40);
+            tft.set_background(COLOR_BACKGROUND);
+            tft.add_text(0, 0, COLOR_YELLOW, "Too Cold");
+          } else {
+            quickstop_stepper();
+            queue.inject("G91\nG1 E200 F150\nG90");
+            tft.canvas(20, 420, 200, 40);
+            tft.set_background(COLOR_BACKGROUND);
+            tft.add_text(0, 0, COLOR_YELLOW, "Input 200mm");
+          }
         } else {
-          quickstop_stepper();
-          queue.inject("G91\nG1 E200 F80\nG90");
-          tft.canvas(20, 420, 200, 24);
+          tft.canvas(20, 420, 200, 40);
           tft.set_background(COLOR_BACKGROUND);
-          tft.add_text(0, 0, COLOR_YELLOW, "Input 200mm");
+          tft.add_text(0, 0, COLOR_YELLOW, "Print is Active");
         }
       }
-        //pull 100mm fila
+      //pull 200mm fila
       if (direction == -1) {
-        if (thermalManager.wholeDegHotend(H_E0) < 180) {
-          tft.canvas(20, 420, 200, 30);
-          tft.set_background(COLOR_BACKGROUND);
-          tft.add_text(0, 0, COLOR_YELLOW, "Too Cold");
+        if (!printingIsActive()) {        
+          if (thermalManager.wholeDegHotend(H_E0) < EXTRUDE_MINTEMP) {
+            tft.canvas(20, 420, 200, 40);
+            tft.set_background(COLOR_BACKGROUND);
+            tft.add_text(0, 0, COLOR_YELLOW, "Too Cold");
+          } else {
+            quickstop_stepper();
+            queue.inject("G91\nG1 E-200 F150\nG90");
+            tft.canvas(20, 420, 200, 40);
+            tft.set_background(COLOR_BACKGROUND);
+            tft.add_text(0, 0, COLOR_YELLOW, "Output 200mm");
+          }
         } else {
-          quickstop_stepper();
-          queue.inject("G91\nG1 E-200 F80\nG90");
-          tft.canvas(20, 420, 200, 30);
+          tft.canvas(20, 420, 200, 40);
           tft.set_background(COLOR_BACKGROUND);
-          tft.add_text(0, 0, COLOR_YELLOW, "Output 200mm");
+          tft.add_text(0, 0, COLOR_YELLOW, "Print is Active");
         }
       }
       if (direction == 0) {
-        tft.canvas(20, 420, 200, 30);
-        tft.set_background(COLOR_BACKGROUND);
-        tft.add_text(0, 0, COLOR_YELLOW, "Stoping Extruder");
-        quickstop_stepper();
+        if (!printingIsActive()) {
+          tft.canvas(20, 420, 200, 40);
+          tft.set_background(COLOR_BACKGROUND);
+          tft.add_text(0, 0, COLOR_YELLOW, "Stoping Extruder");
+          quickstop_stepper();
+        } else {
+          tft.canvas(20, 420, 200, 40);
+          tft.set_background(COLOR_BACKGROUND);
+          tft.add_text(0, 0, COLOR_YELLOW, "Print is Active");
+        }
       }
       break;
     case HEATER: 
@@ -243,16 +261,11 @@ void Touch::touch(touch_control_t *control) {
     case HEAT_EXT: 
       int16_t ext_temp;
       ext_temp = control->data;
-      // if (ext_temp == 0) {
-      //   thermalManager.cooldown();
-      // } else {
-        thermalManager.setTargetHotend(ext_temp, H_E0);
-      // }
+      thermalManager.setTargetHotend(ext_temp, H_E0);
       break;
     case HEAT_BED: 
       int16_t bed_temp;
       bed_temp = control->data;
-      // thermalManager.setTargetHotend(ext_temp, H_E0);
       thermalManager.setTargetBed(bed_temp);
       break;    
     case HEATER_MANUAL:
@@ -287,8 +300,12 @@ void Touch::touch(touch_control_t *control) {
 
       break;
     #ifdef FINISH_SCREEN
+
+    case TRAMMING: 
+      _lcd_level_bed_corners();
+      break;
     case RETRY_PRINT: 
-    //   //Print file again
+    //Print file again
       card.openAndPrintFile(card.filename);
       ui.return_to_status();
       ui.reset_status();       
@@ -314,6 +331,9 @@ void Touch::touch(touch_control_t *control) {
         MenuItem_int3::action(GET_TEXT_F(MSG_FLOW_N), &planner.flow_percentage[MenuItemBase::itemIndex], 10, 999, []{ planner.refresh_e_factor(MenuItemBase::itemIndex); });
       #endif
       break;
+
+    case RESUME_PRINT: ui.resume_print(); break;
+    case PAUSE_PRINT: ui.pause_print(); break;
 
     #if ENABLED(AUTO_BED_LEVELING_UBL)
       case UBL: hold(control, UBL_REPEAT_DELAY); ui.encoderPosition += control->data; break;

@@ -68,6 +68,9 @@ enum TouchControlType : uint16_t {
   #ifdef FINISH_SCREEN
   RETRY_PRINT,
   #endif
+  RESUME_PRINT,
+  PAUSE_PRINT,
+  TRAMMING,
   FAN,
   FEEDRATE,
   FLOWRATE,
