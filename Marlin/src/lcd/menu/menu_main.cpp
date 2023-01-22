@@ -34,6 +34,9 @@
 #include "../../module/printcounter.h"
 #include "../../module/stepper.h"
 #include "../../sd/cardreader.h"
+#include "../../feature/bedlevel/bedlevel.h"
+#include "../../module/motion.h"
+#include "../../module/planner.h"
 
 #if ENABLED(PSU_CONTROL)
   #include "../../feature/power.h"
@@ -242,6 +245,10 @@ void menu_main() {
 
   START_MENU();
   BACK_ITEM(MSG_INFO_SCREEN);
+
+  // Test Z offset Zr !!!!!!
+  #define LCD_Z_OFFSET_TYPE float42_52
+  EDIT_ITEM(LCD_Z_OFFSET_TYPE, MSG_BED_Z, &bedlevel.z_offset, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
 
   #if ENABLED(SDSUPPORT)
 

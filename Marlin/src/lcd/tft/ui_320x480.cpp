@@ -1263,6 +1263,57 @@ void MarlinUI::bed_screen() {
 
 }
 
+void MarlinUI::fan_screen() {
+
+  TERN_(TOUCH_SCREEN, touch.clear());
+
+  defer_status_screen(true);
+  //
+
+  tft.canvas(0, 20, 320, 80);
+  tft.set_background(COLOR_BACKGROUND);
+  tft_string.set("Model Fan: ");
+  tft_string.add(ui8tostr4pctrj(thermalManager.fan_speed[0]));
+  tft.add_text(tft_string.center(320), 15, COLOR_YELLOW, tft_string);
+
+  uint8_t set_fan_speed;
+  int count = 0;
+  uint8_t fan_preset_numbers = 4;
+    for (uint8_t i =0; i <= 2; i++){
+      for (uint8_t j=0; j <= 2; j++){
+        if (count <= fan_preset_numbers){
+          tft.canvas(XX_OFFSET + PREHEAT_BTN_WIDTH * j + X_SPACING * j, 80 + YY_OFFSET + PREHEAT_BTN_HEIGHT * i + Y_SPACING * i, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT);
+          tft.set_background(COLOR_BACKGROUND);
+          // label = preheat_label[count];
+          if (count == fan_preset_numbers + 1){
+            tft_string.set("Set");
+            tft.add_rectangle(0, 0, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT, COLOR_WHITE);
+            tft.add_text(tft_string.center(PREHEAT_BTN_WIDTH), 15, COLOR_WHITE, tft_string);
+            TERN_(TOUCH_SCREEN, touch.add_control(FAN_MANUAL, XX_OFFSET + PREHEAT_BTN_WIDTH * j + X_SPACING * j, 80 + YY_OFFSET + PREHEAT_BTN_HEIGHT * i + Y_SPACING * i, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT));
+          } else {
+            tft_string.set(ui8tostr4pctrj(255/fan_preset_numbers*count));
+            set_fan_speed = 255/fan_preset_numbers*count;
+            tft.add_rectangle(0, 0, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT, COLOR_WHITE);
+            tft.add_text(tft_string.center(PREHEAT_BTN_WIDTH), 15, COLOR_WHITE, tft_string);
+            TERN_(TOUCH_SCREEN, touch.add_control(SET_FAN_SPEED, XX_OFFSET + PREHEAT_BTN_WIDTH * j + X_SPACING * j, 80 + YY_OFFSET + PREHEAT_BTN_HEIGHT * i + Y_SPACING * i, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT, set_fan_speed));
+          }
+          count++;
+        }
+      }
+    }
+
+  // Preheat Manual
+  // tft.canvas(10, 330, 120, 64);
+  // tft.set_background(COLOR_BACKGROUND);
+  // tft_string.set("Manual");
+  // tft.add_rectangle(0, 0, 120, 64, COLOR_DARK_ORANGE);
+  // tft.add_text(tft_string.center(120), 15, COLOR_DARK_ORANGE, tft_string);
+
+  // TERN_(TOUCH_SCREEN, touch.add_control(FAN_MANUAL, 10, 330, 120, 64));
+  TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH + 25, 420, BACK, imgBack));
+
+}
+
 #ifdef FINISH_SCREEN
 void MarlinUI::finish_screen(){
   char buffer[22]; 

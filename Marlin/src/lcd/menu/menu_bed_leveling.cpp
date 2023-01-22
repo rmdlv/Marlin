@@ -247,15 +247,6 @@ void menu_bed_leveling() {
     if (!is_homed) GCODES_ITEM(MSG_AUTO_HOME, FPSTR(G28_STR));
   #endif
 
-  // Level Bed          Zr !!!!!!!!!!!
-  // #if EITHER(PROBE_MANUALLY, MESH_BED_LEVELING)
-  //   // Manual leveling uses a guided procedure
-  //   SUBMENU(MSG_LEVEL_BED, _lcd_level_bed_continue);
-  // #else
-  //   // Automatic leveling can just run the G-code
-  //   GCODES_ITEM(MSG_LEVEL_BED, is_homed ? F("G29") : F("G29N"));
-  // #endif
-
   #if ENABLED(MESH_EDIT_MENU)
     if (is_valid) SUBMENU(MSG_EDIT_MESH, menu_edit_mesh);
   #endif

@@ -199,7 +199,7 @@ void Touch::touch(touch_control_t *control) {
             tft.add_text(0, 0, COLOR_YELLOW, "Too Cold");
           } else {
             quickstop_stepper();
-            queue.inject("G91\nG1 E200 F150\nG90");
+            queue.inject_P("G91\nG1 E200 F150\nG90");
             tft.canvas(20, 420, 200, 40);
             tft.set_background(COLOR_BACKGROUND);
             tft.add_text(0, 0, COLOR_YELLOW, "Input 200mm");
@@ -219,7 +219,7 @@ void Touch::touch(touch_control_t *control) {
             tft.add_text(0, 0, COLOR_YELLOW, "Too Cold");
           } else {
             quickstop_stepper();
-            queue.inject("G91\nG1 E-200 F150\nG90");
+            queue.inject_P("G91\nG1 E-200 F150\nG90");
             tft.canvas(20, 420, 200, 40);
             tft.set_background(COLOR_BACKGROUND);
             tft.add_text(0, 0, COLOR_YELLOW, "Output 200mm");
@@ -314,7 +314,17 @@ void Touch::touch(touch_control_t *control) {
       ui.reset_status();       
       break;
     #endif
-    case FAN:
+    case SET_FAN_SPEED:
+      static int8_t set_fan_speed;
+      set_fan_speed = control->data;
+      if ((set_fan_speed >= 0) || (set_fan_speed <=255)) {
+        thermalManager.set_fan_speed(0, set_fan_speed);
+      }
+      break;
+    case FAN: 
+      ui.goto_screen((screenFunc_t)ui.fan_screen);
+      break;
+    case FAN_MANUAL:
       ui.clear_lcd();
       static uint8_t fan, fan_speed;
       fan = 0;

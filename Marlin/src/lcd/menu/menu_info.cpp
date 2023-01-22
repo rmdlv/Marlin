@@ -286,9 +286,58 @@ void menu_info_wifi() {
   } else{
     STATIC_ITEM_F(F("Not Connected"), SS_CENTER);
   }
-  // ACTION_ITEM(MSG_WIFI_LOAD_FROM_FILE, ui.wifi_load_from_file);
+
   END_SCREEN();  
 }
+
+void menu_info_wifi_load() {
+
+  if (ui.use_click()) return ui.go_back();
+  // !!!!!!!!!!!!!!  Zr TEST !!!!!!!!!!!
+
+
+  SdBaseFile Wifi_cfg_file;
+
+  // int16_t SdBaseFile::fgets(char *str, int16_t num, char *delim);
+
+  // if (!file.open(&root, EEPROM_FILENAME, O_RDONLY))
+  // return true; // false aborts the save
+
+  // int bytes_read = file.read(HAL_eeprom_data, MARLIN_EEPROM_SIZE);
+  // if (bytes_read < 0) return false;
+  // for (; bytes_read < MARLIN_EEPROM_SIZE; bytes_read++)
+  // HAL_eeprom_data[bytes_read] = 0xFF;
+  // file.close();
+  // return true;
+
+
+  //  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  START_SCREEN();
+
+  if (wifi_link_state == WIFI_CONNECTED) {
+    PSTRING_ITEM_F(F("SSID_start: "), wifiPara.ap_name, SS_CENTER);
+    PSTRING_ITEM_F(F("IP_start: "), ipPara.ip_addr, SS_CENTER);
+    char ap_name_test[11] = "Zartest";
+    char ap_keycode_test[11] = "1234567890";
+    // wifiPara.ap_name = "Zartest";
+    strcpy_P(wifiPara.ap_name, PSTR(ap_name_test));
+    // memcpy(wifiPara.ap_name, ap_name_test, sizeof(ap_name_test));
+    // wifiPara.keyCode = "1234567890";
+    strcpy_P(wifiPara.keyCode, PSTR(ap_keycode_test));
+    // memcpy(wifiPara.keyCode, ap_keycode_test, sizeof(ap_keycode_test));
+    STATIC_ITEM_F(F("Done"), SS_CENTER);
+    PSTRING_ITEM_F(F("SSID_end: "), wifiPara.ap_name, SS_CENTER);
+    PSTRING_ITEM_F(F("IP_end: "), ipPara.ip_addr, SS_CENTER);
+    // PSTRING_ITEM(MSG_INFO_SSID, wifiPara.ap_name, SS_CENTER);
+    // PSTRING_ITEM(MSG_INFO_IP, ipPara.ip_addr, SS_CENTER);
+  } else {
+    STATIC_ITEM_F(F("Not Connected"), SS_CENTER);
+  }
+  
+  END_SCREEN();
+
+}
+
 
 //
 // "About Printer" submenu
@@ -305,6 +354,7 @@ void menu_info() {
       SUBMENU(MSG_INFO_THERMISTOR_MENU, menu_info_thermistors);  // Thermistors >
     #endif
     SUBMENU(MSG_INFO_WIFI_MENU, menu_info_wifi);
+    // SUBMENU(F("Load Wi-Fi Settings"), menu_info_wifi_load);
   #endif
 
   #if ENABLED(PRINTCOUNTER)

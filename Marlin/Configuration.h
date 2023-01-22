@@ -423,7 +423,7 @@
  * Enable and connect the power supply to the PS_ON_PIN.
  * Specify whether the power supply is active HIGH or active LOW.
  */
-#define PSU_CONTROL
+// #define PSU_CONTROL
 //#define PSU_NAME "Power Supply"
 
 #if ENABLED(PSU_CONTROL)
@@ -563,7 +563,7 @@
 #elif CONFIGURE_TERMISTOR == 13
   #define TEMP_SENSOR_0 13
 #else
-  #define TEMP_SENSOR_0 13
+  #define TEMP_SENSOR_0 5
 #endif
 
 #define TEMP_SENSOR_1 0
@@ -3220,9 +3220,9 @@
   //#define DISABLE_ENCODER         // Disable the click encoder, if any
   //#define TOUCH_IDLE_SLEEP_MINS 5 // (minutes) Display Sleep after a period of inactivity. Set with M255 S.
 
-#if MOTHERBOARD == BOARD_LINUX_RAMPS
+// #if MOTHERBOARD == BOARD_LINUX_RAMPS
   #define TOUCH_SCREEN_CALIBRATION
-#endif
+// #endif
 
   //#define TOUCH_CALIBRATION_X 12316
   //#define TOUCH_CALIBRATION_Y -8981
