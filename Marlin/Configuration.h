@@ -39,8 +39,8 @@
 
 
 #define DIAG_JUMPERS_REMOVED
-// #define MOTHERBOARD BOARD_LINUX_RAMPS  // Config for Simulator mode
-
+#define MOTHERBOARD BOARD_LINUX_RAMPS  // Config for Simulator mode
+#define SDCARD_EEPROM_EMULATION
 
 
 //===========================================================================
