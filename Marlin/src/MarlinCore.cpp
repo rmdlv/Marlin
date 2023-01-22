@@ -349,7 +349,7 @@ void startOrResumeJob() {
     TERN_(GCODE_REPEAT_MARKERS, repeat.reset());
     TERN_(CANCEL_OBJECTS, cancelable.reset());
     TERN_(LCD_SHOW_E_TOTAL, e_move_accumulator = 0);
-    #if BOTH(LCD_SET_PROGRESS_MANUALLY, USE_M73_REMAINING_TIME)
+    #if BOTH(SET_PROGRESS_MANUALLY, SET_REMAINING_TIME)
       ui.reset_remaining_time();
     #endif
   }
@@ -387,7 +387,7 @@ void startOrResumeJob() {
       marlin_state = MF_RUNNING;          // Signal to stop trying
       TERN_(PASSWORD_AFTER_SD_PRINT_END, password.lock_machine());
       TERN_(DGUS_LCD_UI_MKS, ScreenHandler.SDPrintingFinished());
-      }
+    }
     #ifdef FINISH_SCREEN
     ui.goto_screen((screenFunc_t)ui.finish_screen);
     #endif
@@ -493,7 +493,7 @@ inline void manage_inactivity(const bool no_stepper_sleep=false) {
     }
   #endif
 
-  #if HAS_FREEZE_PIN
+  #if ENABLED(FREEZE_FEATURE)
     stepper.frozen = READ(FREEZE_PIN) == FREEZE_STATE;
   #endif
 
@@ -845,7 +845,7 @@ void idle(bool no_stepper_sleep/*=false*/) {
 
   // Update the Beeper queue
   if (MarlinUI::sound_on) {
-    TERN_(HAS_BEEPER, buzzer.tick());
+  TERN_(HAS_BEEPER, buzzer.tick());
   }
   // Handle UI input / draw events
   TERN(DWIN_CREALITY_LCD, DWIN_Update(), ui.update());
@@ -1692,11 +1692,7 @@ void loop() {
           delay(150);
           buzzer.click(500);
         }
-        // ui.reselect_last_file();
-        // ui.clear_lcd();
-        // MarlinUI::finish_screen();
-        // if sonud is on do BEEP !!!!!!!!!!!!!!!!!!
-        }
+      }
     #endif
 
     queue.advance();

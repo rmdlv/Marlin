@@ -253,11 +253,13 @@ void menu_main() {
       #if ENABLED(MENU_ADDAUTOSTART)
         ACTION_ITEM(MSG_RUN_AUTO_FILES, card.autofile_begin); // Run Auto Files
       #endif
-
+      
       if (card_detected) {
         if (!card_open) {
           #if HAS_SD_DETECT
+          #ifndef DISABLE_CHANGE_MEDIA_MENU
             GCODES_ITEM(MSG_CHANGE_MEDIA, F("M21"));        // M21 Change Media
+          #endif // DISABLE_CHANGE_MEDIA_MENU  
           #else                                             // - or -
             ACTION_ITEM(MSG_RELEASE_MEDIA, []{              // M22 Release Media
               queue.inject(F("M22"));
@@ -268,7 +270,9 @@ void menu_main() {
               #endif
             });
           #endif
-          SUBMENU(MSG_MEDIA_MENU, MEDIA_MENU_GATEWAY);      // Media Menu (or Password First)
+          #ifndef DISABLE_PRINT_MEDIA_MENU
+            SUBMENU(MSG_MEDIA_MENU, MEDIA_MENU_GATEWAY);      // Media Menu (or Password First)
+          #endif // DISABLE_PRINT_MEDIA_MENU
         }
       }
       else {
@@ -277,6 +281,7 @@ void menu_main() {
         #else
           GCODES_ITEM(MSG_ATTACH_MEDIA, F("M21"));          // M21 Attach Media
         #endif
+      
       }
     };
 
@@ -323,8 +328,9 @@ void menu_main() {
     #if ENABLED(PREHEAT_SHORTCUT_MENU_ITEM)
       SUBMENU(MSG_PREHEAT_CUSTOM, menu_preheat_only);
     #endif
-
+  #ifndef DISABLE_MOTION_MENU
     SUBMENU(MSG_MOTION, menu_motion);
+  #endif 
   }
 
   #if BOTH(ADVANCED_PAUSE_FEATURE, DISABLE_ENCODER)
@@ -335,9 +341,11 @@ void menu_main() {
     SUBMENU(MSG_CUTTER(MENU), STICKY_SCREEN(menu_spindle_laser));
   #endif
 
-  #if HAS_TEMPERATURE
-    SUBMENU(MSG_TEMPERATURE, menu_temperature);
-  #endif
+  #ifndef DISABLE_TEMPERATURE_MENU
+    #if HAS_TEMPERATURE
+      SUBMENU(MSG_TEMPERATURE, menu_temperature);
+    #endif
+  #endif 
 
   #if HAS_POWER_MONITOR
     SUBMENU(MSG_POWER_MONITOR, menu_power_monitor);

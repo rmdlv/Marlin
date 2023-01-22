@@ -305,7 +305,7 @@ void menu_info() {
       SUBMENU(MSG_INFO_THERMISTOR_MENU, menu_info_thermistors);  // Thermistors >
     #endif
     SUBMENU(MSG_INFO_WIFI_MENU, menu_info_wifi);
-    #endif
+  #endif
 
   #if ENABLED(PRINTCOUNTER)
     SUBMENU(MSG_INFO_STATS_MENU, menu_info_stats);               // Printer Stats >

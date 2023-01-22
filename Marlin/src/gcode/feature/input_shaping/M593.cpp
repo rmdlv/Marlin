@@ -59,6 +59,7 @@ void GcodeSuite::M593() {
              seen_Y = TERN0(INPUT_SHAPING_Y, parser.seen_test('Y')),
              for_X = seen_X || TERN0(INPUT_SHAPING_X, (!seen_X && !seen_Y)),
              for_Y = seen_Y || TERN0(INPUT_SHAPING_Y, (!seen_X && !seen_Y));
+
   if (parser.seen('D')) {
     const float zeta = parser.value_float();
     if (WITHIN(zeta, 0, 1)) {
@@ -71,13 +72,13 @@ void GcodeSuite::M593() {
 
   if (parser.seen('F')) {
     const float freq = parser.value_float();
-    constexpr float max_freq = float(uint32_t(STEPPER_TIMER_RATE) / 2) / shaping_time_t(-2);
-    if (freq == 0.0f || freq > max_freq) {
+    constexpr float min_freq = float(uint32_t(STEPPER_TIMER_RATE) / 2) / shaping_time_t(-2);
+    if (freq == 0.0f || freq > min_freq) {
       if (for_X) stepper.set_shaping_frequency(X_AXIS, freq);
       if (for_Y) stepper.set_shaping_frequency(Y_AXIS, freq);
     }
     else
-      SERIAL_ECHOLNPGM("?Frequency (F) must be greater than ", max_freq, " or 0 to disable");
+      SERIAL_ECHOLNPGM("?Frequency (F) must be greater than ", min_freq, " or 0 to disable");
   }
 }
 

@@ -64,9 +64,12 @@ const tImage Cancel_64x64x4         = { (void *)cancel_64x64x4, 64, 64, GREYSCAL
 const tImage Increase_64x64x4       = { (void *)increase_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Decrease_64x64x4       = { (void *)decrease_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Pause_64x64x4          = { (void *)pause_64x64x4, 64, 64, GREYSCALE4 };
+const tImage Move_64x64x4           = { (void *)move_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Wifi_64x64x4           = { (void *)wifi_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Feedrate_32x32x4       = { (void *)feedrate_32x32x4, 32, 32, GREYSCALE4 };
+const tImage Feedrate_64x64x4       = { (void *)feedrate_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Flowrate_32x32x4       = { (void *)flowrate_32x32x4, 32, 32, GREYSCALE4 };
+const tImage Flowrate_64x64x4       = { (void *)flowrate_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Directory_32x32x4      = { (void *)directory_32x32x4, 32, 32, GREYSCALE4 };
 const tImage Back_32x32x4           = { (void *)back_32x32x4, 32, 32, GREYSCALE4 };
 const tImage Up_32x32x4             = { (void *)up_32x32x4, 32, 32, GREYSCALE4 };
@@ -92,7 +95,9 @@ const tImage Images[imgCount] = {
   Fan_Fast0_64x64x4,
   Fan_Fast1_64x64x4,
   Feedrate_32x32x4,
+  Feedrate_64x64x4,
   Flowrate_32x32x4,
+  Flowrate_64x64x4,
   SD_64x64x4,
   Menu_64x64x4,
   Settings_64x64x4,
@@ -114,6 +119,7 @@ const tImage Images[imgCount] = {
   BtnRounded_42x39x4,
   Wifi_64x64x4,
   Pause_64x64x4,
+  Move_64x64x4,
 };
 
 #endif // HAS_GRAPHICAL_TFT

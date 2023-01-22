@@ -28,8 +28,16 @@
 /**
  * Marlin release version identifier
  */
-#define SHORT_BUILD_VERSION "FBG6-2.1.1-1.7.3-3950"
-// #define SHORT_BUILD_VERSION "FBG6-2.1.1-1.7.3-104gt-2"
+
+#if TEMP_SENSOR_0 == 5
+  #define SHORT_BUILD_VERSION "FBG6-2.1.2.4-104gt"
+#elif TEMP_SENSOR_0 == 13
+  #define SHORT_BUILD_VERSION "FBG6-2.1.2.4-3950"
+#endif
+
+// #define SHORT_BUILD_VERSION "FBG6-2.1.2.4-104gt"
+
+// #define SHORT_BUILD_VERSION "FBG6-2.1.2.4-3950"
 
 /**
  * Verbose version identifier which should contain a reference to the location
@@ -42,7 +50,7 @@
  * here we define this default string as the date where the latest release
  * version was tagged.
  */
-//#define STRING_DISTRIBUTION_DATE "2022-11-29"
+#define STRING_DISTRIBUTION_DATE "2023-01-13"
 
 /**
  * Defines a generic printer name to be output to the LCD after booting Marlin.

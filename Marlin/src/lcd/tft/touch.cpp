@@ -69,7 +69,6 @@ void Touch::init() {
 }
 
 void Touch::add_control(TouchControlType type, uint16_t x, uint16_t y, uint16_t width, uint16_t height, intptr_t data) {
-
   if (controls_count == MAX_CONTROLS) return;
 
   controls[controls_count].type = type;
@@ -117,11 +116,6 @@ void Touch::idle() {
     if (PENDING(now, time_to_hold)) return;
 
     if (x != 0 && y != 0) {
-      // char msg[20];
-      // sprintf_P(msg, "(%d, %d)", x, y);
-      // ui.set_status(msg);
-      // return;
-
       if (current_control) {
         if (WITHIN(x, current_control->x - FREE_MOVE_RANGE, current_control->x + current_control->width + FREE_MOVE_RANGE) && WITHIN(y, current_control->y - FREE_MOVE_RANGE, current_control->y + current_control->height + FREE_MOVE_RANGE)) {
           NOLESS(x, current_control->x);
@@ -249,7 +243,7 @@ void Touch::touch(touch_control_t *control) {
         }
       }
       break;
-    case HEATER: 
+    case HEATER:
       int8_t heater;
       heater = control->data;
       if (heater == H_BED) {
@@ -304,6 +298,15 @@ void Touch::touch(touch_control_t *control) {
     case TRAMMING: 
       _lcd_level_bed_corners();
       break;
+
+    case MESH_LEVEL:
+      _lcd_level_bed_continue();
+      break;
+    
+    case BABYSTEP_BUTTON:
+      lcd_babystep_z();
+      break;
+
     case RETRY_PRINT: 
     //Print file again
       card.openAndPrintFile(card.filename);
@@ -353,7 +356,7 @@ void Touch::touch(touch_control_t *control) {
 void Touch::hold(touch_control_t *control, millis_t delay) {
   current_control = control;
   if (delay) {
-    repeat_delay = _MAX(delay, MIN_REPEAT_DELAY);
+    repeat_delay = _MAX(delay, uint32_t(MIN_REPEAT_DELAY));
     time_to_hold = next_touch_ms + repeat_delay;
   }
   ui.refresh();

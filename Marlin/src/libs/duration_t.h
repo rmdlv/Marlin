@@ -151,27 +151,32 @@ struct duration_t {
    *  123456789 (strlen)
    *  12'34
    *  99:59
-   *  11d 12:33
+   *  123:45
+   *  1d 12:33
+   *  9999d 12:33
    */
-  uint8_t toDigital(char *buffer, bool with_days=false) const {
+  uint8_t toDigital(char *buffer, bool with_days=false, bool remaining=false) const {
     const uint16_t h = uint16_t(this->hour()),
                    m = uint16_t(this->minute() % 60UL);
+    char prefix[30] = "";
+    if(remaining)
+      strcpy(prefix, "R ");
     if (with_days) {
       const uint16_t d = this->day();
-      sprintf_P(buffer, PSTR("%hud %02hu:%02hu"), d, h % 24, m);  // 1d 23:45
-      return d >= 10 ? 9 : 8;
+      sprintf_P(buffer, PSTR(strcat(prefix, "%hud %02hu:%02hu")), d, h % 24, m);  // 1d 23:45
+      return strlen_P(buffer);
     }
     else if (!h) {
       const uint16_t s = uint16_t(this->second() % 60UL);
-      sprintf_P(buffer, PSTR("%02hu'%02hu"), m, s);     // 12'34
+      sprintf_P(buffer, PSTR(strcat(prefix, "%02hu'%02hu")), m, s);     // 12'34
       return 5;
     }
     else if (h < 100) {
-      sprintf_P(buffer, PSTR("%02hu:%02hu"), h, m);     // 12:34
+      sprintf_P(buffer, PSTR(strcat(prefix, "%02hu:%02hu")), h, m);     // 12:34
       return 5;
     }
     else {
-      sprintf_P(buffer, PSTR("%hu:%02hu"), h, m);       // 123:45
+      sprintf_P(buffer, PSTR(strcat(prefix, "%hu:%02hu")), h, m);       // 123:45
       return 6;
     }
   }

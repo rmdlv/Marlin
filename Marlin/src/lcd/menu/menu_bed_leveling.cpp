@@ -78,6 +78,7 @@
     }
     if (ui.should_draw()) MenuItem_static::draw(LCD_HEIGHT >= 4, GET_TEXT_F(MSG_LEVEL_BED_DONE));
     ui.refresh(LCDVIEW_CALL_REDRAW_NEXT);
+    ui.clear_lcd();
   }
 
   void _lcd_level_goto_next_point();

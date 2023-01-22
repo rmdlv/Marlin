@@ -52,9 +52,12 @@ extern const uint8_t cancel_64x64x4[];
 extern const uint8_t increase_64x64x4[];
 extern const uint8_t decrease_64x64x4[];
 extern const uint8_t pause_64x64x4[];
+extern const uint8_t move_64x64x4[];
 extern const uint8_t wifi_64x64x4[];
 extern const uint8_t feedrate_32x32x4[];
+extern const uint8_t feedrate_64x64x4[];
 extern const uint8_t flowrate_32x32x4[];
+extern const uint8_t flowrate_64x64x4[];
 extern const uint8_t directory_32x32x4[];
 extern const uint8_t back_32x32x4[];
 extern const uint8_t up_32x32x4[];
@@ -79,7 +82,9 @@ enum MarlinImage : uint8_t {
   imgFanFast0,
   imgFanFast1,
   imgFeedRate,
+  imgFeedRateBig,
   imgFlowRate,
+  imgFlowRateBig,
   imgSD,
   imgMenu,
   imgSettings,
@@ -101,6 +106,7 @@ enum MarlinImage : uint8_t {
   imgBtn39Rounded,
   imgWifi,
   imgPause,
+  imgMove,
   imgCount,
   noImage = imgCount,
   imgPageUp = imgLeft,
@@ -167,9 +173,12 @@ extern const tImage Cancel_64x64x4;
 extern const tImage Increase_64x64x4;
 extern const tImage Decrease_64x64x4;
 extern const tImage Pause_64x64x4;
+extern const tImage Move_64x64x4;
 extern const tImage Wifi_64x64x4;
 extern const tImage Feedrate_32x32x4;
+extern const tImage Feedrate_64x64x4;
 extern const tImage Flowrate_32x32x4;
+extern const tImage Flowrate_64x64x4;
 extern const tImage Directory_32x32x4;
 extern const tImage Back_32x32x4;
 extern const tImage Up_32x32x4;

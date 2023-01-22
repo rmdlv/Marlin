@@ -137,6 +137,7 @@
   #define DOGLCD
   #define IS_U8GLIB_ST7920 1
   #define IS_ULTIPANEL 1
+  #define ENCODER_PULSES_PER_STEP 2
 
 #elif ENABLED(MKS_12864OLED)
 
@@ -1072,20 +1073,6 @@
   #ifndef Z_PROBE_SERVO_NR
     #define Z_PROBE_SERVO_NR 0
   #endif
-  #ifdef DEACTIVATE_SERVOS_AFTER_MOVE
-    #error "BLTOUCH requires DEACTIVATE_SERVOS_AFTER_MOVE to be to disabled. Please update your Configuration.h file."
-  #endif
-
-  // Always disable probe pin inverting for BLTouch
-  #if Z_MIN_PROBE_ENDSTOP_INVERTING
-    #error "BLTOUCH requires Z_MIN_PROBE_ENDSTOP_INVERTING set to false. Please update your Configuration.h file."
-  #endif
-
-  #if ENABLED(Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN)
-    #if Z_MIN_ENDSTOP_INVERTING
-      #error "BLTOUCH requires Z_MIN_ENDSTOP_INVERTING set to false. Please update your Configuration.h file."
-    #endif
-  #endif
 #endif
 
 /**
@@ -1531,7 +1518,7 @@
   #endif
 #elif ENABLED(TFT_GENERIC)
   #ifndef TFT_DEFAULT_ORIENTATION
-    #define TFT_DEFAULT_ORIENTATION (TFT_EXCHANGE_XY | TFT_INVERT_X | TFT_INVERT_Y)
+  #define TFT_DEFAULT_ORIENTATION (TFT_EXCHANGE_XY | TFT_INVERT_X | TFT_INVERT_Y)
   #endif
   #if NONE(TFT_RES_320x240, TFT_RES_480x272, TFT_RES_480x320, TFT_RES_320x480, TFT_RES_1024x600)
     #define TFT_RES_320x240

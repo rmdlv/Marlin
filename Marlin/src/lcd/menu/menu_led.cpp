@@ -122,14 +122,6 @@
       END_MENU();
     }
   #endif
-  #ifdef LED_FAST_MENU
-    void menu_case_on(){
-      START_MENU();
-      CASELIGHT_TOGGLE_ITEM();
-      END_MENU();
-    }
-  #endif
-
 #endif
 
 void menu_led() {

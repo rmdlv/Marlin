@@ -331,16 +331,19 @@ void menu_motion() {
   //
   // Move Axis
   //
+  #ifndef DISABLE_MOTION_MENU
   if (TERN1(DELTA, all_axes_homed()))
     SUBMENU(MSG_MOVE_AXIS, menu_move);
-
+  #endif
   //
   // Auto Home
   //
   #if ENABLED(INDIVIDUAL_AXIS_HOMING_SUBMENU)
     SUBMENU(MSG_HOMING, menu_home);
   #else
+  #ifndef DISABLE_AUTOHOME_MENU
     GCODES_ITEM(MSG_AUTO_HOME, FPSTR(G28_STR));
+  #endif
     #if ENABLED(INDIVIDUAL_AXIS_HOMING_MENU)
       MAIN_AXIS_MAP(_HOME_ITEM);
     #endif
@@ -423,7 +426,9 @@ void menu_motion() {
   //
   // Disable Steppers
   //
-  GCODES_ITEM(MSG_DISABLE_STEPPERS, F("M84"));
+  #ifndef DISABLE_UNLOCKING_STEPPERS_MENU
+    GCODES_ITEM(MSG_DISABLE_STEPPERS, F("M84"));
+  #endif
 
   END_MENU();
 }
