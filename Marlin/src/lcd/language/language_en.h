@@ -49,7 +49,17 @@ namespace Language_en {
   LSTR LANGUAGE                           = _UxGT("English");
 
   // These strings should be translated
+  LSTR MSG_NO_CONNECT                     = _UxGT("Not Connected");
+  LSTR MSG_SET_BUTTON                     = _UxGT("Set");
+  LSTR MSG_MODEL_FAN                      = _UxGT("Model Fan");  
+  LSTR MSG_BED_STATUS                     = _UxGT("Bed");
+  LSTR MSG_EXTRUDER_STATUS                = _UxGT("Extruder");
+  LSTR MSG_MANUAL_BUTTON                  = _UxGT("Manual");
+  LSTR MSG_COOLING_BUTTON                 = _UxGT("Cooling");
+  LSTR MSG_STOP_BUTTON                    = _UxGT("Stop");
+  LSTR MSG_INFO_WIFI_MENU                 = _UxGT("Wi-Fi Info");
   LSTR MSG_WIFI_LOAD_FROM_FILE            = _UxGT("Load Wi-Fi from File");
+  LSTR MSG_CHAMBER_FAN                    = _UxGT("Chamber Fan");
   LSTR WELCOME_MSG                        = MACHINE_NAME _UxGT(" Ready.");
   LSTR MSG_YES                            = _UxGT("YES");
   LSTR MSG_NO                             = _UxGT("NO");
@@ -642,7 +652,6 @@ namespace Language_en {
   LSTR MSG_MESH_DONE                      = _UxGT("Mesh probing done");
   LSTR MSG_INFO_STATS_MENU                = _UxGT("Printer Stats");
   LSTR MSG_INFO_BOARD_MENU                = _UxGT("Board Info");
-  LSTR MSG_INFO_WIFI_MENU                 = _UxGT("Wi-Fi Info");
   LSTR MSG_INFO_THERMISTOR_MENU           = _UxGT("Thermistors");
   LSTR MSG_INFO_EXTRUDERS                 = _UxGT("Extruders");
   LSTR MSG_INFO_BAUDRATE                  = _UxGT("Baud");

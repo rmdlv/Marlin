@@ -75,6 +75,7 @@ enum TouchControlType : uint16_t {
   BABYSTEP_BUTTON,
   FAN_MANUAL,
   SET_FAN_SPEED,
+  CHAMBER_FAN,
   FAN,
   FEEDRATE,
   FLOWRATE,

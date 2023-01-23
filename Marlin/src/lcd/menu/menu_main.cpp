@@ -37,6 +37,7 @@
 #include "../../feature/bedlevel/bedlevel.h"
 #include "../../module/motion.h"
 #include "../../module/planner.h"
+#include "../../feature/caselight.h"
 
 #if ENABLED(PSU_CONTROL)
   #include "../../feature/power.h"
@@ -249,6 +250,7 @@ void menu_main() {
   // Test Z offset Zr !!!!!!
   #define LCD_Z_OFFSET_TYPE float42_52
   EDIT_ITEM(LCD_Z_OFFSET_TYPE, MSG_BED_Z, &bedlevel.z_offset, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
+  EDIT_ITEM(bool, MSG_CASE_LIGHT, (bool*)&caselight.on, caselight.update_enabled);
 
   #if ENABLED(SDSUPPORT)
 
@@ -382,9 +384,9 @@ void menu_main() {
     SUBMENU(MSG_INFO_MENU, menu_info);
   #endif
 
-  #if EITHER(LED_CONTROL_MENU, CASE_LIGHT_MENU)
-    SUBMENU(MSG_LEDS, menu_led);
-  #endif
+  // #if EITHER(LED_CONTROL_MENU, CASE_LIGHT_MENU)
+  //   SUBMENU(MSG_LEDS, menu_led);
+  // #endif
 
   //
   // Switch power on/off

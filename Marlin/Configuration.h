@@ -39,8 +39,8 @@
 
 
 #define DIAG_JUMPERS_REMOVED
-#define MOTHERBOARD BOARD_LINUX_RAMPS  // Config for Simulator mode
-#define SDCARD_EEPROM_EMULATION
+// #define MOTHERBOARD BOARD_LINUX_RAMPS  // Config for Simulator mode
+// #define SDCARD_EEPROM_EMULATION
 
 
 //===========================================================================
@@ -423,7 +423,7 @@
  * Enable and connect the power supply to the PS_ON_PIN.
  * Specify whether the power supply is active HIGH or active LOW.
  */
-// #define PSU_CONTROL
+#define PSU_CONTROL
 //#define PSU_NAME "Power Supply"
 
 #if ENABLED(PSU_CONTROL)

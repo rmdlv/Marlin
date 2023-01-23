@@ -37,6 +37,19 @@ namespace Language_ru {
   LSTR LANGUAGE                             = _UxGT("Russian");
 
   LSTR WELCOME_MSG                          = MACHINE_NAME _UxGT(" Готов.");
+  LSTR MSG_NO_CONNECT                       = _UxGT("Нет подключения");  
+  LSTR MSG_INFO_SSID                        = _UxGT("Имя сети");
+  LSTR MSG_INFO_IP                          = _UxGT("IP Адрес");  
+  LSTR MSG_MODEL_FAN                        = _UxGT("Обдув Детали");  
+  LSTR MSG_BED_STATUS                       = _UxGT("Стол");
+  LSTR MSG_EXTRUDER_STATUS                  = _UxGT("Экструдер");
+  LSTR MSG_SET_BUTTON                       = _UxGT("Задать");
+  LSTR MSG_MANUAL_BUTTON                    = _UxGT("Задать");
+  LSTR MSG_COOLING_BUTTON                   = _UxGT("Охлажд");
+  LSTR MSG_STOP_BUTTON                      = _UxGT("Стоп");
+  LSTR MSG_INFO_WIFI_MENU                   = _UxGT("Информация Wi-Fi");
+  LSTR MSG_WIFI_LOAD_FROM_FILE              = _UxGT("Загрузить настройки");
+  LSTR MSG_CHAMBER_FAN                      = _UxGT("Кулер корпуса");
   LSTR MSG_YES                              = _UxGT("Да");
   LSTR MSG_NO                               = _UxGT("Нет");
   LSTR MSG_BACK                             = _UxGT("Назад");

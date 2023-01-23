@@ -38,6 +38,9 @@
   #include "../../module/wifi/wifi.h"
 #endif
 
+#include "../../sd/SdBaseFile.h"
+#include "../../sd/cardreader.h"
+
 #define VALUE_ITEM(MSG, VALUE, STYL)    do{ char msg[21]; strcpy_P(msg, PSTR(": ")); strcpy(msg + 2, VALUE); STATIC_ITEM(MSG, STYL, msg); }while(0)
 #define VALUE_ITEM_F(MSG, PVALUE, STYL) do{ char msg[21]; strcpy_P(msg, PSTR(": ")); strcpy_P(msg + 2, PSTR(PVALUE)); STATIC_ITEM(MSG, STYL, msg); }while(0)
 
@@ -275,7 +278,7 @@ void menu_info_board() {
 
 #endif
 
-
+#if ENABLED(MKS_WIFI_MODULE)
 void menu_info_wifi() {
   if (ui.use_click()) return ui.go_back();
   
@@ -284,21 +287,45 @@ void menu_info_wifi() {
     PSTRING_ITEM(MSG_INFO_SSID, wifiPara.ap_name, SS_CENTER);
     PSTRING_ITEM(MSG_INFO_IP, ipPara.ip_addr, SS_CENTER);
   } else{
-    STATIC_ITEM_F(F("Not Connected"), SS_CENTER);
+    STATIC_ITEM(MSG_NO_CONNECT, SS_CENTER);
   }
 
   END_SCREEN();  
 }
 
+
 void menu_info_wifi_load() {
 
   if (ui.use_click()) return ui.go_back();
+
   // !!!!!!!!!!!!!!  Zr TEST !!!!!!!!!!!
+  
+  // char wifi_str[30];
+  // SdFile Wifi_cfg_file;
+  // dir_t wifi_dir;
+  // wifi_dir.name = "/";
 
 
-  SdBaseFile Wifi_cfg_file;
-
+  // uint8_t const O_READ = 0x01;
   // int16_t SdBaseFile::fgets(char *str, int16_t num, char *delim);
+  // bool SdBaseFile::open(SdBaseFile *dirFile, const char *path, uint8_t oflag)
+  // file.open(this, name, O_READ);
+  // Wifi_cfg_file.dirEntry(*wifi_dir);
+  // Wifi_cfg_file.open("/", "wifi.txt", O_READ);
+  // int16_t nums = Wifi_cfg_file.fgets(wifi_str, 30, "\n");
+
+  // if (!nums) {
+  // // STATIC_ITEM(F(wifi_str), SS_CENTER);
+  // } else {
+  //   STATIC_ITEM(F("Read Error"), SS_CENTER);
+  // }
+
+  // Wifi_cfg_file.closefile();
+
+
+  // SdFile::SdFile(const char *path, uint8_t oflag) : SdBaseFile(path, oflag) { }
+
+  
 
   // if (!file.open(&root, EEPROM_FILENAME, O_RDONLY))
   // return true; // false aborts the save
@@ -314,30 +341,54 @@ void menu_info_wifi_load() {
   //  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   START_SCREEN();
 
-  if (wifi_link_state == WIFI_CONNECTED) {
-    PSTRING_ITEM_F(F("SSID_start: "), wifiPara.ap_name, SS_CENTER);
-    PSTRING_ITEM_F(F("IP_start: "), ipPara.ip_addr, SS_CENTER);
-    char ap_name_test[11] = "Zartest";
-    char ap_keycode_test[11] = "1234567890";
-    // wifiPara.ap_name = "Zartest";
-    strcpy_P(wifiPara.ap_name, PSTR(ap_name_test));
-    // memcpy(wifiPara.ap_name, ap_name_test, sizeof(ap_name_test));
-    // wifiPara.keyCode = "1234567890";
-    strcpy_P(wifiPara.keyCode, PSTR(ap_keycode_test));
-    // memcpy(wifiPara.keyCode, ap_keycode_test, sizeof(ap_keycode_test));
-    STATIC_ITEM_F(F("Done"), SS_CENTER);
-    PSTRING_ITEM_F(F("SSID_end: "), wifiPara.ap_name, SS_CENTER);
-    PSTRING_ITEM_F(F("IP_end: "), ipPara.ip_addr, SS_CENTER);
-    // PSTRING_ITEM(MSG_INFO_SSID, wifiPara.ap_name, SS_CENTER);
-    // PSTRING_ITEM(MSG_INFO_IP, ipPara.ip_addr, SS_CENTER);
-  } else {
-    STATIC_ITEM_F(F("Not Connected"), SS_CENTER);
-  }
-  
+  // char ap_name_test[11] = "Zar-Home";
+  // char ap_keycode_test[32] = "193782647895123";
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // uint8_t buf_to_wifi[256];
+  // int index_to_wifi = 0;
+  // uint8_t wifi_ret_head = 0xA5;
+  // uint8_t wifi_ret_tail = 0xFC;
+
+  // int data_offset = 4,
+  // apLen = strlen((const char *)ap_name_test),
+  // keyLen = strlen((const char *)ap_keycode_test);
+
+  // ZERO(buf_to_wifi);
+  // index_to_wifi = 0;
+
+  // // #define ESP_WIFI          0x02
+  // #define AP_MODEL          0x01
+  // #define STA_MODEL         0x02
+
+  // buf_to_wifi[data_offset] = STA_MODEL;
+  // buf_to_wifi[data_offset + 1]  = apLen;
+  // memcpy(&buf_to_wifi[data_offset + 2], (const char *)ap_name_test, apLen);
+  // buf_to_wifi[data_offset + apLen + 2]  = keyLen;
+  // memcpy(&buf_to_wifi[data_offset + apLen + 3], (const char *)ap_keycode_test, keyLen);
+  // buf_to_wifi[data_offset + apLen + keyLen + 3] = wifi_ret_tail;
+
+  // index_to_wifi = apLen + keyLen + 3;
+
+  // buf_to_wifi[0] = wifi_ret_head;
+  // buf_to_wifi[1] = WIFI_PARA_SET;
+  // buf_to_wifi[2] = index_to_wifi & 0xFF;
+  // buf_to_wifi[3] = (index_to_wifi >> 8) & 0xFF;
+
+  // raw_send_to_wifi(buf_to_wifi, 5 + index_to_wifi);
+
+  // ZERO(buf_to_wifi);
+
+  // delay(1000);
+
+  // PSTRING_ITEM(MSG_INFO_SSID, wifiPara.ap_name, SS_CENTER);
+  // PSTRING_ITEM(MSG_INFO_IP, ipPara.ip_addr, SS_CENTER);
+
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   END_SCREEN();
 
 }
-
+#endif
 
 //
 // "About Printer" submenu
@@ -353,8 +404,10 @@ void menu_info() {
     #if HAS_EXTRUDERS
       SUBMENU(MSG_INFO_THERMISTOR_MENU, menu_info_thermistors);  // Thermistors >
     #endif
-    SUBMENU(MSG_INFO_WIFI_MENU, menu_info_wifi);
-    // SUBMENU(F("Load Wi-Fi Settings"), menu_info_wifi_load);
+    #if ENABLED(MKS_WIFI_MODULE)
+      SUBMENU(MSG_INFO_WIFI_MENU, menu_info_wifi);
+      SUBMENU(MSG_WIFI_LOAD_FROM_FILE, menu_info_wifi_load);
+    #endif
   #endif
 
   #if ENABLED(PRINTCOUNTER)

@@ -294,6 +294,13 @@ void Touch::touch(touch_control_t *control) {
 
       break;
     #ifdef FINISH_SCREEN
+    case RETRY_PRINT: 
+    //Print file again
+      card.openAndPrintFile(card.filename);
+      ui.return_to_status();
+      ui.reset_status();       
+      break;
+    #endif
 
     case TRAMMING: 
       _lcd_level_bed_corners();
@@ -307,20 +314,24 @@ void Touch::touch(touch_control_t *control) {
       lcd_babystep_z();
       break;
 
-    case RETRY_PRINT: 
-    //Print file again
-      card.openAndPrintFile(card.filename);
-      ui.return_to_status();
-      ui.reset_status();       
-      break;
-    #endif
     case SET_FAN_SPEED:
-      static int8_t set_fan_speed;
+      static uint8_t set_fan_speed;
       set_fan_speed = control->data;
-      if ((set_fan_speed >= 0) || (set_fan_speed <=255)) {
+      // if ((set_fan_speed >= 0) || (set_fan_speed <=255)) {
         thermalManager.set_fan_speed(0, set_fan_speed);
-      }
+      // }
       break;
+    case CHAMBER_FAN: 
+      bool chamber_fan_status;
+      chamber_fan_status = control->data;
+      if (chamber_fan_status == true) {
+        thermalManager.set_fan_speed(1,255);
+        ui.chamber_fan = true;
+      } else {
+        thermalManager.set_fan_speed(1,0);
+        ui.chamber_fan = false;
+      }
+      break;      
     case FAN: 
       ui.goto_screen((screenFunc_t)ui.fan_screen);
       break;

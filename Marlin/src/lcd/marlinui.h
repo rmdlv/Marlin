@@ -227,6 +227,8 @@ public:
     static constexpr bool sound_on = true;
   #endif
 
+  static bool chamber_fan;
+
   #if USE_MARLINUI_BUZZER
     static void buzz(const long duration, const uint16_t freq);
   #endif
