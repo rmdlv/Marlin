@@ -340,7 +340,8 @@ void menu_info_wifi_load() {
 
   //  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   START_SCREEN();
-
+  
+  STATIC_ITEM(F("Under construction"), SS_CENTER);
   // char ap_name_test[11] = "Zar-Home";
   // char ap_keycode_test[32] = "193782647895123";
 
