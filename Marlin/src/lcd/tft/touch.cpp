@@ -323,11 +323,11 @@ void Touch::touch(touch_control_t *control) {
     case BABYSTEP_BUTTON:
       lcd_babystep_z();
       break;
-    
+    #ifdef PSU_CONTROL
     case POWER_OFF: 
       ui.poweroff();
       break;
-
+    #endif
     case SET_FAN_SPEED:
       static uint8_t set_fan_speed;
       set_fan_speed = control->data;
