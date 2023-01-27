@@ -33,6 +33,12 @@
 #include "../../module/planner.h"
 #include "../../module/stepper.h"
 
+#if ENABLED(PSU_CONTROL)
+  #include "../../feature/power.h"
+#endif
+
+#include "../../feature/bedlevel/bedlevel.h"
+
 #if ENABLED(AUTO_BED_LEVELING_UBL)
   #include "../../feature/bedlevel/bedlevel.h"
 #endif
@@ -253,7 +259,13 @@ void Touch::touch(touch_control_t *control) {
     case HEAT_EXT: 
       int16_t ext_temp;
       ext_temp = control->data;
-      thermalManager.setTargetHotend(ext_temp, H_E0);
+      if ((ext_temp == 0) & printingIsActive()) {
+        tft.canvas(20, 420, 200, 40);
+        tft.set_background(COLOR_BACKGROUND);
+        tft.add_text(0, 0, COLOR_YELLOW, "Print is Active");       
+      } else {
+        thermalManager.setTargetHotend(ext_temp, H_E0);
+      }
       break;
     case HEAT_BED: 
       int16_t bed_temp;
@@ -311,6 +323,10 @@ void Touch::touch(touch_control_t *control) {
     case BABYSTEP_BUTTON:
       lcd_babystep_z();
       break;
+    
+    case POWER_OFF: 
+      ui.poweroff();
+      break;
 
     case SET_FAN_SPEED:
       static uint8_t set_fan_speed;
@@ -319,6 +335,11 @@ void Touch::touch(touch_control_t *control) {
         thermalManager.set_fan_speed(0, set_fan_speed);
       // }
       break;
+
+    case BED_Z:
+      ui.clear_lcd();
+      MenuItem_float42_52::action(GET_TEXT_F(MSG_BED_Z), &bedlevel.z_offset, -3, 3);
+    break;
     case CHAMBER_FAN: 
       bool chamber_fan_status;
       chamber_fan_status = control->data;
@@ -356,6 +377,10 @@ void Touch::touch(touch_control_t *control) {
 
     case RESUME_PRINT: ui.resume_print(); break;
     case PAUSE_PRINT: ui.pause_print(); break;
+    case STOP_PRINT: 
+    ui.abort_print(); 
+    ui.clear_lcd();
+    break;
 
     #if ENABLED(AUTO_BED_LEVELING_UBL)
       case UBL: hold(control, UBL_REPEAT_DELAY); ui.encoderPosition += control->data; break;

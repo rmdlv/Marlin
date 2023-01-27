@@ -53,6 +53,11 @@ extern const uint8_t increase_64x64x4[];
 extern const uint8_t decrease_64x64x4[];
 extern const uint8_t pause_64x64x4[];
 extern const uint8_t move_64x64x4[];
+extern const uint8_t resume_64x64x4[];
+extern const uint8_t stop_64x64x4[];
+extern const uint8_t babystep_64x64x4[];
+extern const uint8_t tune_64x64x4[];
+extern const uint8_t tramming_64x64x4[];
 extern const uint8_t wifi_64x64x4[];
 extern const uint8_t feedrate_32x32x4[];
 extern const uint8_t feedrate_64x64x4[];
@@ -66,8 +71,9 @@ extern const uint8_t left_32x32x4[];
 extern const uint8_t right_32x32x4[];
 extern const uint8_t refresh_32x32x4[];
 extern const uint8_t leveling_32x32x4[];
-
+extern const uint8_t power_64x64x4[];
 extern const uint8_t slider_8x16x4[];
+extern const uint8_t zoffset_64x64x4[];
 
 enum MarlinImage : uint8_t {
   imgBootScreen = 0x00,
@@ -107,6 +113,13 @@ enum MarlinImage : uint8_t {
   imgWifi,
   imgPause,
   imgMove,
+  imgResume,
+  imgStop,  
+  imgBabystep,
+  imgTune,
+  imgTramming,
+  imgPower,
+  imgZoffset,
   imgCount,
   noImage = imgCount,
   imgPageUp = imgLeft,
@@ -187,7 +200,12 @@ extern const tImage Left_32x32x4;
 extern const tImage Right_32x32x4;
 extern const tImage Refresh_32x32x4;
 extern const tImage Leveling_32x32x4;
-
+extern const tImage Resume_64x64x4;
+extern const tImage Stop_64x64x4;
+extern const tImage Babystep_64x64x4;
+extern const tImage Tune_64x64x4;
+extern const tImage Tramming_64x64x4;
 extern const tImage Slider8x16x4;
-
+extern const tImage Power_64x64x4;
+extern const tImage Zoffset_64x64x4;
 extern const tImage Images[imgCount];

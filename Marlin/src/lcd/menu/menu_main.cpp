@@ -391,19 +391,21 @@ void menu_main() {
   //
   // Switch power on/off
   //
-  #if ENABLED(PSU_CONTROL)
-    if (powerManager.psu_on)
-      #if ENABLED(PS_OFF_CONFIRM)
-        CONFIRM_ITEM(MSG_SWITCH_PS_OFF,
-          MSG_YES, MSG_NO,
-          ui.poweroff, nullptr,
-          GET_TEXT_F(MSG_SWITCH_PS_OFF), (const char *)nullptr, F("?")
-        );
-      #else
-        ACTION_ITEM(MSG_SWITCH_PS_OFF, ui.poweroff);
-      #endif
-    else
-      GCODES_ITEM(MSG_SWITCH_PS_ON, F("M80"));
+  #ifdef DISABLE_MENU_POWER_OFF
+    #if ENABLED(PSU_CONTROL)
+      if (powerManager.psu_on)
+        #if ENABLED(PS_OFF_CONFIRM)
+          CONFIRM_ITEM(MSG_SWITCH_PS_OFF,
+            MSG_YES, MSG_NO,
+            ui.poweroff, nullptr,
+            GET_TEXT_F(MSG_SWITCH_PS_OFF), (const char *)nullptr, F("?")
+          );
+        #else
+          ACTION_ITEM(MSG_SWITCH_PS_OFF, ui.poweroff);
+        #endif
+      else
+        GCODES_ITEM(MSG_SWITCH_PS_ON, F("M80"));
+    #endif
   #endif
 
   #if ENABLED(SDSUPPORT) && DISABLED(MEDIA_MENU_AT_TOP)

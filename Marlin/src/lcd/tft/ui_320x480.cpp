@@ -282,7 +282,7 @@ void MarlinUI::draw_status_screen() {
   y += TERN(HAS_UI_480x272, 118, 128);
 
   // coordinates
-  tft.canvas(5, 140, 300, 36);
+  tft.canvas(5, 155, 300, 36);
   tft.set_background(COLOR_BACKGROUND);
   tft.add_rectangle(0, 0, 300, 36, COLOR_AXIS_HOMED);
   tft_string.set(' ');
@@ -339,23 +339,38 @@ void MarlinUI::draw_status_screen() {
   // flow rate
 
   #if ENABLED(TOUCH_SCREEN)
-    add_control(236, 200, menu_main, imgSettings);                                                      
-    if (!printingIsPaused()) {
-      TERN_(TOUCH_SCREEN, add_control(128, 200, PAUSE_PRINT, imgPause, !printingIsPaused(), COLOR_GREEN, COLOR_RED));
+    // TERN_(TOUCH_SCREEN, add_control(128, 200, PAUSE_PRINT, imgTramming, COLOR_WHITE)); //Test Images
+    if (printingIsActive() || printingIsPaused()) {                                                     
+      if (!printingIsPaused()) {
+        TERN_(TOUCH_SCREEN, add_control(20, 200, PAUSE_PRINT, imgPause));
+      } else {
+        TERN_(TOUCH_SCREEN, add_control(20, 200, RESUME_PRINT, imgResume));
+      }
+      TERN_(TOUCH_SCREEN, add_control(128, 200, STOP_PRINT, imgStop, true, COLOR_CORAL_RED));
+      add_control(236, 200, menu_tune, imgTune);
+      TERN_(TOUCH_SCREEN, add_control(128, 280, BABYSTEP_BUTTON, imgBabystep));
     } else {
-      TERN_(TOUCH_SCREEN, add_control(128, 200, RESUME_PRINT, imgPause, printingIsPaused(), COLOR_RED, COLOR_GREEN));
+      // TERN_(TOUCH_SCREEN, add_control(128, 200, BED_Z, imgBedZ, COLOR_WHITE));
+      add_control(236, 200, menu_main, imgSettings);
+      TERN_(TOUCH_SCREEN, add_control(128, 360, TRAMMING, imgTramming));
+      TERN_(TOUCH_SCREEN, add_control(20, 360, BED_Z, imgZoffset));
+      #ifdef PSU_CONTROL
+        TERN_(TOUCH_SCREEN, add_control(236, 360, POWER_OFF, imgPower));
+      #endif
+      #ifdef MKS_WIFI_MODULE
+        add_control(128, 200, wifi_screen, imgWifi, wifi_link_state == WIFI_CONNECTED);
+      #endif
+      TERN_(TOUCH_SCREEN, add_control(128, 280, MOVE_AXIS, imgMove));
+      #if ENABLED(SDSUPPORT)
+        const bool cm = card.isMounted(), pa = printingIsActive();
+        add_control(20, 200, menu_media, imgSD, cm && !pa, COLOR_CONTROL_ENABLED, cm && pa ? COLOR_BUSY : COLOR_CONTROL_DISABLED);
+      #endif
     }
-
-    #if ENABLED(SDSUPPORT)
-      const bool cm = card.isMounted(), pa = printingIsActive();
-      add_control(20, 200, menu_media, imgSD, cm && !pa, COLOR_CONTROL_ENABLED, cm && pa ? COLOR_BUSY : COLOR_CONTROL_DISABLED);
-    #endif
     // TERN_(SDSUPPORT, add_control(20, 200, menu_media, imgSD, !printingIsActive(), COLOR_CONTROL_ENABLED, card.isMounted() && printingIsActive() ? COLOR_BUSY : COLOR_CONTROL_DISABLED));
   #endif                                                                                                  
 
 
 TERN_(TOUCH_SCREEN, add_control(20, 280, FEEDRATE, imgFeedRateBig));
-TERN_(TOUCH_SCREEN, add_control(128, 280, MOVE_AXIS, imgMove));
 TERN_(TOUCH_SCREEN, add_control(236, 280, FLOWRATE, imgFlowRateBig));
 
   // print duration
@@ -374,33 +389,38 @@ TERN_(TOUCH_SCREEN, add_control(236, 280, FLOWRATE, imgFlowRateBig));
   #endif
 
   // sprintf_P(buffer, PSTR("%s    %d %%"), buffer, progress);
+  if (printingIsActive() || printingIsPaused()) {
+    tft.canvas(4, 350, 312, 30);
+    tft.set_background(COLOR_BACKGROUND);
+    tft_string.set("Print Time: ");
+    tft_string.add(buffer);
+    tft.add_text(tft_string.center(312), 2, COLOR_LIGHT_BLUE, tft_string);
 
-  tft.canvas(4, 360, 312, 30);
-  tft.set_background(COLOR_BACKGROUND);
-  tft_string.set(buffer);
-  tft_string.add("   ");
-  tft_string.add(i16tostr3rj(progress));
-  tft_string.add("%");
-  tft.add_text(tft_string.center(308), 0, COLOR_PRINT_TIME, tft_string);
 
-  y += TERN(HAS_UI_480x272, 28, 36);
-  // progress bar
-  // const uint8_t progress = ui.get_progress_percent();
-  tft.canvas(4, 400, 312, 9);
-  tft.set_background(COLOR_PROGRESS_BG);
-  tft.add_rectangle(0, 0, 312, 9, COLOR_PROGRESS_FRAME);
-  if (progress)
-    tft.add_bar(1, 1, (310 * progress) / 100, 7, COLOR_PROGRESS_BAR);
+    y += TERN(HAS_UI_480x272, 28, 36);
+    // progress bar
+    // const uint8_t progress = ui.get_progress_percent();
+    tft.canvas(4, 390, 312, 37);
+    tft.set_background(COLOR_PROGRESS_BG);
+    tft.add_rectangle(0, 0, 312, 37, COLOR_PROGRESS_FRAME);
+    if (progress)
+      tft.add_bar(1, 1, (310 * progress) / 100, 35, COLOR_PROGRESS_BAR);
 
-  y += 20;
+    tft_string.set(i16tostr3rj(progress));
+    tft_string.add("%");
+    tft.add_text(tft_string.center(312), 2, COLOR_WHITE, tft_string);
+
+    y += 20;
+  }
   // status message
-  TERN_(MKS_WIFI_MODULE, touch.add_control(WIFI, 0, 420, 320, 30, 0));          // IP !!!!!!!!!!!!!!
+  // TERN_(MKS_WIFI_MODULE, touch.add_control(WIFI, 0, 420, 320, 30, 0));          // IP !!!!!!!!!!!!!!
 
-  tft.canvas(0, 420, 320, 30);
+  tft.canvas(0, 435, 320, 35);
   tft.set_background(COLOR_BACKGROUND);
+  tft.add_rectangle(10, 0, 300, 1, COLOR_WHITE);
   tft_string.set(status_message);
   tft_string.trim();
-  tft.add_text(tft_string.center(TFT_WIDTH), 0, COLOR_STATUS_MESSAGE, tft_string);
+  tft.add_text(tft_string.center(TFT_WIDTH), 5, COLOR_STATUS_MESSAGE, tft_string);
 }
 
 // Low-level draw_edit_screen can be used to draw an edit screen from anyplace
@@ -880,35 +900,35 @@ void MarlinUI::move_axis_screen() {
 
   // Mesh Button
 
-  tft.canvas(10, 17, 80, 46);
+  tft.canvas(100, 17, 120, 46);
   tft.set_background(COLOR_BACKGROUND);
   tft_string.set("Mesh");
-  tft.add_rectangle(0, 0, 80, 46, !busy ? COLOR_WHITE : COLOR_CONTROL_DISABLED);
-  tft.add_text(tft_string.center(80), 8, !busy ? COLOR_WHITE : COLOR_CONTROL_DISABLED, tft_string);
-  TERN_(TOUCH_SCREEN, if (!busy) touch.add_control(MESH_LEVEL, 10, 17, 80, 46));
+  tft.add_rectangle(0, 0, 120, 46, !busy ? COLOR_WHITE : COLOR_CONTROL_DISABLED);
+  tft.add_text(tft_string.center(120), 8, !busy ? COLOR_WHITE : COLOR_CONTROL_DISABLED, tft_string);
+  TERN_(TOUCH_SCREEN, if (!busy) touch.add_control(MESH_LEVEL, 100, 17, 120, 46));
 
-  // Level Button
-  tft.canvas(107, 17, 106, 46);
-  tft.set_background(COLOR_BACKGROUND);
-  tft_string.set("Babystep");
-  uint16_t baby_color;
-  if (!busy) { 
-    baby_color = COLOR_CONTROL_DISABLED;
-    } else {
-      baby_color = COLOR_WHITE;
-    }
-  tft.add_rectangle(0, 0, 106, 46, baby_color);
-  tft.add_text(tft_string.center(106), 8, baby_color, tft_string);
-  TERN_(TOUCH_SCREEN, if (busy) touch.add_control(BABYSTEP_BUTTON, 107, 17, 106, 46));
+  // Babystep Button
+  // tft.canvas(107, 17, 106, 46);
+  // tft.set_background(COLOR_BACKGROUND);
+  // tft_string.set("Babystep");
+  // uint16_t baby_color;
+  // if (!busy) { 
+  //   baby_color = COLOR_CONTROL_DISABLED;
+  //   } else {
+  //     baby_color = COLOR_WHITE;
+  //   }
+  // tft.add_rectangle(0, 0, 106, 46, baby_color);
+  // tft.add_text(tft_string.center(106), 8, baby_color, tft_string);
+  // TERN_(TOUCH_SCREEN, if (busy) touch.add_control(BABYSTEP_BUTTON, 107, 17, 106, 46));
   // add_control(20, 200, menu_media, imgSD, cm && !pa, COLOR_CONTROL_ENABLED, cm && pa ? COLOR_BUSY : COLOR_CONTROL_DISABLED);
   
   // Level Button
-  tft.canvas(230, 17, 80, 46);
-  tft.set_background(COLOR_BACKGROUND);
-  tft_string.set("Level");
-  tft.add_rectangle(0, 0, 80, 46, !busy ? COLOR_WHITE : COLOR_CONTROL_DISABLED);
-  tft.add_text(tft_string.center(80), 8, !busy ? COLOR_WHITE : COLOR_CONTROL_DISABLED, tft_string);
-  TERN_(TOUCH_SCREEN, if (!busy) touch.add_control(TRAMMING, 230, 17, 80, 46));
+  // tft.canvas(180, 17, 120, 46);
+  // tft.set_background(COLOR_BACKGROUND);
+  // tft_string.set("Level");
+  // tft.add_rectangle(0, 0, 120, 46, !busy ? COLOR_WHITE : COLOR_CONTROL_DISABLED);
+  // tft.add_text(tft_string.center(120), 8, !busy ? COLOR_WHITE : COLOR_CONTROL_DISABLED, tft_string);
+  // TERN_(TOUCH_SCREEN, if (!busy) touch.add_control(TRAMMING, 180, 17, 120, 46));
 
 
   // Babysteps during printing? Select babystep for Z probe offset
@@ -1034,6 +1054,25 @@ void MarlinUI::move_axis_screen() {
   // tft.add_text(245, 3, Z_BTN_COLOR, ftostr52sp(ui.manual_move.axis_value(Z_AXIS)));
   
 }
+
+#ifdef MKS_WIFI_MODULE
+void MarlinUI::wifi_screen() {
+
+  defer_status_screen(true);
+  ui.clear_lcd();
+  TERN_(TOUCH_SCREEN, touch.clear());
+
+  tft.canvas(0, 200, 320, 80);
+  tft.set_background(COLOR_BACKGROUND);
+  tft_string.set("SSID: ");
+  tft_string.add(wifiPara.ap_name);
+  tft.add_text(tft_string.center(320), 0, COLOR_PRINT_TIME, tft_string);
+  tft_string.set("IP: ");
+  tft_string.add(ipPara.ip_addr);
+  tft.add_text(tft_string.center(320), 40, COLOR_PRINT_TIME, tft_string);
+  TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH + 25, 410, BACK, imgBack));
+}
+#endif
 
 void MarlinUI::heater_screen() {
   const bool busy = printingIsActive();

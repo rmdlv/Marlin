@@ -70,6 +70,7 @@ enum TouchControlType : uint16_t {
   #endif
   RESUME_PRINT,
   PAUSE_PRINT,
+  STOP_PRINT,
   TRAMMING,
   MESH_LEVEL,
   BABYSTEP_BUTTON,
@@ -83,6 +84,8 @@ enum TouchControlType : uint16_t {
   MOVE_AXIS,
   BUTTON,
   WIFI,
+  POWER_OFF,
+  BED_Z,
 };
 
 typedef void (*screenFunc_t)();

@@ -64,6 +64,12 @@ const tImage Cancel_64x64x4         = { (void *)cancel_64x64x4, 64, 64, GREYSCAL
 const tImage Increase_64x64x4       = { (void *)increase_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Decrease_64x64x4       = { (void *)decrease_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Pause_64x64x4          = { (void *)pause_64x64x4, 64, 64, GREYSCALE4 };
+const tImage Resume_64x64x4         = { (void *)resume_64x64x4, 64, 64, GREYSCALE4 };
+const tImage Stop_64x64x4           = { (void *)stop_64x64x4, 64, 64, GREYSCALE4 };
+const tImage Babystep_64x64x4       = { (void *)babystep_64x64x4, 64, 64, GREYSCALE4 };
+const tImage Tune_64x64x4           = { (void *)tune_64x64x4, 64, 64, GREYSCALE4 };
+const tImage Tramming_64x64x4       = { (void *)tramming_64x64x4, 64, 64, GREYSCALE4 };
+const tImage Power_64x64x4          = { (void *)power_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Move_64x64x4           = { (void *)move_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Wifi_64x64x4           = { (void *)wifi_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Feedrate_32x32x4       = { (void *)feedrate_32x32x4, 32, 32, GREYSCALE4 };
@@ -78,7 +84,7 @@ const tImage Left_32x32x4           = { (void *)left_32x32x4, 32, 32, GREYSCALE4
 const tImage Right_32x32x4          = { (void *)right_32x32x4, 32, 32, GREYSCALE4 };
 const tImage Refresh_32x32x4        = { (void *)refresh_32x32x4, 32, 32, GREYSCALE4 };
 const tImage Leveling_32x32x4       = { (void *)leveling_32x32x4, 32, 32, GREYSCALE4 };
-
+const tImage Zoffset_64x64x4        = { (void *)zoffset_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Slider8x16x4           = { (void *)slider_8x16x4, 8, 16, GREYSCALE4 };
 
 const tImage Images[imgCount] = {
@@ -119,7 +125,14 @@ const tImage Images[imgCount] = {
   BtnRounded_42x39x4,
   Wifi_64x64x4,
   Pause_64x64x4,
-  Move_64x64x4,
+  Move_64x64x4,  
+  Resume_64x64x4,
+  Stop_64x64x4,
+  Babystep_64x64x4,
+  Tune_64x64x4,
+  Tramming_64x64x4,
+  Power_64x64x4,
+  Zoffset_64x64x4,
 };
 
 #endif // HAS_GRAPHICAL_TFT

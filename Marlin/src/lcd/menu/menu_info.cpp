@@ -296,7 +296,7 @@ void menu_info_wifi() {
 
 void menu_info_wifi_load() {
 
-  if (ui.use_click()) return ui.go_back();
+  // if (ui.use_click()) return ui.go_back();
 
   // !!!!!!!!!!!!!!  Zr TEST !!!!!!!!!!!
   
@@ -341,7 +341,7 @@ void menu_info_wifi_load() {
   //  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   START_SCREEN();
   
-  STATIC_ITEM(F("Under construction"), SS_CENTER);
+  // STATIC_ITEM(F("Under construction"), SS_CENTER);
   // char ap_name_test[11] = "Zar-Home";
   // char ap_keycode_test[32] = "193782647895123";
 
@@ -407,7 +407,7 @@ void menu_info() {
     #endif
     #if ENABLED(MKS_WIFI_MODULE)
       SUBMENU(MSG_INFO_WIFI_MENU, menu_info_wifi);
-      SUBMENU(MSG_WIFI_LOAD_FROM_FILE, menu_info_wifi_load);
+      // SUBMENU(MSG_WIFI_LOAD_FROM_FILE, menu_info_wifi_load);
     #endif
   #endif
 
