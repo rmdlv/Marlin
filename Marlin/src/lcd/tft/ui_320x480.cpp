@@ -338,9 +338,37 @@ void MarlinUI::draw_status_screen() {
   y += TERN(HAS_UI_480x272, 38, 48);
   // flow rate
 
+  const uint8_t progress = ui.get_progress_percent();
+  char buffer[30];
+  duration_t elapsed = print_job_timer.duration();
+  #if ENABLED(SHOW_REMAINING_TIME)
+    if(progress == 0 || (elapsed.second() / 10) % 2 == 1){
+      elapsed.toDigital(buffer);
+    }else{
+      duration_t remaining = ui.get_remaining_time();
+      remaining.toDigital(buffer, false, true);
+    }
+  #else
+      elapsed.toDigital(buffer);
+  #endif
   #if ENABLED(TOUCH_SCREEN)
     // TERN_(TOUCH_SCREEN, add_control(128, 200, PAUSE_PRINT, imgTramming, COLOR_WHITE)); //Test Images
-    if (printingIsActive() || printingIsPaused()) {                                                     
+    if (printingIsActive() || printingIsPaused()) {
+      tft.canvas(0, 340, 320, 50);
+      tft.set_background(COLOR_BACKGROUND);
+      tft_string.set("Print Time: ");
+      tft_string.add(buffer);
+      tft.add_text(tft_string.center(320), 10, COLOR_LIGHT_BLUE, tft_string);                    
+      tft.canvas(4, 390, 312, 37);
+      tft.set_background(COLOR_PROGRESS_BG);
+      tft.add_rectangle(0, 0, 312, 37, COLOR_PROGRESS_FRAME);
+      if (progress)
+        tft.add_bar(1, 1, (310 * progress) / 100, 35, COLOR_PROGRESS_BAR);
+
+      tft_string.set(i16tostr3rj(progress));
+      tft_string.add("%");
+      tft.add_text(tft_string.center(312), 2, COLOR_WHITE, tft_string);
+
       if (!printingIsPaused()) {
         TERN_(TOUCH_SCREEN, add_control(20, 200, PAUSE_PRINT, imgPause));
       } else {
@@ -374,44 +402,44 @@ TERN_(TOUCH_SCREEN, add_control(20, 280, FEEDRATE, imgFeedRateBig));
 TERN_(TOUCH_SCREEN, add_control(236, 280, FLOWRATE, imgFlowRateBig));
 
   // print duration
-  const uint8_t progress = ui.get_progress_percent();
-  char buffer[30];
-  duration_t elapsed = print_job_timer.duration();
-  #if ENABLED(SHOW_REMAINING_TIME)
-    if(progress == 0 || (elapsed.second() / 10) % 2 == 1){
-      elapsed.toDigital(buffer);
-    }else{
-      duration_t remaining = ui.get_remaining_time();
-      remaining.toDigital(buffer, false, true);
-    }
-  #else
-    elapsed.toDigital(buffer);
-  #endif
+  // const uint8_t progress = ui.get_progress_percent();
+  // char buffer[30];
+  // duration_t elapsed = print_job_timer.duration();
+  // #if ENABLED(SHOW_REMAINING_TIME)
+  //   if(progress == 0 || (elapsed.second() / 10) % 2 == 1){
+  //     elapsed.toDigital(buffer);
+  //   }else{
+  //     duration_t remaining = ui.get_remaining_time();
+  //     remaining.toDigital(buffer, false, true);
+  //   }
+  // #else
+  //   elapsed.toDigital(buffer);
+  // #endif
 
   // sprintf_P(buffer, PSTR("%s    %d %%"), buffer, progress);
-  if (printingIsActive() || printingIsPaused()) {
-    tft.canvas(4, 350, 312, 30);
-    tft.set_background(COLOR_BACKGROUND);
-    tft_string.set("Print Time: ");
-    tft_string.add(buffer);
-    tft.add_text(tft_string.center(312), 2, COLOR_LIGHT_BLUE, tft_string);
+  // if (printingIsActive() || printingIsPaused()) {
+    // tft.canvas(4, 350, 312, 30);
+    // tft.set_background(COLOR_BACKGROUND);
+    // tft_string.set("Print Time: ");
+    // tft_string.add(buffer);
+    // tft.add_text(tft_string.center(312), 2, COLOR_LIGHT_BLUE, tft_string);
 
 
     y += TERN(HAS_UI_480x272, 28, 36);
     // progress bar
     // const uint8_t progress = ui.get_progress_percent();
-    tft.canvas(4, 390, 312, 37);
-    tft.set_background(COLOR_PROGRESS_BG);
-    tft.add_rectangle(0, 0, 312, 37, COLOR_PROGRESS_FRAME);
-    if (progress)
-      tft.add_bar(1, 1, (310 * progress) / 100, 35, COLOR_PROGRESS_BAR);
+    // tft.canvas(4, 390, 312, 37);
+    // tft.set_background(COLOR_PROGRESS_BG);
+    // tft.add_rectangle(0, 0, 312, 37, COLOR_PROGRESS_FRAME);
+    // if (progress)
+    //   tft.add_bar(1, 1, (310 * progress) / 100, 35, COLOR_PROGRESS_BAR);
 
-    tft_string.set(i16tostr3rj(progress));
-    tft_string.add("%");
-    tft.add_text(tft_string.center(312), 2, COLOR_WHITE, tft_string);
+    // tft_string.set(i16tostr3rj(progress));
+    // tft_string.add("%");
+    // tft.add_text(tft_string.center(312), 2, COLOR_WHITE, tft_string);
 
     y += 20;
-  }
+  // }
   // status message
   // TERN_(MKS_WIFI_MODULE, touch.add_control(WIFI, 0, 420, 320, 30, 0));          // IP !!!!!!!!!!!!!!
 
