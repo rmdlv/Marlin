@@ -58,9 +58,9 @@ void MarlinUI::tft_idle() {
   #if ENABLED(TOUCH_SCREEN)
     if (TERN0(HAS_TOUCH_SLEEP, lcd_sleep_task())) return;
     if (draw_menu_navigation) {
-      add_control(48, 380, PAGE_UP, imgPageUp, encoderTopLine > 0);
-      add_control(240, 380, PAGE_DOWN, imgPageDown, encoderTopLine + LCD_HEIGHT < screen_items);
-      add_control(144, 380, BACK, imgBack);
+      add_control(48, 420, PAGE_UP, imgPageUp, encoderTopLine > 0);
+      add_control(240, 420, PAGE_DOWN, imgPageDown, encoderTopLine + LCD_HEIGHT < screen_items);
+      add_control(144, 420, BACK, imgBack);
       draw_menu_navigation = false;
     }
   #endif

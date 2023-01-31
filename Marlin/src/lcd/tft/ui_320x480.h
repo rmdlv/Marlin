@@ -30,20 +30,20 @@ using namespace std;
 #define TFT_STATUS_TOP_Y       0
 #define TFT_TOP_LINE_Y         2
 
-#define MENU_TEXT_X_OFFSET    10
-#define MENU_TEXT_Y_OFFSET    10
+#define MENU_TEXT_X_OFFSET    5
+#define MENU_TEXT_Y_OFFSET    12
 
 #define MENU_ITEM_ICON_X       5
 #define MENU_ITEM_ICON_Y       5
 #define MENU_ITEM_ICON_SPACE  42
 
-#define MENU_ITEM_HEIGHT      43
-#define MENU_LINE_HEIGHT      (MENU_ITEM_HEIGHT + 2)
+#define MENU_ITEM_HEIGHT      50
+#define MENU_LINE_HEIGHT      (MENU_ITEM_HEIGHT + 7)
 
 #define MENU_FONT_NAME        Helvetica18
 #define SYMBOLS_FONT_NAME     Helvetica18_symbols
 
-#define FONT_LINE_HEIGHT    34
+#define FONT_LINE_HEIGHT    25
 
   const int XX_OFFSET = 10; 
   const int YY_OFFSET = 10;
