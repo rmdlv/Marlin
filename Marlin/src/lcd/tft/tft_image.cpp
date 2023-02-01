@@ -85,6 +85,15 @@ const tImage Right_32x32x4          = { (void *)right_32x32x4, 32, 32, GREYSCALE
 const tImage Refresh_32x32x4        = { (void *)refresh_32x32x4, 32, 32, GREYSCALE4 };
 const tImage Leveling_32x32x4       = { (void *)leveling_32x32x4, 32, 32, GREYSCALE4 };
 const tImage Zoffset_64x64x4        = { (void *)zoffset_64x64x4, 64, 64, GREYSCALE4 };
+const tImage Light_64x64x4          = { (void *)light_64x64x4, 64, 64, GREYSCALE4 };
+const tImage Next_64x64x4           = { (void *)next_64x64x4, 64, 64, GREYSCALE4 };
+const tImage Prevous_64x64x4        = { (void *)prevous_64x64x4, 64, 64, GREYSCALE4 };
+const tImage Fila_64x64x4           = { (void *)fila_64x64x4, 64, 64, GREYSCALE4 };
+const tImage Language_64x64x4       = { (void *)language_64x64x4, 64, 64, GREYSCALE4 };
+const tImage Info_64x64x4           = { (void *)info_64x64x4, 64, 64, GREYSCALE4 };
+const tImage Save_64x64x4           = { (void *)save_64x64x4, 64, 64, GREYSCALE4 };
+const tImage Is_64x64x4             = { (void *)is_64x64x4, 64, 64, GREYSCALE4 };
+const tImage La_64x64x4             = { (void *)la_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Slider8x16x4           = { (void *)slider_8x16x4, 8, 16, GREYSCALE4 };
 
 const tImage Images[imgCount] = {
@@ -133,6 +142,15 @@ const tImage Images[imgCount] = {
   Tramming_64x64x4,
   Power_64x64x4,
   Zoffset_64x64x4,
+  Light_64x64x4,
+  Next_64x64x4,
+  Prevous_64x64x4,
+  Fila_64x64x4,
+  Language_64x64x4,
+  Info_64x64x4,
+  Save_64x64x4,
+  Is_64x64x4,
+  La_64x64x4,
 };
 
 #endif // HAS_GRAPHICAL_TFT

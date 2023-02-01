@@ -798,6 +798,7 @@ public:
     static void finish_screen();
   #endif
 
+  int8_t screen_num = 0;
 private:
 
   #if HAS_SCREEN_TIMEOUT

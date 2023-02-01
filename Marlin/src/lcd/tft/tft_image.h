@@ -74,6 +74,15 @@ extern const uint8_t leveling_32x32x4[];
 extern const uint8_t power_64x64x4[];
 extern const uint8_t slider_8x16x4[];
 extern const uint8_t zoffset_64x64x4[];
+extern const uint8_t light_64x64x4[];
+extern const uint8_t next_64x64x4[];
+extern const uint8_t prevous_64x64x4[];
+extern const uint8_t fila_64x64x4[];
+extern const uint8_t language_64x64x4[];
+extern const uint8_t info_64x64x4[];
+extern const uint8_t save_64x64x4[];
+extern const uint8_t is_64x64x4[];
+extern const uint8_t la_64x64x4[];
 
 enum MarlinImage : uint8_t {
   imgBootScreen = 0x00,
@@ -120,6 +129,15 @@ enum MarlinImage : uint8_t {
   imgTramming,
   imgPower,
   imgZoffset,
+  imgLight,
+  imgNext,
+  imgPrevous,
+  imgFila,
+  imgLanguage,
+  imgInfo,
+  imgSave,
+  imgIs,
+  imgLa,
   imgCount,
   noImage = imgCount,
   imgPageUp = imgLeft,
@@ -208,4 +226,13 @@ extern const tImage Tramming_64x64x4;
 extern const tImage Slider8x16x4;
 extern const tImage Power_64x64x4;
 extern const tImage Zoffset_64x64x4;
+extern const tImage Light_64x64x4;
+extern const tImage Next_64x64x4;
+extern const tImage Prevous_64x64x4;
+extern const tImage Fila_64x64x4;
+extern const tImage Language_64x64x4;
+extern const tImage Info_64x64x4;
+extern const tImage Save_64x64x4;
+extern const tImage Is_64x64x4;
+extern const tImage La_64x64x4;
 extern const tImage Images[imgCount];

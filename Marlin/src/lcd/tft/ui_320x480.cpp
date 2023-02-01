@@ -41,6 +41,27 @@ using namespace std;
 #include "../../module/motion.h"
 #include "../marlinui.h"
 
+#include "../../feature/caselight.h"
+
+
+#if HAS_MULTI_LANGUAGE
+  void menu_language();
+#endif
+
+#if ENABLED(ADVANCED_PAUSE_FEATURE)
+  void menu_change_filament();
+#endif
+
+#if ENABLED(LCD_INFO_MENU)
+  void menu_info();
+#endif
+
+void menu_configuration();
+
+void menu_advanced_input_shaping();
+
+void menu_advanced_filament();
+
 #ifdef MKS_WIFI_MODULE
   #include "../../module/wifi/wifi.h"
 #endif
@@ -53,6 +74,7 @@ using namespace std;
 #if ENABLED(AUTO_BED_LEVELING_UBL)
   #include "../../feature/bedlevel/bedlevel.h"
 #endif
+
 
 void MarlinUI::tft_idle() {
   #if ENABLED(TOUCH_SCREEN)
@@ -368,7 +390,7 @@ void MarlinUI::draw_status_screen() {
       tft_string.set(i16tostr3rj(progress));
       tft_string.add("%");
       tft.add_text(tft_string.center(312), 2, COLOR_WHITE, tft_string);
-
+      //1 Line Icons
       if (!printingIsPaused()) {
         TERN_(TOUCH_SCREEN, add_control(20, 200, PAUSE_PRINT, imgPause));
       } else {
@@ -376,30 +398,68 @@ void MarlinUI::draw_status_screen() {
       }
       TERN_(TOUCH_SCREEN, add_control(128, 200, STOP_PRINT, imgStop, true, COLOR_CORAL_RED));
       add_control(236, 200, menu_tune, imgTune);
-      TERN_(TOUCH_SCREEN, add_control(128, 280, BABYSTEP_BUTTON, imgBabystep));
+      //2 Line Icons
+      if (ui.screen_num == 0) {
+        TERN_(TOUCH_SCREEN, add_control(20, 280, CASE_LIGHT, imgLight, true, caselight.on? COLOR_WHITE : COLOR_GREY));      
+        TERN_(TOUCH_SCREEN, add_control(128, 280, BABYSTEP_BUTTON, imgBabystep));
+        TERN_(TOUCH_SCREEN, add_control(236, 280, NEXT_SCREEN, imgNext));
+      } else if (ui.screen_num == 1){
+        TERN_(TOUCH_SCREEN, add_control(20, 280, PREVOUS_SCREEN, imgPrevous));
+        TERN_(TOUCH_SCREEN, add_control(128, 280, FEEDRATE, imgFeedRateBig)); 
+        TERN_(TOUCH_SCREEN, add_control(236, 280, FLOWRATE, imgFlowRateBig));
+      }
     } else {
-      // TERN_(TOUCH_SCREEN, add_control(128, 200, BED_Z, imgBedZ, COLOR_WHITE));
-      add_control(236, 200, menu_main, imgSettings);
-      TERN_(TOUCH_SCREEN, add_control(128, 360, TRAMMING, imgTramming));
-      TERN_(TOUCH_SCREEN, add_control(20, 360, BED_Z, imgZoffset));
-      #ifdef PSU_CONTROL
-        TERN_(TOUCH_SCREEN, add_control(236, 360, POWER_OFF, imgPower));
-      #endif
-      #ifdef MKS_WIFI_MODULE
-        add_control(128, 200, wifi_screen, imgWifi, wifi_link_state == WIFI_CONNECTED);
-      #endif
-      TERN_(TOUCH_SCREEN, add_control(128, 280, MOVE_AXIS, imgMove));
-      #if ENABLED(SDSUPPORT)
-        const bool cm = card.isMounted(), pa = printingIsActive();
-        add_control(20, 200, menu_media, imgSD, cm && !pa, COLOR_CONTROL_ENABLED, cm && pa ? COLOR_BUSY : COLOR_CONTROL_DISABLED);
-      #endif
+      if (ui.screen_num == 0) {
+        //1 Line Icons
+        #if ENABLED(SDSUPPORT)
+          const bool cm = card.isMounted(), pa = printingIsActive();
+          add_control(20, 200, menu_media, imgSD, cm && !pa, COLOR_CONTROL_ENABLED, cm && pa ? COLOR_BUSY : COLOR_CONTROL_DISABLED);
+        #endif      
+        TERN_(TOUCH_SCREEN, add_control(128, 200, CASE_LIGHT, imgLight, true, caselight.on? COLOR_WHITE : COLOR_GREY));        
+        add_control(236, 200, menu_configuration, imgSettings);
+        //2 Line Icons
+        TERN_(TOUCH_SCREEN, add_control(128, 280, MOVE_AXIS, imgMove));
+        TERN_(TOUCH_SCREEN, add_control(20, 280, FEEDRATE, imgFeedRateBig));
+        TERN_(TOUCH_SCREEN, add_control(236, 280, FLOWRATE, imgFlowRateBig));
+        //3 Line Icons
+        TERN_(TOUCH_SCREEN, add_control(20, 360, BED_Z, imgZoffset));        
+        TERN_(TOUCH_SCREEN, add_control(128, 360, TRAMMING, imgTramming));
+        TERN_(TOUCH_SCREEN, add_control(236, 360, NEXT_SCREEN, imgNext));
+
+
+      } else if (ui.screen_num == 1) {
+        // //1 Line Icons
+        #ifdef MKS_WIFI_MODULE
+          add_control(20, 200, wifi_screen, imgWifi, wifi_link_state == WIFI_CONNECTED);        //wifi
+        #endif
+        // TERN_(TOUCH_SCREEN, add_control(128, 200, , ));      //Power off
+        add_control(128, 200, menu_language, imgLanguage);
+        add_control(236, 200, menu_info, imgInfo);
+        // TERN_(TOUCH_SCREEN, add_control(236, 200, LANGUAGE_SCREEN, imgLanguage));        //language        
+        // //2 Line Icons
+        add_control(20, 280, menu_advanced_input_shaping, imgIs);        
+        add_control(128, 280, menu_change_filament, imgFila);
+        add_control(236, 280, menu_advanced_filament, imgLa);
+        // TERN_(TOUCH_SCREEN, add_control(128, 280, CHANGE_FILAMENT, imgFila));        //Change filament
+
+        // TERN_(TOUCH_SCREEN, add_control(236, 280, MOVE_AXIS, imgMove));        //hz1
+        // //3 Line Icons
+        TERN_(TOUCH_SCREEN, add_control(20, 360, PREVOUS_SCREEN, imgPrevous));        //BackScreen
+        #ifdef PSU_CONTROL
+          add_control(128, 360, ui.poweroff, imgPower);
+        #else
+          tft.canvas(128, 360, 64, 64);
+          tft.set_background(COLOR_BACKGROUND); 
+        #endif
+        // TERN_(TOUCH_SCREEN, add_control(128, 360, POWER_OFF, imgPower));      //Power off   
+        TERN_(TOUCH_SCREEN, add_control(236, 360, SAVE_EEPROM, imgSave));     
+        // add_control(236, 360, ui.store_settings, imgSave);
+        // TERN_(TOUCH_SCREEN, add_control(128, 360, MOVE_AXIS, imgMove));       //hz2
+        // TERN_(TOUCH_SCREEN, add_control(236, 360, MOVE_AXIS, imgMove));       //hz3
+      }
     }
-    // TERN_(SDSUPPORT, add_control(20, 200, menu_media, imgSD, !printingIsActive(), COLOR_CONTROL_ENABLED, card.isMounted() && printingIsActive() ? COLOR_BUSY : COLOR_CONTROL_DISABLED));
   #endif                                                                                                  
 
-
-TERN_(TOUCH_SCREEN, add_control(20, 280, FEEDRATE, imgFeedRateBig));
-TERN_(TOUCH_SCREEN, add_control(236, 280, FLOWRATE, imgFlowRateBig));
 
   // print duration
   // const uint8_t progress = ui.get_progress_percent();
@@ -1425,5 +1485,18 @@ void MarlinUI::finish_screen(){
 
 }
 #endif
+
+
+// void MarlinUI::language_screen(){
+//   TERN_(TOUCH_SCREEN, touch.clear());
+//   defer_status_screen(true);  //Blocking Autoback to status screen
+//   TERN_(TOUCH_SCREEN, touch.add_control(20, 200, LANG, imgLangru, rus));
+//   TERN_(TOUCH_SCREEN, touch.add_control(128, 200, LANG, imgLangeng, eng));
+//   //En image
+//   //Rus image
+//   TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH + 25, 420, BACK, imgBack));
+
+// }
+
 
 #endif //HAS_UI_320x480

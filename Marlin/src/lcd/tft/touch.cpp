@@ -37,6 +37,8 @@
   #include "../../feature/power.h"
 #endif
 
+#include "../../feature/caselight.h"
+
 #include "../../feature/bedlevel/bedlevel.h"
 
 #if ENABLED(AUTO_BED_LEVELING_UBL)
@@ -311,7 +313,9 @@ void Touch::touch(touch_control_t *control) {
       ui.reset_status();       
       break;
     #endif
-
+    case SAVE_EEPROM:
+      ui.store_settings();
+    break;
     case TRAMMING: 
       _lcd_level_bed_corners();
       break;
@@ -340,6 +344,27 @@ void Touch::touch(touch_control_t *control) {
       ui.clear_lcd();
       MenuItem_float42_52::action(GET_TEXT_F(MSG_BED_Z), &bedlevel.z_offset, -3, 3);
     break;
+
+    case CASE_LIGHT:
+      if (caselight.on) {
+        caselight.on = false;
+      } else {
+        caselight.on = true;
+      }
+      caselight.update_enabled();
+    break;
+    case NEXT_SCREEN:
+      ui.screen_num = 1;
+      // ui.clear_lcd();
+    break;
+    case PREVOUS_SCREEN:
+      ui.screen_num = 0;
+      // ui.clear_lcd();    
+    break;
+    // case CHANGE_FILAMENT:
+    //   menu_change_filament();
+    // break;
+
     case CHAMBER_FAN: 
       bool chamber_fan_status;
       chamber_fan_status = control->data;
@@ -378,6 +403,7 @@ void Touch::touch(touch_control_t *control) {
     case RESUME_PRINT: ui.resume_print(); break;
     case PAUSE_PRINT: ui.pause_print(); break;
     case STOP_PRINT: 
+    ui.screen_num = 0;
     ui.abort_print(); 
     ui.clear_lcd();
     break;

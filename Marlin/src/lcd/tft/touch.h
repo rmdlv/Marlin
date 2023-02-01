@@ -86,6 +86,11 @@ enum TouchControlType : uint16_t {
   WIFI,
   POWER_OFF,
   BED_Z,
+  CASE_LIGHT,
+  NEXT_SCREEN,
+  PREVOUS_SCREEN,
+  CHANGE_FILAMENT,
+  SAVE_EEPROM,
 };
 
 typedef void (*screenFunc_t)();
