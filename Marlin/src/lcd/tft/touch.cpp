@@ -88,6 +88,11 @@ void Touch::add_control(TouchControlType type, uint16_t x, uint16_t y, uint16_t 
   controls_count++;
 }
 
+void Clear_midle_screen(){
+  tft.canvas(0, 200, 320, 224);
+  tft.set_background(COLOR_BACKGROUND); 
+}
+
 void Touch::idle() {
   uint16_t i;
   int16_t _x, _y;
@@ -305,14 +310,14 @@ void Touch::touch(touch_control_t *control) {
       #endif
 
       break;
-    #ifdef FINISH_SCREEN
     case RETRY_PRINT: 
-    //Print file again
+      //Print file again
       card.openAndPrintFile(card.filename);
       ui.return_to_status();
-      ui.reset_status();       
+      ui.reset_status(); 
+      Clear_midle_screen();      
+      ui.screen_num = 0;
       break;
-    #endif
     case SAVE_EEPROM:
       ui.store_settings();
     break;
@@ -355,10 +360,12 @@ void Touch::touch(touch_control_t *control) {
     break;
     case NEXT_SCREEN:
       ui.screen_num = 1;
+      Clear_midle_screen();
       // ui.clear_lcd();
     break;
     case PREVOUS_SCREEN:
       ui.screen_num = 0;
+      Clear_midle_screen();
       // ui.clear_lcd();    
     break;
     // case CHANGE_FILAMENT:

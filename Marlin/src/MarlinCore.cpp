@@ -388,9 +388,8 @@ void startOrResumeJob() {
       TERN_(PASSWORD_AFTER_SD_PRINT_END, password.lock_machine());
       TERN_(DGUS_LCD_UI_MKS, ScreenHandler.SDPrintingFinished());
     }
-    #ifdef FINISH_SCREEN
-    ui.goto_screen((screenFunc_t)ui.finish_screen);
-    #endif
+    ui.screen_num = 3;
+
   }
 
 #endif // SDSUPPORT

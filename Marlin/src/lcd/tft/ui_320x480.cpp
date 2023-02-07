@@ -410,6 +410,7 @@ void MarlinUI::draw_status_screen() {
       }
     } else {
       if (ui.screen_num == 0) {
+        // Clear_midle_screen();
         //1 Line Icons
         #if ENABLED(SDSUPPORT)
           const bool cm = card.isMounted(), pa = printingIsActive();
@@ -428,6 +429,7 @@ void MarlinUI::draw_status_screen() {
 
 
       } else if (ui.screen_num == 1) {
+        
         // //1 Line Icons
         #ifdef MKS_WIFI_MODULE
           add_control(20, 200, wifi_screen, imgWifi, wifi_link_state == WIFI_CONNECTED);        //wifi
@@ -456,6 +458,60 @@ void MarlinUI::draw_status_screen() {
         // add_control(236, 360, ui.store_settings, imgSave);
         // TERN_(TOUCH_SCREEN, add_control(128, 360, MOVE_AXIS, imgMove));       //hz2
         // TERN_(TOUCH_SCREEN, add_control(236, 360, MOVE_AXIS, imgMove));       //hz3
+      } else if (ui.screen_num == 3){
+        char buffer[22]; 
+        //full Blank
+        // Clear_midle_screen();
+
+        //Print Time
+        tft.canvas(0, 200, 320, 120);
+        tft.set_background(COLOR_BACKGROUND);
+        tft_string.set("Printing Finished");
+        tft.add_text(tft_string.center(320), 5, COLOR_YELLOW, tft_string);
+        duration_t(print_job_timer.duration()).toString(buffer);
+        tft_string.set(buffer);
+        tft.add_text(tft_string.center(320), 45, COLOR_YELLOW, tft_string);
+
+        //Print Full filename
+        tft_string.set(card.longest_filename());
+        tft.add_text(tft_string.center(320), 85, COLOR_WHITE, tft_string);
+
+        //Up Blank
+        tft.canvas(0, 320, 320, 14);
+        tft.set_background(COLOR_BACKGROUND);  
+
+        //Left Blank
+        tft.canvas(0, 334, 10, 50);
+        tft.set_background(COLOR_BACKGROUND);       
+
+        //Print Back Button
+        tft.canvas(10, 334, 140, 50);
+        tft.set_background(COLOR_BACKGROUND);
+        tft_string.set("Back");
+        tft.add_rectangle(0, 0, 140, 50, COLOR_DARK_ORANGE);
+        tft.add_text(tft_string.center(140), 10, COLOR_ORANGE, tft_string);
+        TERN_(TOUCH_SCREEN, touch.add_control(PREVOUS_SCREEN, 10, 334, 140, 50));
+
+        //Midle Blank
+        tft.canvas(150, 334, 20, 50);
+        tft.set_background(COLOR_BACKGROUND);   
+
+        //Print Again Button
+        tft.canvas(170, 334, 140, 50);
+        tft.set_background(COLOR_BACKGROUND);
+        tft_string.set("Print Again");
+        tft.add_rectangle(0, 0, 140, 50, COLOR_DARK_ORANGE);
+        tft.add_text(tft_string.center(140), 10, COLOR_ORANGE, tft_string);
+        TERN_(TOUCH_SCREEN, touch.add_control(RETRY_PRINT, 170, 334, 140, 50));
+
+        //Right Blank
+        tft.canvas(310, 334, 10, 50);
+        tft.set_background(COLOR_BACKGROUND);       
+
+        //End blank
+        tft.canvas(0, 384, 320, 51);
+        tft.set_background(COLOR_BACKGROUND);
+
       }
     }
   #endif                                                                                                  
@@ -1443,48 +1499,6 @@ void MarlinUI::fan_screen() {
   TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH + 25, 420, BACK, imgBack));
 
 }
-
-#ifdef FINISH_SCREEN
-void MarlinUI::finish_screen(){
-  char buffer[22]; 
-
-  TERN_(TOUCH_SCREEN, touch.clear());
-  defer_status_screen(true);  //Blocking Autoback to status screen
-
-  //Print Head
-  tft.canvas(0, 20, 320, 200);
-  tft.set_background(COLOR_BACKGROUND);
-  tft_string.set("Printing Finished");
-  tft.add_text(tft_string.center(320), 15, COLOR_YELLOW, tft_string);
-  
-  //Print Time
-  duration_t(print_job_timer.duration()).toString(buffer);
-  tft_string.set(buffer);
-  tft.add_text(tft_string.center(320), 90, COLOR_YELLOW, tft_string);
-
-  //Print Full filename
-  tft_string.set(card.longest_filename());
-  tft.add_text(tft_string.center(320), 150, COLOR_WHITE, tft_string);
-
-  //Print Button
-  tft.canvas(170, 330, 140, 64);
-  tft.set_background(COLOR_BACKGROUND);
-  tft_string.set("Print Again");
-  tft.add_rectangle(0, 0, 140, 64, COLOR_DARK_ORANGE);
-  tft.add_text(tft_string.center(140), 15, COLOR_ORANGE, tft_string);
-  TERN_(TOUCH_SCREEN, touch.add_control(RETRY_PRINT, 170, 330, 140, 64));
-
-  //Print Back Button
-  tft.canvas(10, 330, 140, 64);
-  tft.set_background(COLOR_BACKGROUND);
-  tft_string.set("Back");
-  tft.add_rectangle(0, 0, 140, 64, COLOR_DARK_ORANGE);
-  tft.add_text(tft_string.center(140), 15, COLOR_ORANGE, tft_string);
-  TERN_(TOUCH_SCREEN, touch.add_control(BACK, 10, 330, 140, 64));
-  // TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH + 25, 420, BACK, imgBack));
-
-}
-#endif
 
 
 // void MarlinUI::language_screen(){
