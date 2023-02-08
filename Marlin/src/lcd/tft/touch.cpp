@@ -347,7 +347,7 @@ void Touch::touch(touch_control_t *control) {
 
     case BED_Z:
       ui.clear_lcd();
-      MenuItem_float42_52::action(GET_TEXT_F(MSG_BED_Z), &bedlevel.z_offset, -3, 3);
+      MenuItem_float43::action(GET_TEXT_F(MSG_BED_Z), &bedlevel.z_offset, -3, 3);
     break;
 
     case CASE_LIGHT:

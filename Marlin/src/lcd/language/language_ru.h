@@ -37,6 +37,7 @@ namespace Language_ru {
   LSTR LANGUAGE                             = _UxGT("Russian");
 
   LSTR WELCOME_MSG                          = MACHINE_NAME _UxGT(" Готов.");
+  LSTR MSG_INFO_SSID_KEY                    = _UxGT("Ключ сети");
   LSTR MSG_NO_CONNECT                       = _UxGT("Нет подключения");  
   LSTR MSG_INFO_SSID                        = _UxGT("Имя сети");
   LSTR MSG_INFO_IP                          = _UxGT("IP Адрес");  

@@ -147,7 +147,7 @@ void menu_tune() {
   // Manual bed leveling, Bed Z:
   //
   #if BOTH(MESH_BED_LEVELING, LCD_BED_LEVELING)
-    EDIT_ITEM(float43, MSG_BED_Z, &bedlevel.z_offset, -1, 1);
+    EDIT_ITEM(float43, MSG_BED_Z, &bedlevel.z_offset, -3, 3);
   #endif
 
   //
