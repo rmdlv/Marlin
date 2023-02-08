@@ -296,94 +296,74 @@ void menu_info_wifi() {
 
 void menu_info_wifi_load() {
 
-  // if (ui.use_click()) return ui.go_back();
+  START_SCREEN();
 
   // !!!!!!!!!!!!!!  Zr TEST !!!!!!!!!!!
   
-  // char wifi_str[30];
-  // SdFile Wifi_cfg_file;
-  // dir_t wifi_dir;
-  // wifi_dir.name = "/";
+  if (!card.isMounted()) {
+    STATIC_ITEM_F(F("Card not inserted"));
+  } else {
+    char fname[] = "wifi.txt";
+    card.openFileRead(fname);
+    if (!card.isFileOpen()) {
+      STATIC_ITEM_F(F("File open error"));
+    } else {
 
+      char buf[256];
+      char delim[] = "::";
+      char ap_name_test[32];
+      char ap_keycode_test[32];
 
-  // uint8_t const O_READ = 0x01;
-  // int16_t SdBaseFile::fgets(char *str, int16_t num, char *delim);
-  // bool SdBaseFile::open(SdBaseFile *dirFile, const char *path, uint8_t oflag)
-  // file.open(this, name, O_READ);
-  // Wifi_cfg_file.dirEntry(*wifi_dir);
-  // Wifi_cfg_file.open("/", "wifi.txt", O_READ);
-  // int16_t nums = Wifi_cfg_file.fgets(wifi_str, 30, "\n");
+      card.read(buf, COUNT(buf));
 
-  // if (!nums) {
-  // // STATIC_ITEM(F(wifi_str), SS_CENTER);
-  // } else {
-  //   STATIC_ITEM(F("Read Error"), SS_CENTER);
-  // }
+      char *ptr = strtok(buf, delim);
+      strcpy(ap_name_test, ptr);
 
-  // Wifi_cfg_file.closefile();
-
-
-  // SdFile::SdFile(const char *path, uint8_t oflag) : SdBaseFile(path, oflag) { }
-
-  
-
-  // if (!file.open(&root, EEPROM_FILENAME, O_RDONLY))
-  // return true; // false aborts the save
-
-  // int bytes_read = file.read(HAL_eeprom_data, MARLIN_EEPROM_SIZE);
-  // if (bytes_read < 0) return false;
-  // for (; bytes_read < MARLIN_EEPROM_SIZE; bytes_read++)
-  // HAL_eeprom_data[bytes_read] = 0xFF;
-  // file.close();
-  // return true;
-
+      ptr = strtok(NULL, delim);
+      strcpy(ap_keycode_test, ptr);
+      card.closefile();
 
   //  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  START_SCREEN();
-  
-  // STATIC_ITEM(F("Under construction"), SS_CENTER);
-  // char ap_name_test[11] = "Zar-Home";
-  // char ap_keycode_test[32] = "193782647895123";
+    
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      uint8_t buf_to_wifi[256];
+      int index_to_wifi = 0;
+      uint8_t wifi_ret_head = 0xA5;
+      uint8_t wifi_ret_tail = 0xFC;
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // uint8_t buf_to_wifi[256];
-  // int index_to_wifi = 0;
-  // uint8_t wifi_ret_head = 0xA5;
-  // uint8_t wifi_ret_tail = 0xFC;
+      int data_offset = 4,
+      apLen = strlen((const char *)ap_name_test),
+      keyLen = strlen((const char *)ap_keycode_test);
 
-  // int data_offset = 4,
-  // apLen = strlen((const char *)ap_name_test),
-  // keyLen = strlen((const char *)ap_keycode_test);
+      // ZERO(buf_to_wifi);
 
-  // ZERO(buf_to_wifi);
-  // index_to_wifi = 0;
+      // #define ESP_WIFI          0x02
+      #define AP_MODEL          0x01
+      #define STA_MODEL         0x02
 
-  // // #define ESP_WIFI          0x02
-  // #define AP_MODEL          0x01
-  // #define STA_MODEL         0x02
+      buf_to_wifi[data_offset] = STA_MODEL;
+      buf_to_wifi[data_offset + 1]  = apLen;
+      memcpy(&buf_to_wifi[data_offset + 2], (const char *)ap_name_test, apLen);
+      buf_to_wifi[data_offset + apLen + 2]  = keyLen;
+      memcpy(&buf_to_wifi[data_offset + apLen + 3], (const char *)ap_keycode_test, keyLen);
+      buf_to_wifi[data_offset + apLen + keyLen + 3] = wifi_ret_tail;
 
-  // buf_to_wifi[data_offset] = STA_MODEL;
-  // buf_to_wifi[data_offset + 1]  = apLen;
-  // memcpy(&buf_to_wifi[data_offset + 2], (const char *)ap_name_test, apLen);
-  // buf_to_wifi[data_offset + apLen + 2]  = keyLen;
-  // memcpy(&buf_to_wifi[data_offset + apLen + 3], (const char *)ap_keycode_test, keyLen);
-  // buf_to_wifi[data_offset + apLen + keyLen + 3] = wifi_ret_tail;
+      index_to_wifi = apLen + keyLen + 3;
 
-  // index_to_wifi = apLen + keyLen + 3;
+      buf_to_wifi[0] = wifi_ret_head;
+      buf_to_wifi[1] = WIFI_PARA_SET;
+      buf_to_wifi[2] = index_to_wifi & 0xFF;
+      buf_to_wifi[3] = (index_to_wifi >> 8) & 0xFF;
 
-  // buf_to_wifi[0] = wifi_ret_head;
-  // buf_to_wifi[1] = WIFI_PARA_SET;
-  // buf_to_wifi[2] = index_to_wifi & 0xFF;
-  // buf_to_wifi[3] = (index_to_wifi >> 8) & 0xFF;
+      raw_send_to_wifi(buf_to_wifi, 5 + index_to_wifi);
 
-  // raw_send_to_wifi(buf_to_wifi, 5 + index_to_wifi);
+      ZERO(buf_to_wifi);
+      STATIC_ITEM_F(F("Wi-Fi config Loaded"));
+      PSTRING_ITEM(MSG_INFO_SSID, ap_name_test, SS_CENTER);
+      PSTRING_ITEM(MSG_INFO_SSID_KEY, ap_keycode_test, SS_CENTER);
+    }
+  } 
 
-  // ZERO(buf_to_wifi);
-
-  // delay(1000);
-
-  // PSTRING_ITEM(MSG_INFO_SSID, wifiPara.ap_name, SS_CENTER);
-  // PSTRING_ITEM(MSG_INFO_IP, ipPara.ip_addr, SS_CENTER);
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   END_SCREEN();
@@ -407,7 +387,7 @@ void menu_info() {
     #endif
     #if ENABLED(MKS_WIFI_MODULE)
       SUBMENU(MSG_INFO_WIFI_MENU, menu_info_wifi);
-      // SUBMENU(MSG_WIFI_LOAD_FROM_FILE, menu_info_wifi_load);
+      SUBMENU(MSG_WIFI_LOAD_FROM_FILE, menu_info_wifi_load);
     #endif
   #endif
 

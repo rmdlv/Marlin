@@ -49,6 +49,7 @@ namespace Language_en {
   LSTR LANGUAGE                           = _UxGT("English");
 
   // These strings should be translated
+  LSTR MSG_INFO_SSID_KEY                  = _UxGT("Wi-Fi Key");
   LSTR MSG_NO_CONNECT                     = _UxGT("Not Connected");
   LSTR MSG_SET_BUTTON                     = _UxGT("Set");
   LSTR MSG_MODEL_FAN                      = _UxGT("Model Fan");  
@@ -642,7 +643,7 @@ namespace Language_en {
   LSTR MSG_DELTA_RADIUS                   = _UxGT("Radius");
   LSTR MSG_INFO_MENU                      = _UxGT("About Printer");
   LSTR MSG_INFO_PRINTER_MENU              = _UxGT("Printer Info");
-  LSTR MSG_INFO_SSID                      = _UxGT("SSID");
+  LSTR MSG_INFO_SSID                      = _UxGT("Wi-Fi Name");
   LSTR MSG_INFO_IP                        = _UxGT("IP");
   LSTR MSG_3POINT_LEVELING                = _UxGT("3-Point Leveling");
   LSTR MSG_LINEAR_LEVELING                = _UxGT("Linear Leveling");
