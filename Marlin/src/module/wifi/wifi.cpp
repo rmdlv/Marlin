@@ -892,16 +892,16 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
               break;
             }
             while (tmpStr[index] == ' ') index++;
-            char *path = (char *)tempBuf;
+              char *path = (char *)tempBuf;
 
-            if (strlen((char *)&tmpStr[index]) < 80) {
-              send_to_wifi((uint8_t *)(STR_BEGIN_FILE_LIST "\r\n"), strlen(STR_BEGIN_FILE_LIST "\r\n"));
-              strcpy((char *)path, (char *)&tmpStr[index]);
+              if (strlen((char *)&tmpStr[index]) < 80) {
+                send_to_wifi((uint8_t *)(STR_BEGIN_FILE_LIST "\r\n"), strlen(STR_BEGIN_FILE_LIST "\r\n"));
+                strcpy((char *)path, (char *)&tmpStr[index]);
               send_sd_ls(path);
-              send_to_wifi((uint8_t *)(STR_END_FILE_LIST "\r\n"), strlen(STR_END_FILE_LIST "\r\n"));
+                send_to_wifi((uint8_t *)(STR_END_FILE_LIST "\r\n"), strlen(STR_END_FILE_LIST "\r\n"));
+              }
+              SEND_OK_TO_WIFI;
             }
-            SEND_OK_TO_WIFI;
-          }
           break;
 
         // case 21: SEND_OK_TO_WIFI; break;            // Init SD card
@@ -936,8 +936,8 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
                 //   strcat((char *)list_file.long_name[sel_id], dosName);
                 // }
                 // else {
-                  strcat((char *)list_file.file_name[sel_id], (char *)&tmpStr[index]);
-                  strcat((char *)list_file.long_name[sel_id], (char *)&tmpStr[index]);
+                    strcat((char *)list_file.file_name[sel_id], (char *)&tmpStr[index]);
+                    strcat((char *)list_file.long_name[sel_id], (char *)&tmpStr[index]);
                 // }
 
                 char *cur_name=strrchr(list_file.file_name[sel_id],'/');
@@ -959,29 +959,29 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
         case 24: // M24：Start or resume printing
           if (strcmp_P(list_file.file_name[sel_id], PSTR("notValid")) != 0) {
             if (!card.isPrinting() || !card.isPaused()) {
-              if (!gcode_preview_over) {
-                char *cur_name = strrchr(list_file.file_name[sel_id], '/');
-                SdFile file;
-                SdFile *curDir;
-                card.abortFilePrintNow();
-                const char * const fname = card.diveToFile(false, curDir, cur_name);
-                if (!fname) return;
-                card.openFileRead(cur_name);
-                if (card.isFileOpen()) {
-                  feedrate_percentage = 100;
-                #if HAS_EXTRUDERS
-                  planner.flow_percentage[0] = 100;
-                  planner.e_factor[0] = planner.flow_percentage[0] * 0.01f;
-                #endif
-                #if HAS_MULTI_EXTRUDER
-                  planner.flow_percentage[1] = 100;
-                  planner.e_factor[1] = planner.flow_percentage[1] * 0.01f;
-                #endif
-                  card.startOrResumeFilePrinting();
-                  TERN_(POWER_LOSS_RECOVERY, recovery.prepare());
-                  once_flag = false;
+                if (!gcode_preview_over) {
+                  char *cur_name = strrchr(list_file.file_name[sel_id], '/');
+                  SdFile file;
+                  SdFile *curDir;
+                  card.abortFilePrintNow();
+                  const char * const fname = card.diveToFile(false, curDir, cur_name);
+                  if (!fname) return;
+                  card.openFileRead(cur_name);
+                  if (card.isFileOpen()) {
+                    feedrate_percentage = 100;
+                    #if HAS_EXTRUDERS
+                      planner.flow_percentage[0] = 100;
+                      planner.e_factor[0] = planner.flow_percentage[0] * 0.01f;
+                    #endif
+                    #if HAS_MULTI_EXTRUDER
+                      planner.flow_percentage[1] = 100;
+                      planner.e_factor[1] = planner.flow_percentage[1] * 0.01f;
+                    #endif
+                    card.startOrResumeFilePrinting();
+                    TERN_(POWER_LOSS_RECOVERY, recovery.prepare());
+                    once_flag = false;
+                  }
                 }
-              }
             } else if (card.isPaused()) {
                 card.startOrResumeFilePrinting();
             }
@@ -991,14 +991,14 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
 
         case 25: // M25: pause printing
           if (card.isPrinting()) {
-            card.pauseSDPrint();
+              card.pauseSDPrint();
             SEND_OK_TO_WIFI;
           }
           break;
 
         case 26: // M26：stop printing
           if (card.isPrinting() || card.isPaused()) {
-            card.abortFilePrintSoon();
+              card.abortFilePrintSoon();
             SEND_OK_TO_WIFI;
           }
           break;
@@ -1480,20 +1480,20 @@ static void file_first_msg_handle(uint8_t * msg, uint16_t msgLen) {
   // }
   strcpy((char *)saveFilePath, (char *)file_writer.saveFileName);
 
-  card.cdroot();
-  upload_file.close();
-  const char * const fname = card.diveToFile(false, upload_curDir, saveFilePath);
-  
+    card.cdroot();
+    upload_file.close();
+    const char * const fname = card.diveToFile(false, upload_curDir, saveFilePath);
+
   if (card.fileExists(fname)) card.removeFile(fname); // delete file if exists
 
-  if (!upload_file.open(upload_curDir, fname, O_CREAT | O_APPEND | O_WRITE | O_TRUNC)) {
+    if (!upload_file.open(upload_curDir, fname, O_CREAT | O_APPEND | O_WRITE | O_TRUNC)) {
     upload_result = 2;  // upload error
-    wifiTransError.flag = 1;
-    wifiTransError.start_tick = getWifiTick();
+      wifiTransError.flag = 1;
+      wifiTransError.start_tick = getWifiTick();
     mks_end_transmit();
-    ui.set_status("Upload error");
-    return;
-  }
+    ui.set_status("Upload error 1");
+      return;
+    }
 
   wifi_link_state = WIFI_TRANS_FILE;
   upload_result = 1;  // uploading
@@ -1515,7 +1515,7 @@ static void file_fragment_msg_handle(uint8_t * msg, uint16_t msgLen) {
     wifi_link_state = WIFI_CONNECTED;
     upload_result = 2;  // upload error
     mks_end_transmit();
-    ui.set_status("Upload error");
+    ui.set_status("Upload error 2");
   }
   else {
     if (write_to_file((char *)msg + 4, msgLen - 4) < 0) {
@@ -1524,7 +1524,7 @@ static void file_fragment_msg_handle(uint8_t * msg, uint16_t msgLen) {
       wifi_link_state = WIFI_CONNECTED;
       upload_result = 2;  // upload error
       mks_end_transmit();
-      ui.set_status("Upload error");
+      ui.set_status("Upload error 3");
       return;
     }
     lastFragment = frag;
@@ -1554,7 +1554,7 @@ static void file_fragment_msg_handle(uint8_t * msg, uint16_t msgLen) {
         wifi_link_state = WIFI_CONNECTED;
         upload_result = 2;  // upload error
         mks_end_transmit();
-        ui.set_status("Upload error");
+        ui.set_status("Upload error 4");
         return;
       }
       ZERO(public_buf);

@@ -45,6 +45,8 @@ extern const uint8_t sd_64x64x4[];
 extern const uint8_t home_64x64x4[];
 extern const uint8_t btn_rounded_64x52x4[];
 extern const uint8_t btn_rounded_42x39x4[];
+extern const uint8_t btn_rounded_90x64x4[];
+extern const uint8_t btn_rounded_120x64x4[];
 extern const uint8_t menu_64x64x4[];
 extern const uint8_t settings_64x64x4[];
 extern const uint8_t confirm_64x64x4[];
@@ -65,8 +67,11 @@ extern const uint8_t flowrate_32x32x4[];
 extern const uint8_t flowrate_64x64x4[];
 extern const uint8_t directory_32x32x4[];
 extern const uint8_t back_32x32x4[];
+extern const uint8_t back_big_80x40x4[];
 extern const uint8_t up_32x32x4[];
+extern const uint8_t up_big_80x40x4[];
 extern const uint8_t down_32x32x4[];
+extern const uint8_t down_big_80x40x4[];
 extern const uint8_t left_32x32x4[];
 extern const uint8_t right_32x32x4[];
 extern const uint8_t refresh_32x32x4[];
@@ -109,8 +114,11 @@ enum MarlinImage : uint8_t {
   imgIncrease,
   imgDecrease,
   imgBack,
+  imgBackBig,
   imgUp,
+  imgUpBig,
   imgDown,
+  imgDownBig,
   imgLeft,
   imgRight,
   imgRefresh,
@@ -119,6 +127,8 @@ enum MarlinImage : uint8_t {
   imgHome,
   imgBtn52Rounded,
   imgBtn39Rounded,
+  imgBtn90Rounded,
+  imgBtn120Rounded,
   imgWifi,
   imgPause,
   imgMove,
@@ -140,8 +150,8 @@ enum MarlinImage : uint8_t {
   imgLa,
   imgCount,
   noImage = imgCount,
-  imgPageUp = imgLeft,
-  imgPageDown = imgRight  
+  imgPageUp = imgUpBig,
+  imgPageDown = imgDownBig  
 };
 
 enum colorMode_t : uint8_t {
@@ -197,6 +207,8 @@ extern const tImage SD_64x64x4;
 extern const tImage Home_64x64x4;
 extern const tImage BtnRounded_64x52x4;
 extern const tImage BtnRounded_42x39x4;
+extern const tImage BtnRounded_90x64x4;
+extern const tImage BtnRounded_120x64x4;
 extern const tImage Menu_64x64x4;
 extern const tImage Settings_64x64x4;
 extern const tImage Confirm_64x64x4;
@@ -212,8 +224,11 @@ extern const tImage Flowrate_32x32x4;
 extern const tImage Flowrate_64x64x4;
 extern const tImage Directory_32x32x4;
 extern const tImage Back_32x32x4;
+extern const tImage Back_Big_80x40x4;
 extern const tImage Up_32x32x4;
+extern const tImage Up_Big_80x40x4;
 extern const tImage Down_32x32x4;
+extern const tImage Down_Big_80x40x4;
 extern const tImage Left_32x32x4;
 extern const tImage Right_32x32x4;
 extern const tImage Refresh_32x32x4;

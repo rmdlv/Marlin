@@ -40,6 +40,8 @@
   #error "Unknown Touch Screen Type."
 #endif
 
+void menu_info_wifi_load();
+
 // Menu Navigation
 extern int8_t encoderTopLine, encoderLine, screen_items;
 
@@ -91,6 +93,7 @@ enum TouchControlType : uint16_t {
   PREVOUS_SCREEN,
   CHANGE_FILAMENT,
   SAVE_EEPROM,
+  WIFI_LOAD,
 };
 
 typedef void (*screenFunc_t)();

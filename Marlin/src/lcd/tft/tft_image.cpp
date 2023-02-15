@@ -57,6 +57,8 @@ const tImage SD_64x64x4             = { (void *)sd_64x64x4, 64, 64, GREYSCALE4 }
 const tImage Home_64x64x4           = { (void *)home_64x64x4, 64, 64, GREYSCALE4 };
 const tImage BtnRounded_64x52x4     = { (void *)btn_rounded_64x52x4, 64, 52, GREYSCALE4 };
 const tImage BtnRounded_42x39x4     = { (void *)btn_rounded_42x39x4, 42, 39, GREYSCALE4 };
+const tImage BtnRounded_90x64x4     = { (void *)btn_rounded_90x64x4, 90, 64, GREYSCALE4 };
+const tImage BtnRounded_120x64x4    = { (void *)btn_rounded_120x64x4, 120, 64, GREYSCALE4 };
 const tImage Menu_64x64x4           = { (void *)menu_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Settings_64x64x4       = { (void *)settings_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Confirm_64x64x4        = { (void *)confirm_64x64x4, 64, 64, GREYSCALE4 };
@@ -78,8 +80,11 @@ const tImage Flowrate_32x32x4       = { (void *)flowrate_32x32x4, 32, 32, GREYSC
 const tImage Flowrate_64x64x4       = { (void *)flowrate_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Directory_32x32x4      = { (void *)directory_32x32x4, 32, 32, GREYSCALE4 };
 const tImage Back_32x32x4           = { (void *)back_32x32x4, 32, 32, GREYSCALE4 };
+const tImage Back_Big_80x40x4       = { (void *)back_big_80x40x4, 80, 40, GREYSCALE4 };
 const tImage Up_32x32x4             = { (void *)up_32x32x4, 32, 32, GREYSCALE4 };
+const tImage Up_Big_80x40x4         = { (void *)up_big_80x40x4, 80, 40, GREYSCALE4 };
 const tImage Down_32x32x4           = { (void *)down_32x32x4, 32, 32, GREYSCALE4 };
+const tImage Down_Big_80x40x4       = { (void *)down_big_80x40x4, 80, 40, GREYSCALE4 };
 const tImage Left_32x32x4           = { (void *)left_32x32x4, 32, 32, GREYSCALE4 };
 const tImage Right_32x32x4          = { (void *)right_32x32x4, 32, 32, GREYSCALE4 };
 const tImage Refresh_32x32x4        = { (void *)refresh_32x32x4, 32, 32, GREYSCALE4 };
@@ -122,8 +127,11 @@ const tImage Images[imgCount] = {
   Increase_64x64x4,
   Decrease_64x64x4,
   Back_32x32x4,
+  Back_Big_80x40x4,
   Up_32x32x4,
+  Up_Big_80x40x4,
   Down_32x32x4,
+  Down_Big_80x40x4,
   Left_32x32x4,
   Right_32x32x4,
   Refresh_32x32x4,
@@ -132,6 +140,8 @@ const tImage Images[imgCount] = {
   Home_64x64x4,
   BtnRounded_64x52x4,
   BtnRounded_42x39x4,
+  BtnRounded_90x64x4,
+  BtnRounded_120x64x4,
   Wifi_64x64x4,
   Pause_64x64x4,
   Move_64x64x4,  
