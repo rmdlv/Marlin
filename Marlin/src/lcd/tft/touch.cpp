@@ -200,10 +200,12 @@ void Touch::touch(touch_control_t *control) {
     case SLIDER:    hold(control); ui.encoderPosition = (x - control->x) * control->data / control->width; break;
     case INCREASE:  hold(control, repeat_delay - 5); TERN(AUTO_BED_LEVELING_UBL, ui.external_control ? bedlevel.encoder_diff++ : ui.encoderPosition++, ui.encoderPosition++); break;
     case DECREASE:  hold(control, repeat_delay - 5); TERN(AUTO_BED_LEVELING_UBL, ui.external_control ? bedlevel.encoder_diff-- : ui.encoderPosition--, ui.encoderPosition--); break;
+    #ifdef MKS_WIFI_MODULE
     case WIFI_LOAD:
       ui.goto_screen((screenFunc_t)menu_info_wifi_load);
       // menu_info_wifi_load();
       break;
+    #endif
     case FILAMENT_MOVE:
       int8_t direction;
       direction = control->data;
@@ -351,7 +353,7 @@ void Touch::touch(touch_control_t *control) {
 
     case BED_Z:
       ui.clear_lcd();
-      MenuItem_float42_52::action(GET_TEXT_F(MSG_BED_Z), &bedlevel.z_offset, -3, 3);
+      MenuItem_float43::action(GET_TEXT_F(MSG_BED_Z), &bedlevel.z_offset, -3, 3);
     break;
 
     case CASE_LIGHT:

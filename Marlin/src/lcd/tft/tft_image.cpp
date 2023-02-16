@@ -90,6 +90,7 @@ const tImage Right_32x32x4          = { (void *)right_32x32x4, 32, 32, GREYSCALE
 const tImage Refresh_32x32x4        = { (void *)refresh_32x32x4, 32, 32, GREYSCALE4 };
 const tImage Leveling_32x32x4       = { (void *)leveling_32x32x4, 32, 32, GREYSCALE4 };
 const tImage Zoffset_64x64x4        = { (void *)zoffset_64x64x4, 64, 64, GREYSCALE4 };
+const tImage Zoffset_32x32x4        = { (void *)zoffset_32x32x4, 32, 32, GREYSCALE4 };
 const tImage Light_64x64x4          = { (void *)light_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Next_64x64x4           = { (void *)next_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Prevous_64x64x4        = { (void *)prevous_64x64x4, 64, 64, GREYSCALE4 };
@@ -152,6 +153,7 @@ const tImage Images[imgCount] = {
   Tramming_64x64x4,
   Power_64x64x4,
   Zoffset_64x64x4,
+  Zoffset_32x32x4, 
   Light_64x64x4,
   Next_64x64x4,
   Prevous_64x64x4,

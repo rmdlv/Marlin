@@ -43,6 +43,8 @@ using namespace std;
 
 #include "../../feature/caselight.h"
 
+#include "../../feature/bedlevel/bedlevel.h"
+
 
 #if HAS_MULTI_LANGUAGE
   void menu_language();
@@ -199,9 +201,9 @@ void draw_heater_status(uint16_t x, uint16_t y, const int8_t Heater) {
   #endif
   else return;
 
-  TERN_(TOUCH_SCREEN, if (targetTemperature >= 0) touch.add_control(HEATER, x, y + 20, 64, 130, Heater));
+  TERN_(TOUCH_SCREEN, if (targetTemperature >= 0) touch.add_control(HEATER, x, y + 41, 100, 114, Heater));
   // if (targetTemperature >= 0) add_control(128, 220, heater_screen);          // HEATER !!!!!!!!!!!!!!
-  tft.canvas(x, y + 20, 64, 130);
+  tft.canvas(x, y + 41, 100, 114);
   tft.set_background(COLOR_BACKGROUND);
 
   Color = currentTemperature < 0 ? COLOR_INACTIVE : COLOR_COLD;
@@ -229,24 +231,26 @@ void draw_heater_status(uint16_t x, uint16_t y, const int8_t Heater) {
     }
   #endif
 
-  tft.add_image(0, 28, image, Color);
+  tft.add_image(18, 13, image, Color);
 
-  tft_string.set(i16tostr3rj(currentTemperature));
-  tft_string.add(LCD_STR_DEGREE);
-  tft_string.trim();
-  tft.add_text(tft_string.center(64) + 2, 82, Color, tft_string);
-
-  if (targetTemperature >= 0) {
-    tft_string.set(i16tostr3rj(targetTemperature));
-    tft_string.add(LCD_STR_DEGREE);
+  // tft_string.set(i16tostr3rj(currentTemperature));
+  // tft_string.add(LCD_STR_DEGREE);
+  // tft_string.trim();
+  // tft.add_text(tft_string.center(64) + 2, 82, Color, tft_string);
+// i16tostr3left
+  // if (targetTemperature >= 0) {
+    tft_string.set(i16tostr3left(currentTemperature));
+    tft_string.add("/");
     tft_string.trim();
-    tft.add_text(tft_string.center(64) + 2, 8, Color, tft_string);
-  }
+    tft_string.add(i16tostr3left(targetTemperature));
+    tft_string.trim();
+    tft.add_text(tft_string.center(100), 68, Color, tft_string);
+  // }
 }
 
 void draw_fan_status(uint16_t x, uint16_t y, const bool blink) {
-  TERN_(TOUCH_SCREEN, touch.add_control(FAN, x, y + 32, 64, 130));                                               //FAN !!!!!!!!!!!!!!!!!!!!!!!
-  tft.canvas(x, y + 32, 66, 130);
+  TERN_(TOUCH_SCREEN, touch.add_control(FAN, x, y + 41, 71, 114));                                               //FAN !!!!!!!!!!!!!!!!!!!!!!!
+  tft.canvas(x, y + 41, 70, 114);
   tft.set_background(COLOR_BACKGROUND);
 
   uint8_t fanSpeed = thermalManager.fan_speed[0];
@@ -263,7 +267,7 @@ void draw_fan_status(uint16_t x, uint16_t y, const bool blink) {
 
   tft_string.set(ui8tostr4pctrj(thermalManager.fan_speed[0]));
   tft_string.trim();
-  tft.add_text(tft_string.center(64) + 6, 68, COLOR_FAN, tft_string);
+  tft.add_text(tft_string.center(70) + 6, 68, COLOR_FAN, tft_string);
 }
 
 void MarlinUI::draw_status_screen() {
@@ -302,18 +306,57 @@ void MarlinUI::draw_status_screen() {
   }
 
   y += TERN(HAS_UI_480x272, 118, 128);
-
-  // coordinates
-  tft.canvas(5, 155, 300, 36);
+  // tft_string.set_font(Helvetica14);
+  tft.canvas(5, 5, 310, 36);
   tft.set_background(COLOR_BACKGROUND);
-  tft.add_rectangle(0, 0, 300, 36, COLOR_AXIS_HOMED);
-  tft_string.set(' ');
+  tft.add_rectangle(0, 0, 310, 36, COLOR_WHITE); 
 
   uint16_t color_feedrate = feedrate_percentage == 100 ? COLOR_RATE_100 : COLOR_RATE_ALTERED;
   tft.add_image(5, 3, imgFeedRate, color_feedrate);  
   tft.add_text(40, 3, COLOR_WHITE, i16tostr3rj(feedrate_percentage));
-  // tft_string.add('%');
 
+  uint16_t color_flowrate = planner.flow_percentage[0] == 100 ? COLOR_RATE_100 : COLOR_RATE_ALTERED;
+  tft.add_image(210, 3, imgFlowRate, color_flowrate);
+  tft.add_text(250, 3, COLOR_WHITE, i16tostr3rj(planner.flow_percentage[active_extruder]));
+
+  tft.add_image(95, 3, imgZoffsetSmall, COLOR_VIVID_GREEN);  
+  tft_string.set(ftostr43sign(bedlevel.z_offset));
+  tft_string.trim();
+  tft.add_text(190 - tft_string.width(), 3, COLOR_WHITE, tft_string);
+
+  // tft_string.set("");
+
+  // tft_string.set("LA:");
+  // tft_string.add(ftostr42_52(planner.extruder_advance_K[0]));
+  // tft.add_text(310 - tft_string.width(), 0, COLOR_WHITE, tft_string); 
+  // tft_string.set_font(Helvetica18);
+
+  // coordinates
+  tft.canvas(5, 155, 310, 36);
+  tft.set_background(COLOR_BACKGROUND);
+  tft.add_rectangle(0, 0, 310, 36, COLOR_AXIS_HOMED);
+  tft_string.set(ftostr5rj(planner.get_current_block()->nominal_speed));
+  tft_string.trim();
+  tft_string.add(" ");
+  tft_string.add("mm/s");
+  tft.add_text(290 - tft_string.width(), 3, COLOR_WHITE, tft_string);
+
+  tft.add_text(25, 3, COLOR_AXIS_HOMED , "Z");
+  uint16_t offset = 10;
+  const bool nhz = axis_should_home(Z_AXIS);
+  if (blink && nhz)
+    tft_string.set('?');
+  else {
+    const float z = LOGICAL_Z_POSITION(current_position.z);
+    tft_string.set(ftostr52sp((int16_t)z));
+    tft_string.rtrim();
+    offset += tft_string.width();
+    tft_string.set(ftostr52sp(z));
+    offset -= tft_string.width();
+  }
+  tft.add_text(95 - tft_string.width() - offset, 3, nhz ? COLOR_AXIS_NOT_HOMED : COLOR_AXIS_HOMED, tft_string);
+
+  tft_string.set(' ');
 
   if (TERN0(LCD_SHOW_E_TOTAL, printingIsActive())) {
     #if ENABLED(LCD_SHOW_E_TOTAL)
@@ -336,26 +379,8 @@ void MarlinUI::draw_status_screen() {
     // tft_string.set(blink && nhy ? "?" : ftostr4sign(LOGICAL_Y_POSITION(current_position.y)));
     // tft.add_text(185 - 12 - tft_string.width(), 3, nhy ? COLOR_AXIS_NOT_HOMED : COLOR_AXIS_HOMED, tft_string);
   }
-  tft.add_text(110, 3, COLOR_AXIS_HOMED , "Z");
-  uint16_t offset = 32;
-  const bool nhz = axis_should_home(Z_AXIS);
-  if (blink && nhz)
-    tft_string.set('?');
-  else {
-    const float z = LOGICAL_Z_POSITION(current_position.z);
-    tft_string.set(ftostr52sp((int16_t)z));
-    tft_string.rtrim();
-    offset += tft_string.width();
-    tft_string.set(ftostr52sp(z));
-    offset -= tft_string.width();
-  }
-  tft.add_text(192 - tft_string.width() - offset, 3, nhz ? COLOR_AXIS_NOT_HOMED : COLOR_AXIS_HOMED, tft_string);
-
     // tft.add_text(135, 3, COLOR_WHITE, (ftostr52sp(z)));
  
-  uint16_t color_flowrate = planner.flow_percentage[0] == 100 ? COLOR_RATE_100 : COLOR_RATE_ALTERED;
-  tft.add_image(210, 3, imgFlowRate, color_flowrate);
-  tft.add_text(250, 3, COLOR_WHITE, i16tostr3rj(planner.flow_percentage[active_extruder]));
 
   y += TERN(HAS_UI_480x272, 38, 48);
   // flow rate
@@ -443,8 +468,10 @@ void MarlinUI::draw_status_screen() {
         add_control(236, 200, menu_info, imgInfo);
         // TERN_(TOUCH_SCREEN, add_control(236, 200, LANGUAGE_SCREEN, imgLanguage));        //language        
         // //2 Line Icons
-        add_control(20, 280, menu_advanced_input_shaping, imgIs);        
-        add_control(128, 280, menu_change_filament, imgFila);
+        add_control(20, 280, menu_advanced_input_shaping, imgIs);
+        #if ENABLED(ADVANCED_PAUSE_FEATURE)
+          add_control(128, 280, menu_change_filament, imgFila);
+        #endif
         add_control(236, 280, menu_advanced_filament, imgLa);
         // TERN_(TOUCH_SCREEN, add_control(128, 280, CHANGE_FILAMENT, imgFila));        //Change filament
 

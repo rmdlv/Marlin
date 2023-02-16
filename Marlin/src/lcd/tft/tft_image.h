@@ -79,6 +79,7 @@ extern const uint8_t leveling_32x32x4[];
 extern const uint8_t power_64x64x4[];
 extern const uint8_t slider_8x16x4[];
 extern const uint8_t zoffset_64x64x4[];
+extern const uint8_t zoffset_32x32x4[];
 extern const uint8_t light_64x64x4[];
 extern const uint8_t next_64x64x4[];
 extern const uint8_t prevous_64x64x4[];
@@ -139,6 +140,7 @@ enum MarlinImage : uint8_t {
   imgTramming,
   imgPower,
   imgZoffset,
+  imgZoffsetSmall,
   imgLight,
   imgNext,
   imgPrevous,
@@ -241,6 +243,7 @@ extern const tImage Tramming_64x64x4;
 extern const tImage Slider8x16x4;
 extern const tImage Power_64x64x4;
 extern const tImage Zoffset_64x64x4;
+extern const tImage Zoffset_32x32x4;
 extern const tImage Light_64x64x4;
 extern const tImage Next_64x64x4;
 extern const tImage Prevous_64x64x4;
