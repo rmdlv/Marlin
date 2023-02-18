@@ -309,7 +309,7 @@ void MarlinUI::draw_status_screen() {
   // tft_string.set_font(Helvetica14);
   tft.canvas(5, 5, 310, 36);
   tft.set_background(COLOR_BACKGROUND);
-  tft.add_rectangle(0, 0, 310, 36, COLOR_WHITE); 
+  tft.add_rectangle(0, 35, 310, 1, COLOR_WHITE); 
 
   uint16_t color_feedrate = feedrate_percentage == 100 ? COLOR_RATE_100 : COLOR_RATE_ALTERED;
   tft.add_image(5, 3, imgFeedRate, color_feedrate);  
@@ -334,7 +334,8 @@ void MarlinUI::draw_status_screen() {
   // coordinates
   tft.canvas(5, 155, 310, 36);
   tft.set_background(COLOR_BACKGROUND);
-  tft.add_rectangle(0, 0, 310, 36, COLOR_AXIS_HOMED);
+  tft.add_rectangle(0, 0, 310, 1, COLOR_AXIS_HOMED);
+  tft.add_rectangle(0, 35, 310, 1, COLOR_AXIS_HOMED);
   tft_string.set(ftostr5rj(planner.get_current_block()->nominal_speed));
   tft_string.trim();
   tft_string.add(" ");
@@ -477,7 +478,7 @@ void MarlinUI::draw_status_screen() {
 
         // TERN_(TOUCH_SCREEN, add_control(236, 280, MOVE_AXIS, imgMove));        //hz1
         // //3 Line Icons
-        TERN_(TOUCH_SCREEN, add_control(20, 360, PREVOUS_SCREEN, imgPrevous));        //BackScreen
+        TERN_(TOUCH_SCREEN, add_control(236, 360, PREVOUS_SCREEN, imgPrevous));        //BackScreen
         #ifdef PSU_CONTROL
           add_control(128, 360, ui.poweroff, imgPower);
         #else
@@ -486,7 +487,7 @@ void MarlinUI::draw_status_screen() {
           // tft.set_background(COLOR_BACKGROUND); 
         #endif
         // TERN_(TOUCH_SCREEN, add_control(128, 360, POWER_OFF, imgPower));      //Power off   
-        TERN_(TOUCH_SCREEN, add_control(236, 360, SAVE_EEPROM, imgSave));     
+        TERN_(TOUCH_SCREEN, add_control(20, 360, SAVE_EEPROM, imgSave));     
         // add_control(236, 360, ui.store_settings, imgSave);
         // TERN_(TOUCH_SCREEN, add_control(128, 360, MOVE_AXIS, imgMove));       //hz2
         // TERN_(TOUCH_SCREEN, add_control(236, 360, MOVE_AXIS, imgMove));       //hz3

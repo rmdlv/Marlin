@@ -904,7 +904,7 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
             }
           break;
 
-        // case 21: SEND_OK_TO_WIFI; break;            // Init SD card
+        case 21: SEND_OK_TO_WIFI; break;            // Init SD card
 
         case 23: // M23 xxx.gcode：select the gcode file
           if (!card.isPrinting() || !card.isPaused()) {
@@ -941,6 +941,7 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
                 // }
 
                 char *cur_name=strrchr(list_file.file_name[sel_id],'/');
+                
                 card.openFileRead(cur_name);
                 char msg[300];
                 sprintf((char*)msg, "File selected %s\r\n", cur_name);
@@ -957,55 +958,69 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
           break;
 
         case 24: // M24：Start or resume printing
-          if (strcmp_P(list_file.file_name[sel_id], PSTR("notValid")) != 0) {
-            if (!card.isPrinting() || !card.isPaused()) {
-                if (!gcode_preview_over) {
-                  char *cur_name = strrchr(list_file.file_name[sel_id], '/');
-                  SdFile file;
-                  SdFile *curDir;
-                  card.abortFilePrintNow();
-                  const char * const fname = card.diveToFile(false, curDir, cur_name);
-                  if (!fname) return;
-                  card.openFileRead(cur_name);
-                  if (card.isFileOpen()) {
-                    feedrate_percentage = 100;
-                    #if HAS_EXTRUDERS
-                      planner.flow_percentage[0] = 100;
-                      planner.e_factor[0] = planner.flow_percentage[0] * 0.01f;
-                    #endif
-                    #if HAS_MULTI_EXTRUDER
-                      planner.flow_percentage[1] = 100;
-                      planner.e_factor[1] = planner.flow_percentage[1] * 0.01f;
-                    #endif
-                    card.startOrResumeFilePrinting();
-                    TERN_(POWER_LOSS_RECOVERY, recovery.prepare());
-                    once_flag = false;
-                  }
-                }
-            } else if (card.isPaused()) {
-                card.startOrResumeFilePrinting();
-            }
+          // if (strcmp_P(list_file.file_name[sel_id], PSTR("notValid")) != 0) {
+          // if (!printingIsActive() || !printingIsPaused()) {
+          if (printingIsPaused()) {
+            ui.resume_print();
           }
+
+            // if (!card.isPrinting() || !card.isPaused()) {
+          //       if (!gcode_preview_over) {
+          //         char *cur_name = strrchr(list_file.file_name[sel_id], '/');
+          //         SdFile file;
+          //         SdFile *curDir;
+          //         card.abortFilePrintNow();
+          //         const char * const fname = card.diveToFile(false, curDir, cur_name);
+          //         if (!fname) return;
+          //         card.openFileRead(cur_name);
+          //         if (card.isFileOpen()) {
+          //           feedrate_percentage = 100;
+          //           #if HAS_EXTRUDERS
+          //             planner.flow_percentage[0] = 100;
+          //             planner.e_factor[0] = planner.flow_percentage[0] * 0.01f;
+          //           #endif
+          //           #if HAS_MULTI_EXTRUDER
+          //             planner.flow_percentage[1] = 100;
+          //             planner.e_factor[1] = planner.flow_percentage[1] * 0.01f;
+          //           #endif
+          //           card.startOrResumeFilePrinting();
+          //           TERN_(POWER_LOSS_RECOVERY, recovery.prepare());
+          //           // once_flag = false;
+          //         }
+          //       }
+          //   } else if (printingIsPaused()) {
+          //   // } else if (card.isPaused()) {
+          //       card.startOrResumeFilePrinting();
+          //   }
+          // }
           SEND_OK_TO_WIFI;
           break;
 
         case 25: // M25: pause printing
-          if (card.isPrinting()) {
-              card.pauseSDPrint();
+          // if (card.isPrinting()) {
+          if(printingIsActive()) {
+            ui.pause_print();
             SEND_OK_TO_WIFI;
           }
           break;
 
         case 26: // M26：stop printing
-          if (card.isPrinting() || card.isPaused()) {
-              card.abortFilePrintSoon();
+        
+          // if (card.isPrinting() || card.isPaused()) {
+          if (printingIsActive() || printingIsPaused()) {
+            ui.screen_num = 0;
+            ui.abort_print(); 
+            ui.clear_lcd();
+            // card.abortFilePrintSoon();
             SEND_OK_TO_WIFI;
           }
           break;
 
         case 27: // M27：Report the printing progress (%)
-          if (card.isPrinting() || card.isPaused()) {
-            print_rate = card.percentDone();
+          // if (card.isPrinting() || card.isPaused()) {
+          if (printingIsActive() || printingIsPaused()) {
+            print_rate = ui.get_progress_percent();
+            // print_rate = card.percentDone();
             ZERO(tempBuf);
             sprintf_P((char *)tempBuf, PSTR("M27 %d\r\n"), print_rate);
             send_to_wifi((uint8_t *)tempBuf, strlen((char *)tempBuf));
@@ -1109,7 +1124,7 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
           break;
 
         case 992: // M992：get the time has print
-          if (card.isPrinting() || card.isPaused()) {
+          if (printingIsActive() || printingIsPaused()) {
             ZERO(tempBuf);
 
             char buffer[30];
@@ -1136,11 +1151,11 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
           break;
 
         case 997: // M997：Get the current printer state
-          if (card.isPrinting()) {
+          if (printingIsActive()) {
             wifi_ret_ack();
             send_to_wifi((uint8_t *)"M997 PRINTING\r\n", strlen("M997 PRINTING\r\n"));
           }
-          else if (card.isPaused()) {
+          else if (printingIsPaused()) {
             wifi_ret_ack();
             send_to_wifi((uint8_t *)"M997 PAUSE\r\n", strlen("M997 PAUSE\r\n"));
           }
@@ -1542,6 +1557,8 @@ static void file_fragment_msg_handle(uint8_t * msg, uint16_t msgLen) {
         }
       }
       upload_file.close();
+      card.mount();
+      card.cdroot();
       SdFile file, *curDir;
       const char * const fname = card.diveToFile(false, curDir, saveFilePath);
       if (file.open(curDir, fname, O_RDWR)) {

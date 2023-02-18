@@ -386,8 +386,8 @@ void menu_info() {
       SUBMENU(MSG_INFO_THERMISTOR_MENU, menu_info_thermistors);  // Thermistors >
     #endif
     #if ENABLED(MKS_WIFI_MODULE)
-      SUBMENU(MSG_INFO_WIFI_MENU, menu_info_wifi);
-      SUBMENU(MSG_WIFI_LOAD_FROM_FILE, menu_info_wifi_load);
+      // SUBMENU(MSG_INFO_WIFI_MENU, menu_info_wifi);
+      // SUBMENU(MSG_WIFI_LOAD_FROM_FILE, menu_info_wifi_load);
     #endif
   #endif
 
