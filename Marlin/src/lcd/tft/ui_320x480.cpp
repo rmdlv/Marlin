@@ -606,7 +606,6 @@ void MarlinUI::draw_status_screen() {
 }
 
 // Low-level draw_edit_screen can be used to draw an edit screen from anyplace
-// void MenuEditItemBase::draw_edit_screen(FSTR_P const fstr, const char * const value/*=nullptr*/) {
 void MenuEditItemBase::draw_edit_screen(FSTR_P const fstr, const char * const value/*=nullptr*/, const bool show_slider/* = true*/) {
   ui.encoder_direction_normal();
   TERN_(TOUCH_SCREEN, touch.clear());
@@ -643,7 +642,6 @@ void MenuEditItemBase::draw_edit_screen(FSTR_P const fstr, const char * const va
     }
   #endif
 
-  // if (ui.can_show_slider()) {
   if (show_slider && ui.can_show_slider()) {
 
     #define SLIDER_LENGTH 224
