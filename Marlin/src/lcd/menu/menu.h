@@ -184,7 +184,7 @@ class MenuEditItemBase : public MenuItemBase {
 
     // Implementation-specific:
     // This low-level method is good to draw from anywhere
-    static void draw_edit_screen(FSTR_P const fstr, const char * const value);
+    static void draw_edit_screen(FSTR_P const fstr, const char * const value, const bool show_slider = true);
 
     // This method is for the current menu item
     static void draw_edit_screen(const char * const value) { draw_edit_screen(editLabel, value); }
