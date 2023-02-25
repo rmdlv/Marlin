@@ -862,7 +862,7 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
   int8_t tempBuf[100] = { 0 };
   uint8_t *tmpStr = 0;
   int cmd_value;
-  volatile int print_rate;
+  volatile uint8_t print_rate;
   if (strchr((char *)cmd_line, '\n') && (strchr((char *)cmd_line, 'G') || strchr((char *)cmd_line, 'M') || strchr((char *)cmd_line, 'T'))) {
     tmpStr = (uint8_t *)strchr((char *)cmd_line, '\n');
     if (tmpStr) *tmpStr = '\0';
@@ -882,7 +882,8 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
 
         case 20: // M20 [path]: get the printer file list
           file_writer.fileTransfer = 0;
-          if (!card.isPrinting() || !card.isPaused()) {
+          // if (!card.isPrinting() && !card.isPaused()) {
+          if (!card.isFileOpen()){
             int index = 0;
             if (tmpStr == 0) {
               send_to_wifi((uint8_t *)(STR_BEGIN_FILE_LIST "\r\n"), strlen(STR_BEGIN_FILE_LIST "\r\n"));
@@ -897,11 +898,11 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
               if (strlen((char *)&tmpStr[index]) < 80) {
                 send_to_wifi((uint8_t *)(STR_BEGIN_FILE_LIST "\r\n"), strlen(STR_BEGIN_FILE_LIST "\r\n"));
                 strcpy((char *)path, (char *)&tmpStr[index]);
-              send_sd_ls(path);
+                send_sd_ls(path);
                 send_to_wifi((uint8_t *)(STR_END_FILE_LIST "\r\n"), strlen(STR_END_FILE_LIST "\r\n"));
               }
-              SEND_OK_TO_WIFI;
             }
+            SEND_OK_TO_WIFI;
           break;
 
         case 21: SEND_OK_TO_WIFI; break;            // Init SD card
@@ -909,6 +910,11 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
         case 23: // M23 xxx.gcode：select the gcode file
           if (!card.isPrinting() || !card.isPaused()) {
             int index = 0;
+            // to serial tmpStr
+            // SERIAL_ECHOLNPGM("tmpStr:");
+            // SERIAL_ECHOLNPGM_P(tmpStr);
+            // SERIAL_ECHOLNPGM("\n");
+            
             while (tmpStr[index] == ' ') index++;
             if (strstr_P((char *)&tmpStr[index], PSTR(".g")) || strstr_P((char *)&tmpStr[index], PSTR(".G"))) {
               if (strlen((char *)&tmpStr[index]) < 80) {
@@ -941,8 +947,44 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
                 // }
 
                 char *cur_name=strrchr(list_file.file_name[sel_id],'/');
-                
+                // char *cur_name = strtok(list_file.file_name[sel_id], "/");
+                SERIAL_ECHOPGM("list_file.file_name[sel_id]: ");
+                SERIAL_ECHOLNPGM_P(list_file.file_name[sel_id]);
+
+                SERIAL_ECHOPGM("cur_name: ");
+                SERIAL_ECHOLNPGM_P(cur_name);
+                // SERIAL_ECHOLNPGM(cur_name);
+                // SERIAL_ECHOLNPGM("\n");
+                //to serial cur_name
+                // SERIAL_ECHOPGM("card.longest_filename: ");
+                // SERIAL_ECHOLNPGM_P(card.longest_filename());
+                // SERIAL_ECHOPGM("card.filename: ");
+                // SERIAL_ECHOLNPGM_P(card.filename);
+
+                // strcpy(card.filename, cur_name);
+                // card.filename = cur_name;
+                // card.selectFileByName(cur_name);
+                // SERIAL_ECHOPGM("filename_after: ");
+                // SERIAL_ECHOLNPGM_P(card.filename);
+                // card.closefile();
+                // card.cdroot();
+                // card.openAndPrintFile(card.filename);
+                // SERIAL_ECHOPGM("filename_after_opened: ");
+                // SERIAL_ECHOLNPGM_P(card.filename);
+                // card.closefile();
+                // card.cdroot();
+                // card.openAndPrintFile(cur_name);
+
+
+                // SdFile file;
+                // SdFile *curDir;
+                // card.abortFilePrintNow();
+                // card.diveToFile(false, curDir, cur_name);
+                // if (!fname) return;
+                // file.open(curDir, fname, O_READ);
+                // file.close();
                 card.openFileRead(cur_name);
+                card.printSelectedFilename();
                 char msg[300];
                 sprintf((char*)msg, "File selected %s\r\n", cur_name);
                 if (card.isFileOpen())
@@ -959,12 +1001,7 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
 
         case 24: // M24：Start or resume printing
           // if (strcmp_P(list_file.file_name[sel_id], PSTR("notValid")) != 0) {
-          // if (!printingIsActive() || !printingIsPaused()) {
-          if (printingIsPaused()) {
-            ui.resume_print();
-          }
-
-            // if (!card.isPrinting() || !card.isPaused()) {
+          //    if (!card.isPrinting() && !card.isPaused()) {
           //       if (!gcode_preview_over) {
           //         char *cur_name = strrchr(list_file.file_name[sel_id], '/');
           //         SdFile file;
@@ -988,11 +1025,17 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
           //           // once_flag = false;
           //         }
           //       }
-          //   } else if (printingIsPaused()) {
-          //   // } else if (card.isPaused()) {
-          //       card.startOrResumeFilePrinting();
+          //     } else if (printingIsPaused()) {
+          //       // ui.resume_print();
+          //     card.startOrResumeFilePrinting();
+          //     }
           //   }
-          // }
+              if (printingIsPaused()) {
+                ui.resume_print();
+              // card.startOrResumeFilePrinting();
+              }
+
+
           SEND_OK_TO_WIFI;
           break;
 
@@ -1019,10 +1062,15 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
         case 27: // M27：Report the printing progress (%)
           // if (card.isPrinting() || card.isPaused()) {
           if (printingIsActive() || printingIsPaused()) {
+          // if (card.isFileOpen()){
+            // const uint32_t progress = ui.get_progress_percent();
             print_rate = ui.get_progress_percent();
+            // i16tostr3rj
             // print_rate = card.percentDone();
             ZERO(tempBuf);
             sprintf_P((char *)tempBuf, PSTR("M27 %d\r\n"), print_rate);
+            SERIAL_ECHOPGM("progress: ");
+            SERIAL_ECHOLNPGM_P((char *)tempBuf);
             send_to_wifi((uint8_t *)tempBuf, strlen((char *)tempBuf));
           }
           break;
@@ -1127,16 +1175,25 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
           if (printingIsActive() || printingIsPaused()) {
             ZERO(tempBuf);
 
-            char buffer[30];
+            // char buffer[30];
             duration_t elapsed = print_job_timer.duration();
-            elapsed.toDigital(buffer);
-            sprintf_P((char *)tempBuf, PSTR("M992 %s\r\n"), buffer);
-            // sprintf_P((char *)tempBuf, PSTR("M992 %d%d:%d%d:%d%d\r\n"),
-            //                                 elapsed.hour()/10, elapsed.hour()%10,
-            //                                 elapsed.minute()/10, elapsed.minute()%10,
-            //                                 elapsed.second()/10, elapsed.second()%10);
+            // elapsed.second();
+            // elapsed.hour();
+            // elapsed.minute();
+            // elapsed.toDigital(buffer);
+            // sprintf_P((char *)tempBuf, PSTR("M992 %d:%d:%d\r\n"), elapsed.hour(), elapsed.minute(), elapsed.second());
+            // SERIAL_ECHOPGM("time: ");
+            // SERIAL_ECHOLNPGM_P((char *)tempBuf);
+            sprintf_P((char *)tempBuf, PSTR("M992 %d%d:%d%d:%d%d\r\n"),
+                                            (int)(elapsed.hour()/10), (int)(elapsed.hour()%10),
+                                            (int)((elapsed.minute()%60)/10), (int)((elapsed.minute()%10)),
+                                            (int)((elapsed.second()%60)/10), (int)(elapsed.second()%10));
             // sprintf_P((char *)tempBuf, PSTR("M992 %d%d:%d%d:%d%d\r\n"), print_time.hours/10, print_time.hours%10, print_time.minutes/10, print_time.minutes%10, print_time.seconds/10, print_time.seconds%10);
             wifi_ret_ack();
+            SERIAL_ECHOPGM("time: ");
+            SERIAL_ECHOLNPGM_P((char *)tempBuf);
+            // SERIAL_ECHOPGM("time_buffer: ");
+            // SERIAL_ECHOLNPGM_P(buffer);
             send_to_wifi((uint8_t *)tempBuf, strlen((char *)tempBuf));
           }
           break;
@@ -1144,7 +1201,9 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
         case 994: // M994： Get the name and size of the file being printing
           if (card.isFileOpen()) {
             ZERO(tempBuf);
-            sprintf_P((char *)tempBuf, PSTR("M994 %s;%d\n"), card.longFilename, (int)card.getFileSize());
+            sprintf_P((char *)tempBuf, PSTR("M994 /%s;%d\n"), card.longest_filename(), (int)card.getFileSize());
+            SERIAL_ECHOPGM("file_name/file_size: ");
+            SERIAL_ECHOLNPGM_P((char *)tempBuf);
             wifi_ret_ack();
             send_to_wifi((uint8_t *)tempBuf, strlen((char *)tempBuf));
           }
@@ -1154,14 +1213,17 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
           if (printingIsActive()) {
             wifi_ret_ack();
             send_to_wifi((uint8_t *)"M997 PRINTING\r\n", strlen("M997 PRINTING\r\n"));
+            SERIAL_ECHOLNPGM("STATUS: PRINTING");
           }
           else if (printingIsPaused()) {
             wifi_ret_ack();
             send_to_wifi((uint8_t *)"M997 PAUSE\r\n", strlen("M997 PAUSE\r\n"));
+            SERIAL_ECHOLNPGM("STATUS: PAUSE");
           }
           else {
             wifi_ret_ack();
             send_to_wifi((uint8_t *)"M997 IDLE\r\n", strlen("M997 IDLE\r\n"));
+            SERIAL_ECHOLNPGM("STATUS: IDLE");
           }
           // if (!uiCfg.command_send) get_wifi_list_command_send();
           break;
@@ -1174,11 +1236,11 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
           // }
           // break;
 
-        case 115:
-          ZERO(tempBuf);
-          SEND_OK_TO_WIFI;
-          send_to_wifi((uint8_t *)"FIRMWARE_NAME:Robin_nano\r\n", strlen("FIRMWARE_NAME:Robin_nano\r\n"));
-          break;
+        // case 115:
+        //   ZERO(tempBuf);
+        //   SEND_OK_TO_WIFI;
+        //   send_to_wifi((uint8_t *)"FIRMWARE_NAME:Robin_nano\r\n", strlen("FIRMWARE_NAME:Robin_nano\r\n"));
+        //   break;
 
         default:
           strcat_P((char *)cmd_line, PSTR("\n"));

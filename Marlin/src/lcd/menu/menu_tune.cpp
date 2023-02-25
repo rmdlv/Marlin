@@ -180,7 +180,7 @@ void menu_tune() {
   //
  
   #if HAS_FAN
-    #ifndef DIASABLE_MENU_TUNE_FAN
+    #ifndef DISABLE_MENU_TUNE_FAN
 
       DEFINE_SINGLENOZZLE_ITEM();
 
@@ -261,7 +261,7 @@ void menu_tune() {
   // Babystep Y:
   // Babystep Z:
   //
-  #ifdef DISABLE_MENU_TUNE_BABBYSTEP
+  #ifndef DISABLE_MENU_TUNE_BABBYSTEP
     #if ENABLED(BABYSTEPPING)
       #if ENABLED(BABYSTEP_XY)
         SUBMENU_N(X_AXIS, MSG_BABYSTEP_N, []{ _lcd_babystep_go(_lcd_babystep_x); });

@@ -61,10 +61,10 @@ const tImage BtnRounded_90x64x4     = { (void *)btn_rounded_90x64x4, 90, 64, GRE
 const tImage BtnRounded_120x64x4    = { (void *)btn_rounded_120x64x4, 120, 64, GREYSCALE4 };
 const tImage Menu_64x64x4           = { (void *)menu_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Settings_64x64x4       = { (void *)settings_64x64x4, 64, 64, GREYSCALE4 };
-const tImage Confirm_64x64x4        = { (void *)confirm_64x64x4, 64, 64, GREYSCALE4 };
-const tImage Cancel_64x64x4         = { (void *)cancel_64x64x4, 64, 64, GREYSCALE4 };
-const tImage Increase_64x64x4       = { (void *)increase_64x64x4, 64, 64, GREYSCALE4 };
-const tImage Decrease_64x64x4       = { (void *)decrease_64x64x4, 64, 64, GREYSCALE4 };
+const tImage Confirm_80x40x4        = { (void *)confirm_80x40x4, 80, 40, GREYSCALE4 };
+const tImage Cancel_80x40x4         = { (void *)cancel_80x40x4, 80, 40, GREYSCALE4 };
+const tImage Increase_80x40x4       = { (void *)increase_80x40x4, 80, 40, GREYSCALE4 };
+const tImage Decrease_80x40x4       = { (void *)decrease_80x40x4, 80, 40, GREYSCALE4 };
 const tImage Pause_64x64x4          = { (void *)pause_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Resume_64x64x4         = { (void *)resume_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Stop_64x64x4           = { (void *)stop_64x64x4, 64, 64, GREYSCALE4 };
@@ -123,10 +123,10 @@ const tImage Images[imgCount] = {
   Menu_64x64x4,
   Settings_64x64x4,
   Directory_32x32x4,
-  Confirm_64x64x4,
-  Cancel_64x64x4,
-  Increase_64x64x4,
-  Decrease_64x64x4,
+  Confirm_80x40x4,
+  Cancel_80x40x4,
+  Increase_80x40x4,
+  Decrease_80x40x4,
   Back_32x32x4,
   Back_Big_80x40x4,
   Up_32x32x4,

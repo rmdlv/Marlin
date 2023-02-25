@@ -1684,13 +1684,9 @@ void loop() {
       if (card.flag.abort_sd_printing) abortSDPrinting();
       if (marlin_state == MF_SD_COMPLETE) {
         finishSDPrinting();
-        if (ui.sound_on) {
-          buzzer.click(500);
-          delay(150);
-          buzzer.click(500);
-          delay(150);
-          buzzer.click(500);
-        }
+        // if (ui.sound_on) {
+        //   buzzer.click(500);
+        // }
       }
     #endif
 

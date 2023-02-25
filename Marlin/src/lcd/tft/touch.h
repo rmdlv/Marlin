@@ -86,6 +86,7 @@ enum TouchControlType : uint16_t {
   MOVE_AXIS,
   BUTTON,
   WIFI,
+  LA_SET,
   POWER_OFF,
   BED_Z,
   CASE_LIGHT,

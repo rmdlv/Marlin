@@ -203,7 +203,6 @@ void Touch::touch(touch_control_t *control) {
     #ifdef MKS_WIFI_MODULE
     case WIFI_LOAD:
       ui.goto_screen((screenFunc_t)menu_info_wifi_load);
-      // menu_info_wifi_load();
       break;
     #endif
     case FILAMENT_MOVE:
@@ -330,7 +329,10 @@ void Touch::touch(touch_control_t *control) {
     case TRAMMING: 
       _lcd_level_bed_corners();
       break;
-
+    case LA_SET:
+      ui.clear_lcd();
+      MenuItem_float42_52::action(GET_TEXT_F(MSG_ADVANCE_K), &planner.extruder_advance_K[0], 0, 1);
+      break;
     case MESH_LEVEL:
       _lcd_level_bed_continue();
       break;
