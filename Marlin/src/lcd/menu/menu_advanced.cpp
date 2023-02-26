@@ -715,6 +715,10 @@ void menu_advanced_settings() {
 
   #endif // !SLIM_LCD_MENUS
 
+  #if ENABLED(TOUCH_SCREEN_CALIBRATION)
+	ACTION_ITEM(MSG_CALIBRATE_TOUCH_SCREEN, []{ queue.inject(F("M995")); ui.return_to_status(); });
+  #endif
+
   // M92 - Steps Per mm
   if (!is_busy)
     SUBMENU(MSG_STEPS_PER_MM, menu_advanced_steps_per_mm);

@@ -78,6 +78,9 @@ void menu_advanced_filament();
   #include "../../feature/bedlevel/bedlevel.h"
 #endif
 
+#if HAS_BED_PROBE
+  #include "../../module/probe.h"
+#endif
 
 void MarlinUI::tft_idle() {
   #if ENABLED(TOUCH_SCREEN)
@@ -322,7 +325,12 @@ void MarlinUI::draw_status_screen() {
 
   tft.add_image(95, 1, imgZoffsetSmall, COLOR_VIVID_GREEN);  
   const float mps = planner.mm_per_step[Z_AXIS];
-  float z_off = bedlevel.z_offset + (mps * babystep.axis_total[BS_TOTAL_IND(Z_AXIS)]);
+  #if HAS_BED_PROBE
+    float z_off = probe.offset.z;
+  #else
+    float z_off = bedlevel.z_offset;
+  #endif
+  z_off +=  (mps * babystep.axis_total[BS_TOTAL_IND(Z_AXIS)]);
   tft_string.set(ftostr43sign(z_off));
   tft_string.trim();
   tft.add_text(190 - tft_string.width(), 3, COLOR_WHITE, tft_string);
@@ -857,19 +865,19 @@ static void drawCurStepValue() {
   tft.add_text(CUR_STEP_VALUE_WIDTH - tft_string.width(), 0, COLOR_AXIS_HOMED, tft_string);
 }
 
-// static void drawCurZSelection() {
-//   tft_string.set('Z');
-//   tft.canvas(motionAxisState.zTypePos.x, motionAxisState.zTypePos.y, tft_string.width(), 24);
-//   tft.set_background(COLOR_BACKGROUND);
-//   tft.add_text(0, 0, Z_BTN_COLOR, tft_string);
-//   tft.queue.sync();
-//   tft_string.set(F("Offset"));
-//   tft.canvas(motionAxisState.zTypePos.x, motionAxisState.zTypePos.y + 34, tft_string.width(), 24);
-//   tft.set_background(COLOR_BACKGROUND);
-//   if (motionAxisState.z_selection == Z_SELECTION_Z_PROBE) {
-//     tft.add_text(0, 0, Z_BTN_COLOR, tft_string);
-//   }
-// }
+ static void drawCurZSelection() {
+   tft_string.set('Z');
+   tft.canvas(motionAxisState.zTypePos.x, motionAxisState.zTypePos.y, tft_string.width(), 24);
+   tft.set_background(COLOR_BACKGROUND);
+   tft.add_text(0, 0, Z_BTN_COLOR, tft_string);
+   tft.queue.sync();
+   tft_string.set(F("Offset"));
+   tft.canvas(motionAxisState.zTypePos.x, motionAxisState.zTypePos.y + 34, tft_string.width(), 24);
+   tft.set_background(COLOR_BACKGROUND);
+   if (motionAxisState.z_selection == Z_SELECTION_Z_PROBE) {
+     tft.add_text(0, 0, Z_BTN_COLOR, tft_string);
+   }
+ }
 
 
 // static void drawCurESelection() {

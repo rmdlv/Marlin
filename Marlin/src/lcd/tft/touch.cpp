@@ -33,6 +33,11 @@
 #include "../../module/planner.h"
 #include "../../module/stepper.h"
 
+#if HAS_BED_PROBE
+  #include "../../module/probe.h"
+#endif
+
+
 #if ENABLED(PSU_CONTROL)
   #include "../../feature/power.h"
 #endif
@@ -334,7 +339,11 @@ void Touch::touch(touch_control_t *control) {
       MenuItem_float42_52::action(GET_TEXT_F(MSG_ADVANCE_K), &planner.extruder_advance_K[0], 0, 1);
       break;
     case MESH_LEVEL:
-      _lcd_level_bed_continue();
+      #if ENABLED(MESH_BED_LEVELING)
+        _lcd_level_bed_continue();
+      #elif ENABLED(HAS_AUTOLEVEL)
+        queue.inject(F("G29"));
+	  #endif
       break;
     
     case BABYSTEP_BUTTON:
@@ -355,7 +364,11 @@ void Touch::touch(touch_control_t *control) {
 
     case BED_Z:
       ui.clear_lcd();
-      MenuItem_float43::action(GET_TEXT_F(MSG_BED_Z), &bedlevel.z_offset, -3, 3);
+      #if ENABLED(MESH_BED_LEVELING)
+        MenuItem_float43::action(GET_TEXT_F(MSG_BED_Z), &bedlevel.z_offset, -3, 3);
+      #elif HAS_BED_PROBE
+        MenuItem_float42_52::action(GET_TEXT_F(MSG_BED_Z), &probe.offset.z, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
+      #endif
     break;
 
     case CASE_LIGHT:

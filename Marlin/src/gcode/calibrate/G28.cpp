@@ -252,7 +252,9 @@ void GcodeSuite::G28() {
   // Disable the leveling matrix before homing
   #if CAN_SET_LEVELING_AFTER_G28
     #ifdef SAFE_BABYSTEP_TO_Z_OFFSET
-    bedlevel.z_offset += babystep.axis_total[BS_TOTAL_IND(Z_AXIS)]/planner.settings.axis_steps_per_mm[Z_AXIS];
+      #ifndef FB_G6_BLTOUCH
+        bedlevel.z_offset += babystep.axis_total[BS_TOTAL_IND(Z_AXIS)]/planner.settings.axis_steps_per_mm[Z_AXIS];
+      #endif
     #endif
     const bool leveling_restore_state = parser.boolval('L', TERN1(RESTORE_LEVELING_AFTER_G28, planner.leveling_active));
   #endif

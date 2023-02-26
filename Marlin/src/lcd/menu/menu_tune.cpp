@@ -178,7 +178,7 @@ void menu_tune() {
   //
   // Fan Speed:
   //
- 
+
   #if HAS_FAN
     #ifndef DISABLE_MENU_TUNE_FAN
 
@@ -229,7 +229,7 @@ void menu_tune() {
   //
   // Flow:
   //
-  #ifndef DISABLE_MUNE_TUNE_FLOW
+  #ifndef DISABLE_MENU_TUNE_FLOW
     #if HAS_EXTRUDERS
       EDIT_ITEM(int3, MSG_FLOW, &planner.flow_percentage[active_extruder], 10, 999, []{ planner.refresh_e_factor(active_extruder); });
       // Flow En:
