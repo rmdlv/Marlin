@@ -38,10 +38,10 @@ namespace Language_ru {
 
   LSTR WELCOME_MSG                          = MACHINE_NAME _UxGT(" Готов.");
   LSTR MSG_INFO_SSID_KEY                    = _UxGT("Ключ сети");
-  LSTR MSG_NO_CONNECT                       = _UxGT("Нет подключения");  
+  LSTR MSG_NO_CONNECT                       = _UxGT("Нет подключения");
   LSTR MSG_INFO_SSID                        = _UxGT("Имя сети");
-  LSTR MSG_INFO_IP                          = _UxGT("IP Адрес");  
-  LSTR MSG_MODEL_FAN                        = _UxGT("Обдув Детали");  
+  LSTR MSG_INFO_IP                          = _UxGT("IP Адрес");
+  LSTR MSG_MODEL_FAN                        = _UxGT("Обдув Детали");
   LSTR MSG_BED_STATUS                       = _UxGT("Стол");
   LSTR MSG_EXTRUDER_STATUS                  = _UxGT("Экструдер");
   LSTR MSG_SET_BUTTON                       = _UxGT("Задать");
@@ -887,6 +887,8 @@ namespace Language_ru {
 
   LSTR MSG_SD_CARD                          = _UxGT("SD Карта");
   LSTR MSG_USB_DISK                         = _UxGT("USB Диск");
+
+  LSTR MSG_CALIBRATE_TOUCH_SCREEN         = _UxGT("Калибровка тачскрина");
 }
 
 #if FAN_COUNT == 1

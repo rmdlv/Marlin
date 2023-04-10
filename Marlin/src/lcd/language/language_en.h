@@ -52,7 +52,7 @@ namespace Language_en {
   LSTR MSG_INFO_SSID_KEY                  = _UxGT("Wi-Fi Key");
   LSTR MSG_NO_CONNECT                     = _UxGT("Not Connected");
   LSTR MSG_SET_BUTTON                     = _UxGT("Set");
-  LSTR MSG_MODEL_FAN                      = _UxGT("Model Fan");  
+  LSTR MSG_MODEL_FAN                      = _UxGT("Model Fan");
   LSTR MSG_BED_STATUS                     = _UxGT("Bed");
   LSTR MSG_EXTRUDER_STATUS                = _UxGT("Extruder");
   LSTR MSG_MANUAL_BUTTON                  = _UxGT("Manual");
@@ -876,6 +876,8 @@ namespace Language_en {
   LSTR MSG_PID_F                          = _UxGT("PID-F");
   LSTR MSG_PID_F_E                        = _UxGT("PID-F *");
   LSTR MSG_BACKLASH_N                     = _UxGT("@");
+
+  LSTR MSG_CALIBRATE_TOUCH_SCREEN       = _UxGT("Touchscreen calibration");
 }
 
 #if FAN_COUNT == 1
@@ -885,3 +887,5 @@ namespace Language_en {
   #define MSG_FIRST_FAN_SPEED       MSG_FAN_SPEED_N
   #define MSG_EXTRA_FIRST_FAN_SPEED MSG_EXTRA_FAN_SPEED_N
 #endif
+
+

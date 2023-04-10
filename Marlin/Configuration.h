@@ -97,6 +97,10 @@
   #define MKS_WIFI_MODULE  // MKS WiFi module
 #endif
 
+#if CONFIGURE_FB_G6_BLTOUCH == 1
+  #define FB_G6_BLTOUCH
+#endif
+
 #define SAFE_BABYSTEP_TO_Z_OFFSET
 #define FINISH_SCREEN
 #define DISABLE_AUTOHOME_MENU
@@ -105,7 +109,7 @@
 #define DISABLE_TEMPERATURE_MENU
 #define DISABLE_CHANGE_MEDIA_MENU
 #define DISABLE_PRINT_MEDIA_MENU
-#define DISABLE_MUNE_TUNE_FLOW
+#define DISABLE_MENU_TUNE_FLOW
 #define DISABLE_MENU_TUNE_FAN
 #define DISABLE_MENU_TUNE_TEMP
 #define DISABLE_MENU_TEMP_FEEDRATE
@@ -1139,7 +1143,11 @@
 // Mechanical endstop with COM to ground and NC to Signal uses "false" here (most common setup).
 #define X_MIN_ENDSTOP_INVERTING true  // Set to true to invert the logic of the endstop.
 #define Y_MIN_ENDSTOP_INVERTING true  // Set to true to invert the logic of the endstop.
-#define Z_MIN_ENDSTOP_INVERTING true  // Set to true to invert the logic of the endstop.
+#ifdef FB_G6_BLTOUCH
+  #define Z_MIN_ENDSTOP_INVERTING false  // Set to true to invert the logic of the endstop.
+#else
+  #define Z_MIN_ENDSTOP_INVERTING true  // Set to true to invert the logic of the endstop.
+#endif
 #define I_MIN_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
 #define J_MIN_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
 #define K_MIN_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
@@ -1343,7 +1351,9 @@
  * Use G29 repeatedly, adjusting the Z height at each point with movement commands
  * or (with LCD_BED_LEVELING) the LCD controller.
  */
-#define PROBE_MANUALLY
+#ifndef FB_G6_BLTOUCH
+  #define PROBE_MANUALLY
+#endif
 
 /**
  * A Fix-Mounted Probe either doesn't deploy or needs manual deployment.
@@ -1366,7 +1376,10 @@
 /**
  * The BLTouch probe uses a Hall effect sensor and emulates a servo.
  */
-//#define BLTOUCH
+#ifdef FB_G6_BLTOUCH
+  #define BLTOUCH
+  #define SERVO0_PIN PA8
+#endif
 
 /**
  * MagLev V4 probe by MDD
@@ -1518,7 +1531,7 @@
  *     |    [-]    |
  *     O-- FRONT --+
  */
-#define NOZZLE_TO_PROBE_OFFSET { 10, 10, 0 }
+#define NOZZLE_TO_PROBE_OFFSET { 0, 46, 0 }
 
 // Most probes should stay away from the edges of the bed, but
 // with NOZZLE_AS_PROBE this can be negative for a wider probing area.
@@ -1607,8 +1620,9 @@
 #define Z_PROBE_OFFSET_RANGE_MAX 20
 
 // Enable the M48 repeatability test to test probe accuracy
-//#define Z_MIN_PROBE_REPEATABILITY_TEST
-
+#ifdef FB_G6_BLTOUCH
+	#define Z_MIN_PROBE_REPEATABILITY_TEST
+#endif
 // Before deploy/stow pause for user confirmation
 //#define PAUSE_BEFORE_DEPLOY_STOW
 #if ENABLED(PAUSE_BEFORE_DEPLOY_STOW)
@@ -1912,9 +1926,12 @@
  */
 //#define AUTO_BED_LEVELING_3POINT
 //#define AUTO_BED_LEVELING_LINEAR
-//#define AUTO_BED_LEVELING_BILINEAR
+#ifdef FB_G6_BLTOUCH
+  #define AUTO_BED_LEVELING_BILINEAR
+#else
+  #define MESH_BED_LEVELING
+#endif
 //#define AUTO_BED_LEVELING_UBL
-#define MESH_BED_LEVELING
 
 /**
  * Normally G28 leaves leveling disabled on completion. Enable one of
@@ -2129,7 +2146,9 @@
  * - Allows Z homing only when XY positions are known and trusted.
  * - If stepper drivers sleep, XY homing may be required again before Z homing.
  */
-//#define Z_SAFE_HOMING
+#ifdef FB_G6_BLTOUCH
+  #define Z_SAFE_HOMING
+#endif
 
 #if ENABLED(Z_SAFE_HOMING)
   #define Z_SAFE_HOMING_X_POINT X_CENTER  // X point for Z homing
@@ -3399,7 +3418,9 @@
  * Set this manually if there are extra servos needing manual control.
  * Set to 0 to turn off servo support.
  */
-//#define NUM_SERVOS 3 // Note: Servo index starts with 0 for M280-M282 commands
+#ifdef FB_G6_BLTOUCH
+  #define NUM_SERVOS 1 // Note: Servo index starts with 0 for M280-M282 commands
+#endif
 
 // (ms) Delay before the next move will start, to give the servo time to reach its target angle.
 // 300ms is a good value but you can try less delay.

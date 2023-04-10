@@ -249,7 +249,9 @@ void menu_main() {
 
   // Test Z offset Zr !!!!!!
   #define LCD_Z_OFFSET_TYPE float42_52
-  // EDIT_ITEM(LCD_Z_OFFSET_TYPE, MSG_BED_Z, &bedlevel.z_offset, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
+  // #if ENABLED(MESH_BED_LEVELING)
+  //   EDIT_ITEM(LCD_Z_OFFSET_TYPE, MSG_BED_Z, &bedlevel.z_offset, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
+  // #endif
   // EDIT_ITEM(bool, MSG_CASE_LIGHT, (bool*)&caselight.on, caselight.update_enabled);
 
   #if ENABLED(SDSUPPORT)
