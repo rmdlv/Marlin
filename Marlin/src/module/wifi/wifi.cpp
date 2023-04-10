@@ -1213,17 +1213,23 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
           if (printingIsActive()) {
             wifi_ret_ack();
             send_to_wifi((uint8_t *)"M997 PRINTING\r\n", strlen("M997 PRINTING\r\n"));
-            SERIAL_ECHOLNPGM("STATUS: PRINTING");
+            #if ENABLED(MARLIN_DEV_MODE)
+              SERIAL_ECHOLNPGM("STATUS: PRINTING");
+            #endif
           }
           else if (printingIsPaused()) {
             wifi_ret_ack();
             send_to_wifi((uint8_t *)"M997 PAUSE\r\n", strlen("M997 PAUSE\r\n"));
-            SERIAL_ECHOLNPGM("STATUS: PAUSE");
+            #if ENABLED(MARLIN_DEV_MODE)
+              SERIAL_ECHOLNPGM("STATUS: PAUSE");
+            #endif
           }
           else {
             wifi_ret_ack();
             send_to_wifi((uint8_t *)"M997 IDLE\r\n", strlen("M997 IDLE\r\n"));
-            SERIAL_ECHOLNPGM("STATUS: IDLE");
+            #if ENABLED(MARLIN_DEV_MODE)
+              SERIAL_ECHOLNPGM("STATUS: IDLE");
+            #endif
           }
           // if (!uiCfg.command_send) get_wifi_list_command_send();
           break;
@@ -1236,11 +1242,11 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
           // }
           // break;
 
-        // case 115:
-        //   ZERO(tempBuf);
-        //   SEND_OK_TO_WIFI;
-        //   send_to_wifi((uint8_t *)"FIRMWARE_NAME:Robin_nano\r\n", strlen("FIRMWARE_NAME:Robin_nano\r\n"));
-        //   break;
+         case 115:
+           ZERO(tempBuf);
+           SEND_OK_TO_WIFI;
+           send_to_wifi((uint8_t *)"FIRMWARE_NAME:Robin_nano\r\n", strlen("FIRMWARE_NAME:Robin_nano\r\n"));
+           break;
 
         default:
           strcat_P((char *)cmd_line, PSTR("\n"));
