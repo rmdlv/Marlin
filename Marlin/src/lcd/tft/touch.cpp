@@ -398,10 +398,8 @@ void Touch::touch(touch_control_t *control) {
       chamber_fan_status = control->data;
       if (chamber_fan_status == true) {
         thermalManager.set_fan_speed(1,255);
-        ui.chamber_fan = true;
       } else {
         thermalManager.set_fan_speed(1,0);
-        ui.chamber_fan = false;
       }
       break;      
     case FAN: 

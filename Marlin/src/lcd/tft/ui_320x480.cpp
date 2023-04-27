@@ -1544,12 +1544,11 @@ void MarlinUI::fan_screen() {
     }
   }
 
-  // bool chamber_fan = false;
   tft.canvas(0, 240, 320, 60);
   tft.set_background(COLOR_BACKGROUND);
   tft_string.set(GET_TEXT(MSG_CHAMBER_FAN));
   tft_string.add(" : ");
-  if (ui.chamber_fan) {tft_string.add(GET_TEXT(MSG_LCD_ON));} else {tft_string.add(GET_TEXT(MSG_LCD_OFF));}
+  if (thermalManager.fan_speed[1] == 255) {tft_string.add(GET_TEXT(MSG_LCD_ON));} else {tft_string.add(GET_TEXT(MSG_LCD_OFF));}  
   // tft_string.add(ui8tostr4pctrj(thermalManager.fan_speed[0]));
   tft.add_text(tft_string.center(320), 15, COLOR_YELLOW, tft_string);
 
