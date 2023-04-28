@@ -27,6 +27,7 @@
 #include "wifi.h"
 #include "upload.h"
 
+#include "../../lcd/tft/ui_common.h"
 #include "../../lcd/marlinui.h"
 
 #include "../../MarlinCore.h"
@@ -985,6 +986,12 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
                 // file.close();
                 card.openFileRead(cur_name);
                 card.printSelectedFilename();
+                ui.return_to_status();
+                ui.reset_status(); 
+                // Clear Screen
+                tft.canvas(0, 200, 320, 224);
+                tft.set_background(COLOR_BACKGROUND); 
+                ui.screen_num = 0;
                 char msg[300];
                 sprintf((char*)msg, "File selected %s\r\n", cur_name);
                 if (card.isFileOpen())

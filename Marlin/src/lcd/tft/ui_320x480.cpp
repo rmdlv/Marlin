@@ -39,7 +39,6 @@ using namespace std;
 #include "../../module/printcounter.h"
 #include "../../module/planner.h"
 #include "../../module/motion.h"
-#include "../marlinui.h"
 
 #include "../../feature/caselight.h"
 
@@ -1548,16 +1547,21 @@ void MarlinUI::fan_screen() {
   tft.set_background(COLOR_BACKGROUND);
   tft_string.set(GET_TEXT(MSG_CHAMBER_FAN));
   tft_string.add(" : ");
-  if (thermalManager.fan_speed[1] == 255) {tft_string.add(GET_TEXT(MSG_LCD_ON));} else {tft_string.add(GET_TEXT(MSG_LCD_OFF));}  
-  // tft_string.add(ui8tostr4pctrj(thermalManager.fan_speed[0]));
-  tft.add_text(tft_string.center(320), 15, COLOR_YELLOW, tft_string);
+  tft.add_text(tft_string.center(320) - 20, 15, COLOR_YELLOW, tft_string);
+  if (thermalManager.fan_speed[1] == 255) {
+    tft_string.set(GET_TEXT(MSG_LCD_ON));
+    tft.add_text(235, 15, COLOR_GREEN, tft_string);
+  } else {
+    tft_string.set(GET_TEXT(MSG_LCD_OFF));
+    tft.add_text(235, 15, COLOR_RED, tft_string);
+  }  
 
   tft.canvas(10, 300, 120, 64);
   tft.set_background(COLOR_BACKGROUND);
   // tft.add_rectangle(0, 0, 120, 64, COLOR_WHITE);
   tft.add_image(0, 0, imgBtn120Rounded, COLOR_WHITE, COLOR_BACKGROUND, COLOR_DARKGREY);
   tft_string.set(GET_TEXT(MSG_LCD_ON));
-  tft.add_text(tft_string.center(120), 15, COLOR_WHITE, tft_string);
+  tft.add_text(tft_string.center(120), 15, COLOR_GREEN, tft_string);
   TERN_(TOUCH_SCREEN, touch.add_control(CHAMBER_FAN, 10, 300, 120, 64, true));
 
   tft.canvas(180, 300, 120, 64);
@@ -1565,7 +1569,7 @@ void MarlinUI::fan_screen() {
   // tft.add_rectangle(0, 0, 120, 64, COLOR_WHITE);  
   tft.add_image(0, 0, imgBtn120Rounded, COLOR_WHITE, COLOR_BACKGROUND, COLOR_DARKGREY);
   tft_string.set(GET_TEXT(MSG_LCD_OFF));
-  tft.add_text(tft_string.center(120), 15, COLOR_WHITE, tft_string);
+  tft.add_text(tft_string.center(120), 15, COLOR_RED, tft_string);
   TERN_(TOUCH_SCREEN, touch.add_control(CHAMBER_FAN, 180, 300, 120, 64, false));
 
   TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH - 8, 420, BACK, imgBackBig));
