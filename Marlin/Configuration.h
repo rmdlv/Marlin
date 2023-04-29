@@ -101,6 +101,7 @@
   #define FB_G6_BLTOUCH
 #endif
 
+// #define PSU
 #define SAFE_BABYSTEP_TO_Z_OFFSET
 #define FINISH_SCREEN
 #define DISABLE_AUTOHOME_MENU
@@ -433,7 +434,9 @@
  * Enable and connect the power supply to the PS_ON_PIN.
  * Specify whether the power supply is active HIGH or active LOW.
  */
-// #define PSU_CONTROL
+#ifdef PSU
+  #define PSU_CONTROL
+#endif
 //#define PSU_NAME "Power Supply"
 
 #if ENABLED(PSU_CONTROL)

@@ -221,7 +221,7 @@ void Touch::touch(touch_control_t *control) {
             tft.set_background(COLOR_BACKGROUND);
             tft.add_text(0, 0, COLOR_YELLOW, "Too Cold");
           } else {
-            queue.inject("G91\nG1 E200 F300\nG90");
+            queue.inject("G91\nG1 X0 Y0 Z0 E200 F300\nG90");
             tft.canvas(20, 420, 200, 40);
             tft.set_background(COLOR_BACKGROUND);
             tft.add_text(0, 0, COLOR_YELLOW, "Input 200mm");
@@ -240,7 +240,7 @@ void Touch::touch(touch_control_t *control) {
             tft.set_background(COLOR_BACKGROUND);
             tft.add_text(0, 0, COLOR_YELLOW, "Too Cold");
           } else {
-            queue.inject("G91\nG1 E-200 F300\nG90");
+            queue.inject("G91\nG1 X0 Y0 Z0 E-200 F300\nG90");
             tft.canvas(20, 420, 200, 40);
             tft.set_background(COLOR_BACKGROUND);
             tft.add_text(0, 0, COLOR_YELLOW, "Output 200mm");

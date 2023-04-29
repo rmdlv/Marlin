@@ -1346,7 +1346,8 @@ void MarlinUI::heater_screen() {
         }
       }
     }
-  if (!busy & !paused) {
+  // if (!busy & !paused) {
+  if (!busy) {    
     tft.canvas(XX_OFFSET + PREHEAT_BTN_WIDTH * 0 + X_SPACING * 0, 80 + YY_OFFSET + PREHEAT_BTN_HEIGHT * 2 + Y_SPACING * 2, PREHEAT_BTN_WIDTH, PREHEAT_BTN_HEIGHT);
     tft.set_background(COLOR_BACKGROUND);
     tft_string.set("E+");
