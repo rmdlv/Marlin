@@ -32,6 +32,13 @@ jobs:
         CONFIGURE_TERMISTOR: 5
     - name: Zip artifact for deployment at 104GT-2/104NT
       run: zip -j firmware_104gt_and_stock.zip .pio/build/mks_robin_nano_v3/firmware.bin
+    - name: Build PlatformIO at bltouch+104GT-2/104NT
+      run: pio run -e mks_robin_nano_v3
+      env:
+        CONFIGURE_TERMISTOR: 5
+        CONFIGURE_FB_G6_BLTOUCH: 1
+    - name: Zip artifact for deployment at bltouch+104GT-2/104NT
+      run: zip -j firmware_bltouch_104gt_and_stock.zip .pio/build/mks_robin_nano_v3/firmware.bin
     - name: Build PlatformIO at 3950
       run: pio run -e mks_robin_nano_v3
       env:
@@ -40,6 +47,15 @@ jobs:
       run: ls -la .pio/build/mks_robin_nano_v3 | grep firmware
     - name: Zip artifact for deployment at 3950
       run: zip -j firmware_3950.zip .pio/build/mks_robin_nano_v3/firmware.bin
+    - name: Build PlatformIO at bltouch+3950
+      run: pio run -e mks_robin_nano_v3
+      env:
+        CONFIGURE_TERMISTOR: 13
+        CONFIGURE_FB_G6_BLTOUCH: 1
+    - name: Display fetched artifacts at bltouch+3950
+      run: ls -la .pio/build/mks_robin_nano_v3 | grep firmware
+    - name: Zip artifact for deployment at bltouch+3950
+      run: zip -j firmware_bltouch_3950.zip .pio/build/mks_robin_nano_v3/firmware.bin
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -67,6 +83,24 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./firmware_3950.zip
         asset_name: firmware_3950.zip
+        asset_content_type: application/zip
+    - name: Upload Release Asset at bltouch+104GT-2/104NT
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./firmware_bltouch_104gt_and_stock.zip
+        asset_name: firmware_bltouch_104gt_and_stock.zip
+        asset_content_type: application/zip
+    - name: Upload Release Asset at bltouch+3950
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./firmware_bltouch_3950.zip
+        asset_name: firmware_bltouch_3950.zip
         asset_content_type: application/zip
 
 on:
