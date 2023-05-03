@@ -3736,10 +3736,12 @@
  * Add G-codes M810-M819 to define and run G-code macros.
  * Macros are not saved to EEPROM.
  */
-//#define GCODE_MACROS
+#define GCODE_MACROS
 #if ENABLED(GCODE_MACROS)
-  #define GCODE_MACROS_SLOTS       5  // Up to 10 may be used
-  #define GCODE_MACROS_SLOT_SIZE  50  // Maximum length of a single macro
+  // M810 - pause start
+  // M811 - pause end
+  #define GCODE_MACROS_SLOTS        4   // Up to 10 may be used
+  #define GCODE_MACROS_SLOT_SIZE  200   // Maximum length of a single macro
 #endif
 
 /**

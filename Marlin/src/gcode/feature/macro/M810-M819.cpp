@@ -58,7 +58,11 @@ void GcodeSuite::M810_819() {
   else {
     // Execute a macro
     char * const cmd = gcode_macros[index];
-    if (strlen(cmd)) process_subcommands_now(cmd);
+    if (strlen(cmd)) {
+      process_subcommands_now(cmd);
+    } else if (index == 0) {
+      process_subcommands_now(F("G1 F4500 X0 Y0")); // if M810 not set - go to left front corner
+    }
   }
 }
 

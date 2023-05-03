@@ -25,6 +25,8 @@
 #if ENABLED(SDSUPPORT)
 
 #include "../gcode.h"
+#include "../queue.h"
+#include "../../module/planner.h"
 #include "../../sd/cardreader.h"
 #include "../../module/printcounter.h"
 #include "../../lcd/marlinui.h"
@@ -47,6 +49,13 @@
 
 #include "../../MarlinCore.h" // for startOrResumeJob
 
+static float M25_X_pos = 0;
+static float M25_Y_pos = 0;
+static float M25_Z_pos = 0;
+static float M25_E_pos = 0;
+static bool is_relative = false;
+static bool is_e_relative = false;
+
 /**
  * M24: Start or Resume SD Print
  */
@@ -61,6 +70,23 @@ void GcodeSuite::M24() {
     if (parser.seenval('S')) card.setIndex(parser.value_long());
     if (parser.seenval('T')) print_job_timer.resume(parser.value_long());
   #endif
+
+  // Execute custom gcode
+  queue.exhaust();
+  queue.inject(F("M811"));
+  queue.exhaust();
+  set_relative_mode(false);
+  char cmd[50];
+  sprintf(cmd, "G1 F4500 X%.2f Y%.2f Z%.2f", M25_X_pos, M25_Y_pos, M25_Z_pos);
+  queue.inject(cmd);
+  queue.exhaust();
+  current_position.e = M25_E_pos;
+  set_relative_mode(is_relative);
+  if (is_e_relative) {
+    set_e_relative();
+  } else {
+    set_e_absolute();
+  }
 
   #if ENABLED(PARK_HEAD_ON_PAUSE)
     if (did_pause_print) {
@@ -121,7 +147,17 @@ void GcodeSuite::M25() {
         hostui.pause();
       #endif
     #endif
-
+    queue.exhaust();
+    is_e_relative = axis_is_relative(E_AXIS);
+    is_relative = axis_is_relative(X_AXIS);
+    M25_X_pos = current_position[X_AXIS];
+    M25_Y_pos = current_position[Y_AXIS];
+    M25_Z_pos = current_position[Z_AXIS];
+    M25_E_pos = current_position.e;
+    set_relative_mode(false);
+    set_e_relative();
+    queue.enqueue_one_now(F("M810"));
+    queue.exhaust();
   #endif
 }
 
