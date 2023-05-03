@@ -256,7 +256,8 @@ void Touch::touch(touch_control_t *control) {
           tft.canvas(20, 420, 200, 40);
           tft.set_background(COLOR_BACKGROUND);
           tft.add_text(0, 0, COLOR_YELLOW, "Stoping Extruder");
-          quickstop_stepper();
+          planner.quick_stop();
+          planner.synchronize();
         } else {
           tft.canvas(20, 420, 200, 40);
           tft.set_background(COLOR_BACKGROUND);
