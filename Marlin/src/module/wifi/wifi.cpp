@@ -988,6 +988,7 @@ static void wifi_gcode_exec(uint8_t *cmd_line) {
                 card.printSelectedFilename();
                 ui.return_to_status();
                 ui.reset_status(); 
+                ui.progress_reset();               
                 // Clear Screen
                 tft.canvas(0, 200, 320, 224);
                 tft.set_background(COLOR_BACKGROUND); 
