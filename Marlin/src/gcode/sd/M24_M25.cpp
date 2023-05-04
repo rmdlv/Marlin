@@ -49,7 +49,7 @@
 
 #include "../../MarlinCore.h" // for startOrResumeJob
 
-static float M25_X_pos = 0;
+static float M25_X_pos = 0; // could be replaced with G60 / G61. But without relative position recover
 static float M25_Y_pos = 0;
 static float M25_Z_pos = 0;
 static float M25_E_pos = 0;
@@ -60,7 +60,6 @@ static bool is_e_relative = false;
  * M24: Start or Resume SD Print
  */
 void GcodeSuite::M24() {
-
   #if ENABLED(DGUS_LCD_UI_MKS)
     if ((print_job_timer.isPaused() || print_job_timer.isRunning()) && !parser.seen("ST"))
       MKS_resume_print_move();
@@ -71,22 +70,36 @@ void GcodeSuite::M24() {
     if (parser.seenval('T')) print_job_timer.resume(parser.value_long());
   #endif
 
-  // Execute custom gcode
-  queue.exhaust();
-  queue.inject(F("M811"));
-  queue.exhaust();
-  set_relative_mode(false);
-  char cmd[50];
-  sprintf(cmd, "G1 F4500 X%.2f Y%.2f Z%.2f", M25_X_pos, M25_Y_pos, M25_Z_pos);
-  queue.inject(cmd);
-  queue.exhaust();
-  current_position.e = M25_E_pos;
-  set_relative_mode(is_relative);
-  if (is_e_relative) {
-    set_e_relative();
-  } else {
-    set_e_absolute();
+  if (card.isOnM25Pause()) {
+    // Execute custom gcode
+    queue.exhaust();
+    queue.enqueue_one_now(F("M811"));
+    queue.exhaust();
+    set_relative_mode(false);
+    char cmd[50];
+    char tstr_1[10];
+    char tstr_2[10];
+    char tstr_3[10];
+    sprintf(cmd, "G1 F4500 X%s Y%s Z%s", //FIXMI: see G61 source
+      dtostrf(M25_X_pos, 1, 3, tstr_1), 
+      dtostrf(M25_Y_pos, 1, 3, tstr_2),
+      dtostrf(M25_Z_pos, 1, 3, tstr_3));
+    queue.enqueue_one_now(cmd);
+    queue.exhaust();
+    queue.enqueue_one_now(F("M812"));
+    queue.exhaust();
+    current_position.e = M25_E_pos;
+    sync_plan_position_e();
+    set_relative_mode(is_relative);
+    if (is_e_relative) {
+      set_e_relative();
+    } else {
+      set_e_absolute();
+    }
   }
+
+
+  card.setOnM25Pause(false);
 
   #if ENABLED(PARK_HEAD_ON_PAUSE)
     if (did_pause_print) {
@@ -159,6 +172,7 @@ void GcodeSuite::M25() {
     queue.enqueue_one_now(F("M810"));
     queue.exhaust();
   #endif
+  card.setOnM25Pause(true);
 }
 
 #endif // SDSUPPORT

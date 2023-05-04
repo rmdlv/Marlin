@@ -60,8 +60,13 @@ void GcodeSuite::M810_819() {
     char * const cmd = gcode_macros[index];
     if (strlen(cmd)) {
       process_subcommands_now(cmd);
-    } else if (index == 0) {
-      process_subcommands_now(F("G1 F4500 X0 Y0")); // if M810 not set - go to left front corner
+    } else {
+      // Default commands for 810-812
+      switch(index) {
+        case 0: process_subcommands_now(F("G10\nG1 F4500 X0 Y0\nG11")); break; // if M810 not set - go to left front corner
+        case 1: process_subcommands_now(F("G10")); break; // if M811 pause stop: before movement
+        case 2: process_subcommands_now(F("G11")); break; // if M812 pause stop: after movement
+      }
     }
   }
 }

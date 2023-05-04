@@ -79,7 +79,8 @@ typedef struct {
        mounted:1,
        filenameIsDir:1,
        workDirIsRoot:1,
-       abort_sd_printing:1
+       abort_sd_printing:1,
+       onM25Pause:1
        #if DO_LIST_BIN_FILES
          , filenameIsBin:1
        #endif
@@ -172,6 +173,8 @@ public:
   static void pauseSDPrint()       { flag.sdprinting = false; }
   static bool isPrinting()         { return flag.sdprinting; }
   static bool isPaused()           { return isFileOpen() && !isPrinting(); }
+  static bool isOnM25Pause()           { return flag.onM25Pause; }
+  static void setOnM25Pause(bool v)           { flag.onM25Pause = v; }
   #if HAS_PRINT_PROGRESS_PERMYRIAD
     static uint16_t permyriadDone() {
       if (flag.sdprintdone) return 10000;

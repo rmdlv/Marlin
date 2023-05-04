@@ -579,8 +579,8 @@
  *
  * Define one or both of these to override the default 0-255 range.
  */
-//#define FAN_MIN_PWM 50
-//#define FAN_MAX_PWM 128
+#define FAN_MIN_PWM 60
+#define FAN_MAX_PWM 255
 
 /**
  * Fan Fast PWM
@@ -609,7 +609,7 @@
  */
 #define FAST_PWM_FAN    // Increase the fan PWM frequency. Removes the PWM noise but increases heating in the FET/Arduino
 #if ENABLED(FAST_PWM_FAN)
-  #define FAST_PWM_FAN_FREQUENCY 31400  // Define here to override the defaults below
+  #define FAST_PWM_FAN_FREQUENCY 39200  // Define here to override the defaults below
   //#define USE_OCR2A_AS_TOP
   #ifndef FAST_PWM_FAN_FREQUENCY
     #ifdef __AVR__
@@ -3738,10 +3738,12 @@
  */
 #define GCODE_MACROS
 #if ENABLED(GCODE_MACROS)
-  // M810 - pause start
-  // M811 - pause end
-  #define GCODE_MACROS_SLOTS        4   // Up to 10 may be used
-  #define GCODE_MACROS_SLOT_SIZE  200   // Maximum length of a single macro
+  // M810 - on pause begin
+  // M811 - on unpause before movement to old position
+  // M812 - on unpause after movement to old position
+  #define GCODE_MACROS_SLOTS      10   // Up to 10 may be used
+  #define GCODE_MACROS_SLOT_SIZE  90   // Maximum length of a single macro
+                                       // It should be less than MAX_CMD_SIZE - len("M81x \n")
 #endif
 
 /**
