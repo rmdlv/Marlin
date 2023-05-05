@@ -35,6 +35,7 @@
  *
  * Advanced settings can be found in Configuration_adv.h
  */
+#include "build_params.h"
 #define CONFIGURATION_H_VERSION 02010200
 
 
