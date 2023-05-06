@@ -37,7 +37,7 @@ See [releases page](https://github.com/FB-G6/Marlin/releases).
 4.  After successful installation, you need to re-initialize the EEPROM: `Settings -> Advanced Settings -> Initialize EEPROM`.
 
 ___
- 🇷🇺
+ 🇷🇺 
 1. Скачать со [страницы релизов](https://github.com/FB-G6/Marlin/releases) требуемую версию под нужный термистор.
 2. Распаковать `firmware.bin` из скачанного архив в корень microsd-карточки принтера.
 3. Вставить microsd в принтер и включить питание.
@@ -52,7 +52,8 @@ Mount adapters:
 
  🇬🇧 Install bltouch version of this firmware. Connecting module with board: The 2-pin connector from bltouch should be connected to the printer board in place of the Z endstop (marked `Z-` on the board).  3-pin connector - in the lower left corner (relative to the side of the printer) of the board, next to the bltouch marking. To access the connector, you need to remove the buzzer from the first revision of the printer.  Check wire labels.
  ___
- 🇷🇺 Требуется установить bltouch-версию этой прошивки. Подключение датчика:
+ 🇷🇺 **[Документация на Wiki](https://github.com/FB-G6/Marlin/wiki/%D0%A0%D0%B0%D0%B1%D0%BE%D1%82%D0%B0-%D1%81-BLTouch)**
+ Требуется установить bltouch-версию этой прошивки. Подключение датчика:
 2х контактный разъем от bltouch следует подключать в плату принтера вместо концевика Z (на плате маркировка `Z-`).
 3х контактный разъем -- в нижний левый угол (относительно стороны принтера) платы, рядом с маркировкой bltouch. Для доступа к разъему требуется снять пищалку с первой ривизии принтера.
 Сверьте маркировку проводов.
