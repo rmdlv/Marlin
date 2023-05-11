@@ -332,7 +332,7 @@ void MarlinUI::draw_status_screen() {
   z_off +=  (mps * babystep.axis_total[BS_TOTAL_IND(Z_AXIS)]);
   tft_string.set(ftostr43sign(z_off));
   tft_string.trim();
-  tft.add_text(190 - tft_string.width(), 3, COLOR_WHITE, tft_string);
+  tft.add_text(198 - tft_string.width(), 3, COLOR_WHITE, tft_string);
 
   // tft_string.set("");
 
@@ -365,7 +365,7 @@ void MarlinUI::draw_status_screen() {
     tft_string.set(ftostr52sp(z));
     offset -= tft_string.width();
   }
-  tft.add_text(80 - tft_string.width() - offset, 3, nhz ? COLOR_AXIS_NOT_HOMED : COLOR_AXIS_HOMED, tft_string);
+  tft.add_text(90 - tft_string.width() - offset, 3, nhz ? COLOR_AXIS_NOT_HOMED : COLOR_AXIS_HOMED, tft_string);
 
   tft_string.set(' ');
 
