@@ -94,7 +94,10 @@ enum TouchControlType : uint16_t {
   PREVOUS_SCREEN,
   CHANGE_FILAMENT,
   SAVE_EEPROM,
-  WIFI_LOAD,
+  #if ENABLED(FB_G6_CUSTOM_TRAMMING)
+    TRAMMING_MOVE_TO_POINT,
+  #endif
+  WIFI_LOAD
 };
 
 typedef void (*screenFunc_t)();

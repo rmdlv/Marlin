@@ -332,8 +332,12 @@ void Touch::touch(touch_control_t *control) {
     case SAVE_EEPROM:
       ui.store_settings();
     break;
-    case TRAMMING: 
-      _lcd_level_bed_corners();
+    case TRAMMING:
+      #if ENABLED(FB_G6_CUSTOM_TRAMMING)
+        ui.goto_screen(ui.tramming_screen);
+      #elif ENABLED(LCD_BED_LEVELING)
+        _lcd_level_bed_corners();
+      #endif
       break;
     case LA_SET:
       ui.clear_lcd();
@@ -346,7 +350,7 @@ void Touch::touch(touch_control_t *control) {
         queue.inject(F("G29"));
 	  #endif
       break;
-    
+
     case BABYSTEP_BUTTON:
       lcd_babystep_z();
       break;
@@ -427,13 +431,23 @@ void Touch::touch(touch_control_t *control) {
       #endif
       break;
 
-    case RESUME_PRINT: ui.resume_print(); break;
-    case PAUSE_PRINT: ui.pause_print(); break;
-    case STOP_PRINT: 
-    ui.screen_num = 0;
-    ui.abort_print(); 
-    ui.clear_lcd();
-    break;
+    case RESUME_PRINT:
+      ui.resume_print();
+      break;
+    case PAUSE_PRINT:
+      ui.pause_print();
+      break;
+    case STOP_PRINT:
+      ui.screen_num = 0;
+      ui.abort_print();
+      ui.clear_lcd();
+      break;
+
+    #if ENABLED(FB_G6_CUSTOM_TRAMMING)
+      case TRAMMING_MOVE_TO_POINT:
+        ui.tramming_move_to_point((uint8_t)control->data);
+        break;
+    #endif
 
     #if ENABLED(AUTO_BED_LEVELING_UBL)
       case UBL: hold(control, UBL_REPEAT_DELAY); ui.encoderPosition += control->data; break;

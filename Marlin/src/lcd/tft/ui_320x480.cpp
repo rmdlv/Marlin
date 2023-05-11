@@ -312,17 +312,17 @@ void MarlinUI::draw_status_screen() {
   // tft_string.set_font(Helvetica14);
   tft.canvas(5, 5, 310, 36);
   tft.set_background(COLOR_BACKGROUND);
-  tft.add_rectangle(0, 35, 310, 1, COLOR_WHITE); 
+  tft.add_rectangle(0, 35, 310, 1, COLOR_WHITE);
 
   uint16_t color_feedrate = feedrate_percentage == 100 ? COLOR_RATE_100 : COLOR_RATE_ALTERED;
-  tft.add_image(5, 3, imgFeedRate, color_feedrate);  
+  tft.add_image(5, 3, imgFeedRate, color_feedrate);
   tft.add_text(40, 3, COLOR_WHITE, i16tostr3rj(feedrate_percentage));
 
   uint16_t color_flowrate = planner.flow_percentage[0] == 100 ? COLOR_RATE_100 : COLOR_RATE_ALTERED;
   tft.add_image(210, 3, imgFlowRate, color_flowrate);
   tft.add_text(250, 3, COLOR_WHITE, i16tostr3rj(planner.flow_percentage[active_extruder]));
 
-  tft.add_image(95, 1, imgZoffsetSmall, COLOR_VIVID_GREEN);  
+  tft.add_image(95, 1, imgZoffsetSmall, COLOR_VIVID_GREEN);
   const float mps = planner.mm_per_step[Z_AXIS];
   #if HAS_BED_PROBE
     float z_off = probe.offset.z;
@@ -338,7 +338,7 @@ void MarlinUI::draw_status_screen() {
 
   // tft_string.set("LA:");
   // tft_string.add(ftostr42_52(planner.extruder_advance_K[0]));
-  // tft.add_text(310 - tft_string.width(), 0, COLOR_WHITE, tft_string); 
+  // tft.add_text(310 - tft_string.width(), 0, COLOR_WHITE, tft_string);
   // tft_string.set_font(Helvetica18);
 
   // coordinates
@@ -391,7 +391,7 @@ void MarlinUI::draw_status_screen() {
     // tft.add_text(185 - 12 - tft_string.width(), 3, nhy ? COLOR_AXIS_NOT_HOMED : COLOR_AXIS_HOMED, tft_string);
   }
     // tft.add_text(135, 3, COLOR_WHITE, (ftostr52sp(z)));
- 
+
 
   y += TERN(HAS_UI_480x272, 38, 48);
   // flow rate
@@ -417,7 +417,7 @@ void MarlinUI::draw_status_screen() {
       // tft_string.set(card.longest_filename());
       tft_string.set("Print Time: ");
       tft_string.add(buffer);
-      tft.add_text(tft_string.center(320), 10, COLOR_LIGHT_BLUE, tft_string);                    
+      tft.add_text(tft_string.center(320), 10, COLOR_LIGHT_BLUE, tft_string);
       tft.canvas(4, 390, 312, 37);
       tft.set_background(COLOR_PROGRESS_BG);
       tft.add_rectangle(0, 0, 312, 37, COLOR_PROGRESS_FRAME);
@@ -437,7 +437,7 @@ void MarlinUI::draw_status_screen() {
       add_control(236, 200, menu_tune, imgTune);
       //2 Line Icons
       if (ui.screen_num == 0) {
-        TERN_(TOUCH_SCREEN, add_control(20, 280, CASE_LIGHT, imgLight, true, caselight.on? COLOR_WHITE : COLOR_GREY));      
+        TERN_(TOUCH_SCREEN, add_control(20, 280, CASE_LIGHT, imgLight, true, caselight.on? COLOR_WHITE : COLOR_GREY));
         TERN_(TOUCH_SCREEN, add_control(128, 280, BABYSTEP_BUTTON, imgBabystep));
         TERN_(TOUCH_SCREEN, add_control(236, 280, NEXT_SCREEN, imgNext));
       } else if (ui.screen_num == 1){
@@ -1577,6 +1577,85 @@ void MarlinUI::fan_screen() {
 
 }
 
+#if ENABLED(FB_G6_CUSTOM_TRAMMING)
+  bool tramming_active=false;
+  uint8_t active_tramming_point;
+
+  #define TRAMMING_CONTROL_SIZE 30
+  #define TRAM_TFT_AREA_OFFSET_X 8
+  #define TRAM_TFT_AREA_OFFSET_Y 48
+  #define TRAM_TFT_AREA_HEIGHT 300
+  #define TRAM_TFT_POS_L (TRAM_TFT_AREA_OFFSET_X + TRAMMING_CONTROL_SIZE * 2)
+  #define TRAM_TFT_POS_R (320 - TRAM_TFT_AREA_OFFSET_X*2 - TRAMMING_CONTROL_SIZE * 2)
+  #define TRAM_TFT_POS_F (TRAM_TFT_AREA_HEIGHT + TRAM_TFT_AREA_OFFSET_Y - TRAMMING_CONTROL_SIZE * 2)
+  #define TRAM_TFT_POS_B (TRAM_TFT_AREA_OFFSET_Y + TRAMMING_CONTROL_SIZE * 2)
+
+  #define TRAMMING_POINTS_COUNT 5
+  // {TFT_X, TFT_Y, BED_X, BED_Y}
+  const uint16_t tramming_points[TRAMMING_POINTS_COUNT][4] = {
+    {TRAM_TFT_POS_L, TRAM_TFT_POS_F,                       TRAM_POS_LEFT , TRAM_POS_FRONT},
+    {TRAM_TFT_POS_R, TRAM_TFT_POS_F,                       TRAM_POS_RIGHT, TRAM_POS_FRONT},
+    {TRAM_TFT_POS_L, TRAM_TFT_POS_B,                       TRAM_POS_LEFT,  TRAM_POS_REAR},
+    {TRAM_TFT_POS_R, TRAM_TFT_POS_B,                       TRAM_POS_RIGHT, TRAM_POS_REAR},
+    {320/2, TRAM_TFT_AREA_OFFSET_Y+TRAM_TFT_AREA_HEIGHT/2, X_CENTER,       Y_CENTER}
+  };
+
+  void close_tramming_screen() {
+    ui.return_to_status();
+  }
+
+  void draw_tramming_controls() {
+    tft.canvas(0,0,320,TRAM_TFT_AREA_HEIGHT+TRAM_TFT_AREA_OFFSET_Y);
+    tft.set_background(COLOR_BACKGROUND);
+    tft.add_rectangle(TRAM_TFT_AREA_OFFSET_X, TRAM_TFT_AREA_OFFSET_Y, 320 - TRAM_TFT_AREA_OFFSET_X*2, TRAM_TFT_AREA_HEIGHT, COLOR_WHITE);
+
+    for(uint8_t i=0; i<TRAMMING_POINTS_COUNT; i++) {
+      const uint16_t color = active_tramming_point == i ? COLOR_YELLOW : COLOR_WHITE;
+      tft.add_rectangle(tramming_points[i][0]-TRAMMING_CONTROL_SIZE/2,tramming_points[i][1]-TRAMMING_CONTROL_SIZE/2,TRAMMING_CONTROL_SIZE,TRAMMING_CONTROL_SIZE, color);
+    }
+
+    tft.canvas(0,0,320,TRAM_TFT_AREA_OFFSET_Y);
+    tft.set_background(COLOR_BACKGROUND);
+    tft_string.set(GET_TEXT(MSG_BED_LEVELING));
+    tft_string.trim();
+    tft.add_text(tft_string.center(TFT_WIDTH), 5, COLOR_WHITE, tft_string);
+  }
+
+  void MarlinUI::tramming_move_to_point(const uint8_t i) {
+    if (tramming_active) return;
+    tramming_active=true;
+    active_tramming_point = i;
+    draw_tramming_controls();
+    queue.enqueue_one_now(F("G28 O")); // home if needed
+    queue.exhaust();                   // with waiting
+    TEMPORARY_BED_LEVELING_STATE(false); // will be reenabled after on function exit
+    do_blocking_move_to_z(TRAM_Z_HOP, homing_feedrate(Z_AXIS));
+    do_blocking_move_to_xy(tramming_points[i][2],tramming_points[i][3], TRAM_XY_SPEED);
+    do_blocking_move_to_z(0, homing_feedrate(Z_AXIS));
+    planner.synchronize();
+    tramming_active=false;
+  }
+
+  void MarlinUI::tramming_screen() {
+    if (!tramming_active) {
+      active_tramming_point = TRAMMING_POINTS_COUNT; // unselect point
+    }
+    ui.defer_status_screen(true);
+    ui.clear_lcd();
+    TERN_(TOUCH_SCREEN, touch.clear());
+    TERN_(TOUCH_SCREEN, touch.enable());
+    tft.canvas(0, 0, TFT_WIDTH, TFT_HEIGHT);
+    tft.set_background(COLOR_BACKGROUND);
+
+    for(uint8_t i=0; i<TRAMMING_POINTS_COUNT; i++) {
+      touch.add_control(TRAMMING_MOVE_TO_POINT, tramming_points[i][0]-TRAMMING_CONTROL_SIZE/2, tramming_points[i][1]-TRAMMING_CONTROL_SIZE/2,
+        TRAMMING_CONTROL_SIZE, TRAMMING_CONTROL_SIZE, i);
+    }
+
+    add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH - 8, 420, BUTTON, (intptr_t) close_tramming_screen, imgConfirm);
+    draw_tramming_controls();
+  }
+#endif // FB_G6_CUSTOM_TRAMMING
 
 // void MarlinUI::language_screen(){
 //   TERN_(TOUCH_SCREEN, touch.clear());

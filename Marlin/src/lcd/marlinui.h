@@ -491,6 +491,11 @@ public:
 
       static void status_screen();
 
+      #if ENABLED(FB_G6_CUSTOM_TRAMMING)
+        static void tramming_screen();
+        static void tramming_move_to_point(const uint8_t i);
+      #endif
+
     #endif
 
     #if HAS_MARLINUI_U8GLIB
