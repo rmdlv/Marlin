@@ -2079,7 +2079,7 @@
   #define TRAM_CORNER_OFFSET_X 27
   #define TRAM_CORNER_OFFSET_Y 30
   #define TRAM_Z_HOP 8
-  #define TRAM_XY_SPEED 5000
+  #define TRAM_XY_SPEED 500
   #define TRAM_POS_LEFT  (X_MIN_BED + TRAM_CORNER_OFFSET_X)
   #define TRAM_POS_RIGHT (X_MAX_BED - TRAM_CORNER_OFFSET_X)
   #define TRAM_POS_FRONT (Y_MIN_BED + TRAM_CORNER_OFFSET_Y)
@@ -2090,7 +2090,7 @@
  * Add a bed leveling sub-menu for ABL or MBL.
  * Include a guided procedure if manual probing is enabled.
  */
-//#define LCD_BED_LEVELING
+#define LCD_BED_LEVELING
 
 #if ENABLED(LCD_BED_LEVELING)
   #define MESH_EDIT_Z_STEP  0.01 // (mm) Step size while manually probing Z axis.

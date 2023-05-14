@@ -60,6 +60,7 @@ extern const uint8_t stop_64x64x4[];
 extern const uint8_t babystep_64x64x4[];
 extern const uint8_t tune_64x64x4[];
 extern const uint8_t tramming_64x64x4[];
+extern const uint8_t point_40x40x4[];
 extern const uint8_t wifi_64x64x4[];
 extern const uint8_t feedrate_32x32x4[];
 extern const uint8_t feedrate_64x64x4[];
@@ -138,6 +139,7 @@ enum MarlinImage : uint8_t {
   imgBabystep,
   imgTune,
   imgTramming,
+  imgPoint,
   imgPower,
   imgZoffset,
   imgZoffsetSmall,
@@ -240,6 +242,7 @@ extern const tImage Stop_64x64x4;
 extern const tImage Babystep_64x64x4;
 extern const tImage Tune_64x64x4;
 extern const tImage Tramming_64x64x4;
+extern const tImage Point_40x40x4;
 extern const tImage Slider8x16x4;
 extern const tImage Power_64x64x4;
 extern const tImage Zoffset_64x64x4;

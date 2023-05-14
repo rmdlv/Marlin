@@ -1581,14 +1581,14 @@ void MarlinUI::fan_screen() {
   bool tramming_active=false;
   uint8_t active_tramming_point;
 
-  #define TRAMMING_CONTROL_SIZE 30
-  #define TRAM_TFT_AREA_OFFSET_X 8
+  #define TRAMMING_CONTROL_SIZE 40
+  #define TRAM_TFT_AREA_OFFSET_X 30
   #define TRAM_TFT_AREA_OFFSET_Y 48
   #define TRAM_TFT_AREA_HEIGHT 300
-  #define TRAM_TFT_POS_L (TRAM_TFT_AREA_OFFSET_X + TRAMMING_CONTROL_SIZE * 2)
-  #define TRAM_TFT_POS_R (320 - TRAM_TFT_AREA_OFFSET_X*2 - TRAMMING_CONTROL_SIZE * 2)
-  #define TRAM_TFT_POS_F (TRAM_TFT_AREA_HEIGHT + TRAM_TFT_AREA_OFFSET_Y - TRAMMING_CONTROL_SIZE * 2)
-  #define TRAM_TFT_POS_B (TRAM_TFT_AREA_OFFSET_Y + TRAMMING_CONTROL_SIZE * 2)
+  #define TRAM_TFT_POS_L (TRAM_TFT_AREA_OFFSET_X + TRAMMING_CONTROL_SIZE)
+  #define TRAM_TFT_POS_R (320 - TRAM_TFT_AREA_OFFSET_X - TRAMMING_CONTROL_SIZE)
+  #define TRAM_TFT_POS_F (TRAM_TFT_AREA_HEIGHT + TRAM_TFT_AREA_OFFSET_Y - TRAMMING_CONTROL_SIZE)
+  #define TRAM_TFT_POS_B (TRAM_TFT_AREA_OFFSET_Y + TRAMMING_CONTROL_SIZE)
 
   #define TRAMMING_POINTS_COUNT 5
   // {TFT_X, TFT_Y, BED_X, BED_Y}
@@ -1611,7 +1611,8 @@ void MarlinUI::fan_screen() {
 
     for(uint8_t i=0; i<TRAMMING_POINTS_COUNT; i++) {
       const uint16_t color = active_tramming_point == i ? COLOR_YELLOW : COLOR_WHITE;
-      tft.add_rectangle(tramming_points[i][0]-TRAMMING_CONTROL_SIZE/2,tramming_points[i][1]-TRAMMING_CONTROL_SIZE/2,TRAMMING_CONTROL_SIZE,TRAMMING_CONTROL_SIZE, color);
+      tft.add_image(tramming_points[i][0]-TRAMMING_CONTROL_SIZE/2,tramming_points[i][1]-TRAMMING_CONTROL_SIZE/2, imgPoint, color, COLOR_BACKGROUND, COLOR_DARKGREY);
+      // tft.add_rectangle(tramming_points[i][0]-TRAMMING_CONTROL_SIZE/2,tramming_points[i][1]-TRAMMING_CONTROL_SIZE/2,TRAMMING_CONTROL_SIZE,TRAMMING_CONTROL_SIZE, color);
     }
 
     tft.canvas(0,0,320,TRAM_TFT_AREA_OFFSET_Y);

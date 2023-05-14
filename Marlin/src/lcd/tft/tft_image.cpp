@@ -71,6 +71,7 @@ const tImage Stop_64x64x4           = { (void *)stop_64x64x4, 64, 64, GREYSCALE4
 const tImage Babystep_64x64x4       = { (void *)babystep_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Tune_64x64x4           = { (void *)tune_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Tramming_64x64x4       = { (void *)tramming_64x64x4, 64, 64, GREYSCALE4 };
+const tImage Point_40x40x4          = { (void *)point_40x40x4, 40, 40, GREYSCALE4 };
 const tImage Power_64x64x4          = { (void *)power_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Move_64x64x4           = { (void *)move_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Wifi_64x64x4           = { (void *)wifi_64x64x4, 64, 64, GREYSCALE4 };
@@ -151,6 +152,7 @@ const tImage Images[imgCount] = {
   Babystep_64x64x4,
   Tune_64x64x4,
   Tramming_64x64x4,
+  Point_40x40x4,
   Power_64x64x4,
   Zoffset_64x64x4,
   Zoffset_32x32x4, 
