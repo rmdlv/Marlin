@@ -74,7 +74,6 @@ enum TouchControlType : uint16_t {
   PAUSE_PRINT,
   STOP_PRINT,
   TRAMMING,
-  MESH_LEVEL,
   BABYSTEP_BUTTON,
   FAN_MANUAL,
   SET_FAN_SPEED,

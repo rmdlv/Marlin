@@ -46,10 +46,6 @@
 
 #include "../../feature/bedlevel/bedlevel.h"
 
-#if ENABLED(AUTO_BED_LEVELING_UBL)
-  #include "../../feature/bedlevel/bedlevel.h"
-#endif
-
 #if ENABLED(MKS_WIFI_MODULE)
   #include "../../module/wifi/wifi.h"
 #endif
@@ -95,7 +91,7 @@ void Touch::add_control(TouchControlType type, uint16_t x, uint16_t y, uint16_t 
 
 void Clear_midle_screen(){
   tft.canvas(0, 200, 320, 224);
-  tft.set_background(COLOR_BACKGROUND); 
+  tft.set_background(COLOR_BACKGROUND);
 }
 
 void Touch::idle() {
@@ -234,7 +230,7 @@ void Touch::touch(touch_control_t *control) {
       }
       //pull 200mm fila
       if (direction == -1) {
-        if (!printingIsActive()) {        
+        if (!printingIsActive()) {
           if (thermalManager.wholeDegHotend(H_E0) < EXTRUDE_MINTEMP) {
             tft.canvas(20, 420, 200, 40);
             tft.set_background(COLOR_BACKGROUND);
@@ -274,22 +270,22 @@ void Touch::touch(touch_control_t *control) {
         ui.goto_screen((screenFunc_t)ui.heater_screen);
       }
       break;
-    case HEAT_EXT: 
+    case HEAT_EXT:
       int16_t ext_temp;
       ext_temp = control->data;
       if ((ext_temp == 0) & printingIsActive()) {
         tft.canvas(20, 420, 200, 40);
         tft.set_background(COLOR_BACKGROUND);
-        tft.add_text(0, 0, COLOR_YELLOW, "Print is Active");       
+        tft.add_text(0, 0, COLOR_YELLOW, "Print is Active");
       } else {
         thermalManager.setTargetHotend(ext_temp, H_E0);
       }
       break;
-    case HEAT_BED: 
+    case HEAT_BED:
       int16_t bed_temp;
       bed_temp = control->data;
       thermalManager.setTargetBed(bed_temp);
-      break;    
+      break;
     case HEATER_MANUAL:
       int8_t heater_manual;
       heater_manual = control->data;
@@ -321,12 +317,12 @@ void Touch::touch(touch_control_t *control) {
       #endif
 
       break;
-    case RETRY_PRINT: 
+    case RETRY_PRINT:
       //Print file again
       card.openAndPrintFile(card.filename);
       ui.return_to_status();
-      ui.reset_status(); 
-      Clear_midle_screen();      
+      ui.reset_status();
+      Clear_midle_screen();
       ui.screen_num = 0;
       break;
     case SAVE_EEPROM:
@@ -343,19 +339,11 @@ void Touch::touch(touch_control_t *control) {
       ui.clear_lcd();
       MenuItem_float42_52::action(GET_TEXT_F(MSG_ADVANCE_K), &planner.extruder_advance_K[0], 0, 1);
       break;
-    case MESH_LEVEL:
-      #if ENABLED(MESH_BED_LEVELING)
-        _lcd_level_bed_continue();
-      #elif ENABLED(HAS_AUTOLEVEL)
-        queue.inject(F("G29"));
-	  #endif
-      break;
-
     case BABYSTEP_BUTTON:
       lcd_babystep_z();
       break;
     #ifdef PSU_CONTROL
-    case POWER_OFF: 
+    case POWER_OFF:
       ui.poweroff();
       break;
     #endif
@@ -392,13 +380,13 @@ void Touch::touch(touch_control_t *control) {
     case PREVOUS_SCREEN:
       ui.screen_num = 0;
       Clear_midle_screen();
-      // ui.clear_lcd();    
+      // ui.clear_lcd();
     break;
     // case CHANGE_FILAMENT:
     //   menu_change_filament();
     // break;
 
-    case CHAMBER_FAN: 
+    case CHAMBER_FAN:
       bool chamber_fan_status;
       chamber_fan_status = control->data;
       if (chamber_fan_status == true) {
@@ -406,8 +394,8 @@ void Touch::touch(touch_control_t *control) {
       } else {
         thermalManager.set_fan_speed(1,0);
       }
-      break;      
-    case FAN: 
+      break;
+    case FAN:
       ui.goto_screen((screenFunc_t)ui.fan_screen);
       break;
     case FAN_MANUAL:

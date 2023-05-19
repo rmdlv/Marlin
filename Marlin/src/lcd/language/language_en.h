@@ -878,6 +878,12 @@ namespace Language_en {
   LSTR MSG_BACKLASH_N                     = _UxGT("@");
 
   LSTR MSG_CALIBRATE_TOUCH_SCREEN       = _UxGT("Touchscreen calibration");
+
+  LSTR MSG_G29_PROCESSING				  = _UxGT("Autoleveling...");
+  LSTR MSG_G29_COMPLETE  				  = _UxGT("Complete");
+  LSTR MSG_G29_ERROR  				      = _UxGT("Error");
+  LSTR MSG_G29_VIEW  				      = _UxGT("View current mesh");
+
 }
 
 #if FAN_COUNT == 1

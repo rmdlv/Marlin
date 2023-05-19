@@ -190,6 +190,17 @@ const char* ftostr12ns(const_float_t f) {
   return &conv[3];
 }
 
+// Convert unsigned float to string with 1.234 format
+const char* ftostr13ns(const_float_t f) {
+  const long i = UINTFLOAT(f, 3);
+  conv[2] = DIGIMOD(i, 1000);
+  conv[3] = '.';
+  conv[4] = DIGIMOD(i, 100);
+  conv[5] = DIGIMOD(i, 10);
+  conv[6] = DIGIMOD(i, 1);
+  return &conv[2];
+}
+
 // Convert unsigned float to string with 12.3 format
 const char* ftostr31ns(const_float_t f) {
   const long i = UINTFLOAT(f, 1);

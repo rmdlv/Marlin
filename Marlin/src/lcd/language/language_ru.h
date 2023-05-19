@@ -889,6 +889,10 @@ namespace Language_ru {
   LSTR MSG_USB_DISK                         = _UxGT("USB Диск");
 
   LSTR MSG_CALIBRATE_TOUCH_SCREEN         = _UxGT("Калибровка тачскрина");
+  LSTR MSG_G29_PROCESSING				  = _UxGT("Снятие карты стола...");
+  LSTR MSG_G29_COMPLETE  				  = _UxGT("Выполнено");
+  LSTR MSG_G29_ERROR  				      = _UxGT("Ошибка");
+  LSTR MSG_G29_VIEW  				      = _UxGT("Просмотр карты стола");
 }
 
 #if FAN_COUNT == 1

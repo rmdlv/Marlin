@@ -68,6 +68,9 @@ const char* ftostr11ns(const_float_t x);
 // Convert unsigned float to string with 1.23 format
 const char* ftostr12ns(const_float_t x);
 
+// Convert unsigned float to string with 1.234 format
+const char* ftostr13ns(const_float_t x);
+
 // Convert unsigned float to string with 12.3 format
 const char* ftostr31ns(const_float_t x);
 

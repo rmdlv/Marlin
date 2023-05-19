@@ -25,7 +25,6 @@
  */
 
 #include "../../../inc/MarlinConfig.h"
-
 #if HAS_ABL_NOT_UBL
 
 #include "../../gcode.h"
@@ -670,7 +669,8 @@ G29_TYPE GcodeSuite::G29() {
     abl.measured_z = 0;
 
     #if ABL_USES_GRID
-
+      ui.push_current_screen();
+      ui.goto_screen((screenFunc_t) ui.g29_leveling_screen);
       bool zig = PR_OUTER_SIZE & 1;  // Always end at RIGHT and BACK_PROBE_BED_POSITION
 
       // Outer loop is X with PROBE_Y_FIRST enabled
@@ -708,11 +708,13 @@ G29_TYPE GcodeSuite::G29() {
 
           if (abl.verbose_level) SERIAL_ECHOLNPGM("Probing mesh point ", pt_index, "/", abl.abl_points, ".");
           TERN_(HAS_STATUS_MESSAGE, ui.status_printf(0, F(S_FMT " %i/%i"), GET_TEXT(MSG_PROBING_POINT), int(pt_index), int(abl.abl_points)));
-
+          ui.g29_mesh_grid_event(abl.meshCount.x, abl.meshCount.y, abl.z_values, false);
+          idle_no_sleep();
           abl.measured_z = faux ? 0.001f * random(-100, 101) : probe.probe_at_point(abl.probePos, raise_after, abl.verbose_level);
 
           if (isnan(abl.measured_z)) {
             set_bed_leveling_enabled(abl.reenable);
+            ui.g29_leveling_screen_complete(false);
             break; // Breaks out of both loops
           }
 
@@ -733,13 +735,12 @@ G29_TYPE GcodeSuite::G29() {
             TERN_(EXTENSIBLE_UI, ExtUI::onMeshUpdate(abl.meshCount, z));
 
           #endif
-
+          ui.g29_mesh_grid_event(abl.meshCount.x, abl.meshCount.y, abl.z_values, true);
           abl.reenable = false; // Don't re-enable after modifying the mesh
           idle_no_sleep();
 
         } // inner
       } // outer
-
     #elif ENABLED(AUTO_BED_LEVELING_3POINT)
 
       // Probe at 3 arbitrary points
@@ -937,7 +938,7 @@ G29_TYPE GcodeSuite::G29() {
     #endif
 
   } // !isnan(abl.measured_z)
-
+  ui.g29_leveling_screen_complete(!isnan(abl.measured_z));
   // Restore state after probing
   if (!faux) restore_feedrate_and_scaling();
 

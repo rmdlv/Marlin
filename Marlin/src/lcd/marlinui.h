@@ -26,6 +26,7 @@
 #include "../module/motion.h"
 #include "../libs/buzzer.h"
 #include "buttons.h"
+#include "../feature/bedlevel/bedlevel.h"
 
 #if ENABLED(TOUCH_SCREEN_CALIBRATION)
   #include "tft_io/touch_calibration.h"
@@ -791,12 +792,20 @@ public:
     static void wifi_screen();
   #endif
 
+  static void mesh_view_screen();
+
+//  #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
+    static void g29_leveling_screen();
+    static void g29_leveling_screen_complete(bool success);
+    static void g29_mesh_grid_event(const uint8_t x_pos, const uint8_t y_pos, const bed_mesh_t mesh, bool probe_done);
+  //#endif
+
   static void heater_screen();
 
   static void bed_screen();
 
   static void fan_screen();
-  
+
   #ifdef FINISH_SCREEN
     static void finish_screen();
   #endif
