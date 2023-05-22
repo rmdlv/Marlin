@@ -643,6 +643,7 @@ void announceOpen(const uint8_t doing, const char * const path) {
 //   - 2 : Resuming from a sub-procedure
 //
 void CardReader::openFileRead(const char * const path, const uint8_t subcall_type/*=0*/) {
+  setOnM25Pause(false);
   if (!isMounted()) return openFailed(path);
 
   switch (subcall_type) {
