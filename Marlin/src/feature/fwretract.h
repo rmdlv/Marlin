@@ -45,6 +45,7 @@ private:
   #if HAS_MULTI_EXTRUDER
     static Flags<EXTRUDERS> retracted_swap;        // Which extruders are swap-retracted
   #endif
+  float parseFeedrate();
 
 public:
   static fwretract_settings_t settings;

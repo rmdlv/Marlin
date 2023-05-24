@@ -198,17 +198,37 @@ void FWRetract::retract(const bool retracting E_OPTARG(bool swapping/*=false*/))
 //extern const char SP_Z_STR[];
 
 /**
+ * check first char in arg, if 'S' - read value as mm/s instead of mm/m
+ */
+float FWRetract::parseFeedrate() {
+  char* args = parser.value_string();
+  bool inMMS = false;
+  if (args[0] == 'S')
+    inMMS = true;
+    args[0] = '0';
+  }
+  float val = parser.value_axis_units(E_AXIS);
+  if (!inMMS) {
+    val = MMM_TO_MMS(val);
+  } else {
+    args[0]='S';
+  }
+  return val;
+}
+
+/**
  * M207: Set firmware retraction values
  *
  *   S[+units]    retract_length
  *   W[+units]    swap_retract_length (multi-extruder)
  *   F[units/min] retract_feedrate_mm_s
+ *   FS[units/sec] retract_feedrate_mm_s
  *   Z[units]     retract_zraise
  */
 void FWRetract::M207() {
   if (!parser.seen("FSWZ")) return M207_report();
   if (parser.seenval('S')) settings.retract_length        = parser.value_axis_units(E_AXIS);
-  if (parser.seenval('F')) settings.retract_feedrate_mm_s = MMM_TO_MMS(parser.value_axis_units(E_AXIS));
+  if (parser.seenval('F')) settings.retract_feedrate_mm_s = parseFeedrate();
   if (parser.seenval('Z')) settings.retract_zraise        = parser.value_linear_units();
   if (parser.seenval('W')) settings.swap_retract_length   = parser.value_axis_units(E_AXIS);
 }
@@ -228,13 +248,15 @@ void FWRetract::M207_report() {
  *   S[+units]    retract_recover_extra (in addition to M207 S*)
  *   W[+units]    swap_retract_recover_extra (multi-extruder)
  *   F[units/min] retract_recover_feedrate_mm_s
+ *   FS[units/sec] retract_recover_feedrate_mm_s
  *   R[units/min] swap_retract_recover_feedrate_mm_s
+ *   RS[units/sec] swap_retract_recover_feedrate_mm_s
  */
 void FWRetract::M208() {
   if (!parser.seen("FSRW")) return M208_report();
   if (parser.seen('S')) settings.retract_recover_extra              = parser.value_axis_units(E_AXIS);
-  if (parser.seen('F')) settings.retract_recover_feedrate_mm_s      = MMM_TO_MMS(parser.value_axis_units(E_AXIS));
-  if (parser.seen('R')) settings.swap_retract_recover_feedrate_mm_s = MMM_TO_MMS(parser.value_axis_units(E_AXIS));
+  if (parser.seen('F')) settings.retract_recover_feedrate_mm_s      = parseFeedrate();
+  if (parser.seen('R')) settings.swap_retract_recover_feedrate_mm_s = parseFeedrate();
   if (parser.seen('W')) settings.swap_retract_recover_extra         = parser.value_axis_units(E_AXIS);
 }
 
