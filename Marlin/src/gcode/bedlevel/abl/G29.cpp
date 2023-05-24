@@ -708,10 +708,9 @@ G29_TYPE GcodeSuite::G29() {
 
           if (abl.verbose_level) SERIAL_ECHOLNPGM("Probing mesh point ", pt_index, "/", abl.abl_points, ".");
           TERN_(HAS_STATUS_MESSAGE, ui.status_printf(0, F(S_FMT " %i/%i"), GET_TEXT(MSG_PROBING_POINT), int(pt_index), int(abl.abl_points)));
-          ui.g29_mesh_grid_event(abl.meshCount.x, abl.meshCount.y, abl.z_values, false);
+          ui.draw_mesh_grid(abl.meshCount.x, abl.meshCount.y, abl.z_values, false);
           idle_no_sleep();
           abl.measured_z = faux ? 0.001f * random(-100, 101) : probe.probe_at_point(abl.probePos, raise_after, abl.verbose_level);
-
           if (isnan(abl.measured_z)) {
             set_bed_leveling_enabled(abl.reenable);
             ui.g29_leveling_screen_complete(false);
@@ -735,7 +734,7 @@ G29_TYPE GcodeSuite::G29() {
             TERN_(EXTENSIBLE_UI, ExtUI::onMeshUpdate(abl.meshCount, z));
 
           #endif
-          ui.g29_mesh_grid_event(abl.meshCount.x, abl.meshCount.y, abl.z_values, true);
+          ui.draw_mesh_grid(abl.meshCount.x, abl.meshCount.y, abl.z_values, true);
           abl.reenable = false; // Don't re-enable after modifying the mesh
           idle_no_sleep();
 

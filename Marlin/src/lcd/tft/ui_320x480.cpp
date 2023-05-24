@@ -841,7 +841,8 @@ MotionAxisState motionAxisState;
 #define X_MARGIN 20                           //15
 #define Y_MARGIN 15                           //11
 
-//#if ENABLED(AUTO_BED_LEVELING_BILINEAR)
+
+#if HAS_MESH
 #define GRID_OFFSET_X   8
 #define GRID_OFFSET_Y   8
 #define GRID_WIDTH      300
@@ -854,25 +855,25 @@ MotionAxisState motionAxisState;
         TERN_(TOUCH_SCREEN, touch.clear());
         tft.canvas(0, 0, TFT_WIDTH, TFT_HEIGHT);
         tft.set_background(COLOR_BACKGROUND);
-        tft_string.set("Homing...");
+        tft_string.set(GET_TEXT_F(MSG_HOMING));
         tft_string.trim();
         tft.add_text(tft_string.center(TFT_WIDTH), TFT_HEIGHT/2, COLOR_STATUS_MESSAGE, tft_string);
         queue.inject(F("G28 O\nG29"));
       #endif
   }
-  
+
   void _mesh_leveling_screen(bool viewOnly) {
     ui.defer_status_screen(true);
     TERN_(HAS_TFT_XPT2046, touch.enable());
     ui.clear_lcd();
     TERN_(TOUCH_SCREEN, touch.clear());
     if (viewOnly) {
-      ui.g29_mesh_grid_event(GRID_MAX_POINTS_X, GRID_MAX_POINTS_Y, bedlevel.z_values, true);
+      ui.draw_mesh_grid(GRID_MAX_POINTS_X, GRID_MAX_POINTS_Y, bedlevel.z_values, true);
       add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH - 8, 385, BACK, imgBackBig);
       drawBtn(X_MARGIN, 380, "EDT", (intptr_t)remesh, imgCancel, COLOR_WHITE, true);
       tft_string.set(GET_TEXT_F(MSG_G29_VIEW));
     } else {
-      ui.g29_mesh_grid_event((GRID_MAX_POINTS_Y % 2 == 0 ? GRID_MAX_POINTS_X - 1 : 0), 0, bedlevel.z_values, false);
+      ui.draw_mesh_grid((GRID_MAX_POINTS_Y % 2 == 0 ? GRID_MAX_POINTS_X - 1 : 0), 0, bedlevel.z_values, false);
       tft_string.set(GET_TEXT_F(MSG_G29_PROCESSING));
     }
     tft.canvas(0, 435, 320, 35);
@@ -882,33 +883,11 @@ MotionAxisState motionAxisState;
     tft.add_text(tft_string.center(TFT_WIDTH), 5, COLOR_STATUS_MESSAGE, tft_string);
   }
 
-  void MarlinUI::g29_leveling_screen() {
-    _mesh_leveling_screen(false);
-  }
-
   void MarlinUI::mesh_view_screen() {
     _mesh_leveling_screen(true);
   }
 
-  void MarlinUI::g29_leveling_screen_complete(bool success) {
-    tft.canvas(0, 435, 320, 35);
-    tft.set_background(COLOR_BACKGROUND);
-    tft.add_rectangle(10, 0, 300, 1, COLOR_WHITE);
-    if (IS_SD_PRINTING()) {
-      ui.return_to_status();
-    } else if (success) {
-      ui.go_back();
-    } else {
-      TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH - 8, 385, BACK, imgBackBig));
-      tft_string.set(GET_TEXT_F(MSG_G29_ERROR));
-      tft_string.trim();
-      tft.add_text(tft_string.center(TFT_WIDTH), 5, COLOR_STATUS_MESSAGE, tft_string);
-    }
-  }
-
-
-
-  void MarlinUI::g29_mesh_grid_event(const uint8_t x_pos, const uint8_t y_pos, const bed_mesh_t mesh, bool probe_done) {
+  void MarlinUI::draw_mesh_grid(const uint8_t x_pos, const uint8_t y_pos, const bed_mesh_t mesh, bool probe_done) {
     const uint8_t rs = 20;
     tft.canvas(GRID_OFFSET_X, GRID_OFFSET_X, GRID_WIDTH, GRID_HEIGHT);
     tft.set_background(COLOR_BACKGROUND);
@@ -947,7 +926,28 @@ MotionAxisState motionAxisState;
     }
   }
 
-//#endif // AUTO_BED_LEVELING_BILINEAR
+  #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
+    void MarlinUI::g29_leveling_screen() {
+      _mesh_leveling_screen(false);
+    }
+
+    void MarlinUI::g29_leveling_screen_complete(bool success) {
+      tft.canvas(0, 435, 320, 35);
+      tft.set_background(COLOR_BACKGROUND);
+      tft.add_rectangle(10, 0, 300, 1, COLOR_WHITE);
+      if (IS_SD_PRINTING()) {
+        ui.return_to_status();
+      } else if (success) {
+        ui.go_back();
+      } else {
+        TERN_(HAS_TFT_XPT2046, add_control(TFT_WIDTH - X_MARGIN - BTN_WIDTH - 8, 385, BACK, imgBackBig));
+        tft_string.set(GET_TEXT_F(MSG_G29_ERROR));
+        tft_string.trim();
+        tft.add_text(tft_string.center(TFT_WIDTH), 5, COLOR_STATUS_MESSAGE, tft_string);
+      }
+    }
+  #endif
+#endif // HAS_MESH
 
 static void quick_feedback() {
   #if HAS_CHIRP

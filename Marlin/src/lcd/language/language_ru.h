@@ -80,6 +80,7 @@ namespace Language_ru {
   LSTR MSG_DISABLE_STEPPERS                 = _UxGT("Выключить двигатели");
   LSTR MSG_DEBUG_MENU                       = _UxGT("Меню отладки");
   LSTR MSG_PROGRESS_BAR_TEST                = _UxGT("Тест индикатора");
+  LSTR MSG_HOMING                           = _UxGT("Парковка");
   LSTR MSG_AUTO_HOME                        = _UxGT("Парковка XYZ");
   LSTR MSG_AUTO_HOME_A                      = _UxGT("Парковка @");
   LSTR MSG_AUTO_HOME_X                      = _UxGT("Парковка X");

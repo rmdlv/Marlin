@@ -792,13 +792,14 @@ public:
     static void wifi_screen();
   #endif
 
-  static void mesh_view_screen();
-
-//  #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
-    static void g29_leveling_screen();
-    static void g29_leveling_screen_complete(bool success);
-    static void g29_mesh_grid_event(const uint8_t x_pos, const uint8_t y_pos, const bed_mesh_t mesh, bool probe_done);
-  //#endif
+  #if HAS_MESH
+    static void mesh_view_screen();
+    static void draw_mesh_grid(const uint8_t x_pos, const uint8_t y_pos, const bed_mesh_t mesh, bool probe_done);
+    #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
+      static void g29_leveling_screen();
+      static void g29_leveling_screen_complete(bool success);
+    #endif
+  #endif
 
   static void heater_screen();
 
