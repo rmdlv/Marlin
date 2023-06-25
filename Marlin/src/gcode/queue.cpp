@@ -88,6 +88,8 @@ GCodeQueue::RingBuffer GCodeQueue::ring_buffer = { 0 };
  * Serial command injection
  */
 
+bool GCodeQueue::isProcessingInjectedCommand = false;
+
 /**
  * Next Injected PROGMEM Command pointer. (nullptr == empty)
  * Internal commands are enqueued ahead of serial / SD commands.
@@ -157,8 +159,10 @@ bool GCodeQueue::process_injected_command_P() {
 
   // Execute command if non-blank
   if (i) {
+    GCodeQueue::isProcessingInjectedCommand = true;
     parser.parse(cmd);
     gcode.process_parsed_command();
+    GCodeQueue::isProcessingInjectedCommand = false;
   }
   return true;
 }
@@ -177,8 +181,10 @@ bool GCodeQueue::process_injected_command() {
   // Execute a non-blank command
   if (i) {
     injected_commands[i] = '\0';
+    GCodeQueue::isProcessingInjectedCommand = true;
     parser.parse(injected_commands);
     gcode.process_parsed_command();
+    GCodeQueue::isProcessingInjectedCommand = false;
   }
 
   // Copy the next command into place
@@ -625,7 +631,6 @@ void GCodeQueue::exhaust() {
  * Get the next command in the queue, optionally log it to SD, then dispatch it
  */
 void GCodeQueue::advance() {
-
   // Process immediate commands
   if (process_injected_command_P() || process_injected_command()) return;
 

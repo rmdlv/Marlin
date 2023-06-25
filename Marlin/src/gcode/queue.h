@@ -98,6 +98,12 @@ public:
     inline CommandLine& peek_next_command() { return commands[index_r]; }
 
     inline char* peek_next_command_string() { return peek_next_command().buffer; }
+
+    inline char* pop_next_command_string() {
+      char* result = peek_next_command_string();
+      advance_pos(index_r, -1);
+      return result;
+    }
   };
 
   /**
@@ -109,6 +115,8 @@ public:
    * Clear the Marlin command queue
    */
   static void clear() { ring_buffer.clear(); }
+
+  static bool isProcessingInjectedCommand;
 
   /**
    * Next Injected Command (PROGMEM) pointer. (nullptr == empty)

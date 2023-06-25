@@ -49,12 +49,13 @@
 
 #include "../../MarlinCore.h" // for startOrResumeJob
 
-static float M25_X_pos = 0; // could be replaced with G60 / G61. But without relative position recover
-static float M25_Y_pos = 0;
-static float M25_Z_pos = 0;
-static float M25_E_pos = 0;
-static bool is_relative = false;
-static bool is_e_relative = false;
+struct  {
+  xyze_pos_t pos;
+  bool is_relative = false;
+  bool is_e_relative = false;
+  uint8_t ring_buffer_backup_size = 0;
+  char ring_buffer_backup[BUFSIZE][MAX_CMD_SIZE];
+} m25_saved_state;
 
 /**
  * M24: Start or Resume SD Print
@@ -71,33 +72,41 @@ void GcodeSuite::M24() {
   #endif
 
   if (card.isOnM25Pause()) {
+    if (! queue.isProcessingInjectedCommand) { // ensure that M24 not in queue
+      queue.inject_P(PSTR("M24"));
+      return;
+    }
+
+    current_position.e = m25_saved_state.pos.e;
+    destination.e = current_position.e;
+    sync_plan_position_e();
+
     // Execute custom gcode
     queue.exhaust();
     queue.enqueue_one_now(F("M811"));
     queue.exhaust();
     set_relative_mode(false);
-    char cmd[50];
-    char tstr_1[10];
-    char tstr_2[10];
-    char tstr_3[10];
-    sprintf(cmd, "G1 F4500 X%s Y%s Z%s", //FIXMI: see G61 source
-      dtostrf(M25_X_pos, 1, 3, tstr_1), 
-      dtostrf(M25_Y_pos, 1, 3, tstr_2),
-      dtostrf(M25_Z_pos, 1, 3, tstr_3));
-    queue.enqueue_one_now(cmd);
-    queue.exhaust();
+    do_blocking_move_to(m25_saved_state.pos);
+
     queue.enqueue_one_now(F("M812"));
     queue.exhaust();
-    current_position.e = M25_E_pos;
+
+    current_position.e = m25_saved_state.pos.e;
+    destination.e = current_position.e;
     sync_plan_position_e();
-    set_relative_mode(is_relative);
-    if (is_e_relative) {
+
+    set_relative_mode(m25_saved_state.is_relative);
+    if (m25_saved_state.is_e_relative) {
       set_e_relative();
     } else {
       set_e_absolute();
     }
-  }
 
+    planner.synchronize();
+    for(uint8_t i=0; i < m25_saved_state.ring_buffer_backup_size; i++) {
+      queue.enqueue_one_now(m25_saved_state.ring_buffer_backup[i]);
+    }
+  }
 
   card.setOnM25Pause(false);
 
@@ -132,13 +141,13 @@ void GcodeSuite::M24() {
  *   position. M24 will move the head back before resuming the print.
  */
 void GcodeSuite::M25() {
-
+  if (! queue.isProcessingInjectedCommand) { // ensure that M25 not in queue
+    queue.inject_P(PSTR("M25"));
+    return;
+  }
   #if ENABLED(PARK_HEAD_ON_PAUSE)
-
     M125();
-
   #else
-
     // Set initial pause flag to prevent more commands from landing in the queue while we try to pause
     #if ENABLED(SDSUPPORT)
       if (IS_SD_PRINTING()) card.pauseSDPrint();
@@ -160,17 +169,21 @@ void GcodeSuite::M25() {
         hostui.pause();
       #endif
     #endif
-    queue.exhaust();
-    is_e_relative = axis_is_relative(E_AXIS);
-    is_relative = axis_is_relative(X_AXIS);
-    M25_X_pos = current_position[X_AXIS];
-    M25_Y_pos = current_position[Y_AXIS];
-    M25_Z_pos = current_position[Z_AXIS];
-    M25_E_pos = current_position.e;
+
+    m25_saved_state.ring_buffer_backup_size = 0;
+    while(queue.ring_buffer.occupied()) {
+      char *res = queue.ring_buffer.pop_next_command_string();
+      strcpy(m25_saved_state.ring_buffer_backup[m25_saved_state.ring_buffer_backup_size++], res);
+    }
+    queue.ring_buffer.clear();
+
+    planner.synchronize();
+    m25_saved_state.is_e_relative = axis_is_relative(E_AXIS);
+    m25_saved_state.is_relative = axis_is_relative(X_AXIS);
+    m25_saved_state.pos = current_position;
     set_relative_mode(false);
     set_e_relative();
-    queue.enqueue_one_now(F("M810"));
-    queue.exhaust();
+    process_subcommands_now(F("M810"));
   #endif
   card.setOnM25Pause(true);
 }
