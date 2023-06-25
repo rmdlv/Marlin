@@ -396,6 +396,7 @@ namespace Language_ru {
   LSTR MSG_LCD_OFF                          = _UxGT("Выкл");
 
   LSTR MSG_PID_AUTOTUNE                     = _UxGT("Автоподбор PID");
+  LSTR MSG_PID_USE_MPC                      = _UxGT("Err: Пробуй M306 T");
   LSTR MSG_PID_AUTOTUNE_E                   = _UxGT("Автоподбор PID *");
   LSTR MSG_PID_AUTOTUNE_DONE                = _UxGT("Подбор PID выполнен");
   LSTR MSG_PID_BAD_EXTRUDER_NUM             = _UxGT("Сбой автоподбора! Плохой экструдер.");

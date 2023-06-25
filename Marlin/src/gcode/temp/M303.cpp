@@ -73,6 +73,10 @@ void GcodeSuite::M303() {
     default:
       SERIAL_ECHOPGM(STR_PID_AUTOTUNE);
       SERIAL_ECHOLNPGM(STR_PID_BAD_HEATER_ID);
+      #ifdef MPCTEMP
+        SERIAL_ECHOLN("Use MPC AUTOTEMP: M306 T. See: https://github.com/FB-G6/Marlin/wiki");
+        LCD_MESSAGE(MSG_PID_USE_MPC);
+      #endif
       TERN_(EXTENSIBLE_UI, ExtUI::onPidTuning(ExtUI::result_t::PID_BAD_EXTRUDER_NUM));
       TERN_(DWIN_LCD_PROUI, DWIN_PidTuning(PID_BAD_EXTRUDER_NUM));
       return;
