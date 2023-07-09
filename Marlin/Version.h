@@ -30,15 +30,13 @@
  */
 
 #if TEMP_SENSOR_0 == 5
-  #define SHORT_BUILD_VERSION "FBG6-2.1.2.7-104gt"
+  #define THERMISTOR_NAME "104gt"
 #elif TEMP_SENSOR_0 == 13
-  #define SHORT_BUILD_VERSION "FBG6-2.1.2.7-3950"
+  #define THERMISTOR_NAME "3950"
 #endif
 
-// #define SHORT_BUILD_VERSION "FBG6-2.1.2.4-104gt"
-
-// #define SHORT_BUILD_VERSION "FBG6-2.1.2.4-3950"
-
+#define GIT_VERSION "manual"
+#define SHORT_BUILD_VERSION "FBG6-" GIT_VERSION "-" THERMISTOR_NAME
 /**
  * Verbose version identifier which should contain a reference to the location
  * from where the binary was downloaded or the source code was compiled.
@@ -50,7 +48,7 @@
  * here we define this default string as the date where the latest release
  * version was tagged.
  */
-#define STRING_DISTRIBUTION_DATE "2023-02-25"
+#define STRING_DISTRIBUTION_DATE "2023-06-06"
 
 /**
  * Defines a generic printer name to be output to the LCD after booting Marlin.

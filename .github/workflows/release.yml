@@ -26,7 +26,9 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install --upgrade platformio
-
+    - name: Set version and build date
+      run:
+        sed -r -i "s/^(\s*#define\s+STRING_DISTRIBUTION_DATE) .*/\1 \"$(date +"%Y-%m-%d")\"/;s/^\s*(#define\s+GIT_VERSION) .*/\1 \"$(git describe --tags)\"/" Marlin/Version.h
     - name: Build PlatformIO at 104GT-2/104NT
       run: |
         cp Marlin/build_params.variants/params_104gt.h Marlin/build_params.h
