@@ -63,6 +63,7 @@ const tImage Menu_64x64x4           = { (void *)menu_64x64x4, 64, 64, GREYSCALE4
 const tImage Settings_64x64x4       = { (void *)settings_64x64x4, 64, 64, GREYSCALE4 };
 const tImage Confirm_80x40x4        = { (void *)confirm_80x40x4, 80, 40, GREYSCALE4 };
 const tImage Cancel_80x40x4         = { (void *)cancel_80x40x4, 80, 40, GREYSCALE4 };
+const tImage Edit_80x40x4           = { (void *)edit_80x40x4, 80, 40, GREYSCALE4 };
 const tImage Increase_80x40x4       = { (void *)increase_80x40x4, 80, 40, GREYSCALE4 };
 const tImage Decrease_80x40x4       = { (void *)decrease_80x40x4, 80, 40, GREYSCALE4 };
 const tImage Pause_64x64x4          = { (void *)pause_64x64x4, 64, 64, GREYSCALE4 };
@@ -126,6 +127,7 @@ const tImage Images[imgCount] = {
   Directory_32x32x4,
   Confirm_80x40x4,
   Cancel_80x40x4,
+  Edit_80x40x4,
   Increase_80x40x4,
   Decrease_80x40x4,
   Back_32x32x4,

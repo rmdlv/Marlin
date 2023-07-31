@@ -51,6 +51,7 @@ extern const uint8_t menu_64x64x4[];
 extern const uint8_t settings_64x64x4[];
 extern const uint8_t confirm_80x40x4[];
 extern const uint8_t cancel_80x40x4[];
+extern const uint8_t edit_80x40x4[];
 extern const uint8_t increase_80x40x4[];
 extern const uint8_t decrease_80x40x4[];
 extern const uint8_t pause_64x64x4[];
@@ -113,6 +114,7 @@ enum MarlinImage : uint8_t {
   imgDirectory,
   imgConfirm,
   imgCancel,
+  imgEdit,
   imgIncrease,
   imgDecrease,
   imgBack,
