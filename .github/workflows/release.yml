@@ -66,8 +66,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release firmware ${{ github.ref }}
+        tag_name: ${{ github.ref_name }}
+        release_name: Release firmware ${{ github.ref_name }}
         draft: false
         prerelease: false
     - name: Upload Release Asset at 104GT-2/104NT
