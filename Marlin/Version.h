@@ -29,10 +29,10 @@
  * Marlin release version identifier
  */
 
-#if TEMP_SENSOR_0 == 5
-  #define THERMISTOR_NAME "104gt"
+#if TEMP_SENSOR_0 == 1
+#define THERMISTOR_NAME "104gt"
 #elif TEMP_SENSOR_0 == 13
-  #define THERMISTOR_NAME "3950"
+#define THERMISTOR_NAME "3950"
 #endif
 
 #define GIT_VERSION "manual"
@@ -41,7 +41,7 @@
  * Verbose version identifier which should contain a reference to the location
  * from where the binary was downloaded or the source code was compiled.
  */
-//#define DETAILED_BUILD_VERSION SHORT_BUILD_VERSION
+// #define DETAILED_BUILD_VERSION SHORT_BUILD_VERSION
 
 /**
  * The STRING_DISTRIBUTION_DATE represents when the binary file was built,
@@ -66,18 +66,18 @@
 /**
  * Default generic printer UUID.
  */
-//#define DEFAULT_MACHINE_UUID "cede2a2f-41a2-4748-9b12-c55c62f367ff"
+// #define DEFAULT_MACHINE_UUID "cede2a2f-41a2-4748-9b12-c55c62f367ff"
 
 /**
  * The WEBSITE_URL is the location where users can get more information such as
  * documentation about a specific Marlin release.
  */
-//#define WEBSITE_URL "marlinfw.org"
+// #define WEBSITE_URL "marlinfw.org"
 
 /**
  * Set the vendor info the serial USB interface, if changable
  * Currently only supported by DUE platform
  */
-//#define USB_DEVICE_VENDOR_ID           0x0000
-//#define USB_DEVICE_PRODUCT_ID          0x0000
-//#define USB_DEVICE_MANUFACTURE_NAME    WEBSITE_URL
+// #define USB_DEVICE_VENDOR_ID           0x0000
+// #define USB_DEVICE_PRODUCT_ID          0x0000
+// #define USB_DEVICE_MANUFACTURE_NAME    WEBSITE_URL
