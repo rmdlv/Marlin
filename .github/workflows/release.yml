@@ -111,4 +111,4 @@ on:
   push:
     tags:
       - '*'
-  workflow_dispatch
+  workflow_dispatch:
